@@ -87,3 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Custom
+data/
+character_based_ffnn/internal_representations/inputs/
