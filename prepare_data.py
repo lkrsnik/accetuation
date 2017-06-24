@@ -6,6 +6,7 @@ import numpy as np
 import h5py
 import gc
 import StringIO
+import copy
 
 def save_inputs(file_name, X, y):
     h5f = h5py.File(file_name, 'w')
@@ -45,11 +46,11 @@ def load_inputs(file_name):
     h5f.close()
     return X, y
 
-def load_extended_inputs(file_name):
+def load_extended_inputs(file_name, obtain_range):
     h5f = h5py.File(file_name,'r')
-    X = h5f['X'][:]
-    y = h5f['y'][:]
-    X_pure = h5f['X_pure'][:]
+    X = h5f['X'][obtain_range[0]:obtain_range[1]]
+    y = h5f['y'][obtain_range[0]:obtain_range[1]]
+    X_pure = h5f['X_pure'][obtain_range[0]:obtain_range[1]]
 
     h5f.close()
     return X, y, X_pure
@@ -410,35 +411,105 @@ def generate_full_vowel_matrix_inputs(name, split_number):
     h5f.close()
 
 
+def generate_arrays_from_file(path, batch_size):
+    h5f = h5py.File(path, 'r')
+
+    X = h5f['X'][:]
+    y = h5f['y'][:]
+    X_pure = h5f['X_pure'][:]
+    yield (X, y, X_pure)
+    # while 1:
+    #     f = open(path)
+    #     for line in f:
+    #         # create Numpy arrays of input data
+    #         # and labels, from each line in the file
+    #         x, y = process_line(line)
+    #         yield (x, y)
+    #         # f.close()
+
+    h5f.close()
+
+
+
+
 def shuffle_full_vowel_inputs(name, orderd_name, parts):
 #     internal_representations/inputs/X_ordered_part
     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
     num_all_vowels = count_vowels(content, vowels)
-    # s = np.arange(num_all_vowels)
-    # np.random.shuffle(s)
+    num_all_vowels = 12
+
+
+    s = np.arange(num_all_vowels)
+    np.random.shuffle(s)
     # create_and_save_shuffle_vector(name, s)
-    s = load_shuffle_vector('internal_representations/inputs/X_shuffled_part_shuffle_vector.h5')
+
+    # s = load_shuffle_vector('internal_representations/inputs/X_shuffled_part_shuffle_vector.h5')
+
+# try:
+    #     h5f.close()
+    # except Exception, e:
+    #     pass
+
+    h5f = h5py.File(name, 'w')
+    data_X = h5f.create_dataset('X', (num_all_vowels, max_word, len(dictionary)),
+                                maxshape=(num_all_vowels, max_word, len(dictionary)),
+                                dtype=np.uint8)
+    data_y = h5f.create_dataset('y', (num_all_vowels,),
+                                maxshape=(num_all_vowels,),
+                                dtype=np.uint8)
+    data_X_pure = h5f.create_dataset('X_pure', (num_all_vowels,),
+                                     maxshape=(num_all_vowels,),
+                                     dtype=np.uint8)
+
+
+    gc.collect()
+
     print('Shuffled vector loaded!')
     section_range = [0, (num_all_vowels + 1)/parts]
-    for h in range(3, parts+1):
+    for h in range(1, parts+1):
         gc.collect()
-        new_X = np.zeros((section_range[1], max_word, len(dictionary)))
-        new_X_pure = np.zeros(section_range[1])
-        new_y = np.zeros(section_range[1])
+        new_X = np.zeros((section_range[1] - section_range[0], max_word, len(dictionary)))
+        new_X_pure = np.zeros(section_range[1] - section_range[0])
+        new_y = np.zeros(section_range[1] - section_range[0])
+        targeted_range = [0, (num_all_vowels + 1)/parts]
         for i in range(1, parts+1):
-            X, y, X_pure = load_extended_inputs(orderd_name + str(parts) + '.h5')
+            X, y, X_pure = load_extended_inputs(orderd_name, targeted_range)
             for j in range(X.shape[0]):
-                if s[j] >= section_range[0] and s[j] < section_range[1]:
-                    new_X[s[j]] = X[j]
-                    new_y[s[j]] = y[j]
-                    new_X_pure[s[j]] = X_pure[j]
+                # print targeted_range[0]
+                # print targeted_range[1]
+                # print s[j]
+                if s[j + targeted_range[0]] >= section_range[0] and s[j + targeted_range[0]] < section_range[1]:
+                    # print 's[j] ' + str(s[j + targeted_range[0]]) + ' section_range[0] ' + str(section_range[0]) + ' section_range[1] ' + str(section_range[1])
+                    new_X[s[j + targeted_range[0]] - section_range[0]] = X[j]
+                    new_y[s[j + targeted_range[0]] - section_range[0]] = y[j]
+                    new_X_pure[s[j + targeted_range[0]] - section_range[0]] = X_pure[j]
+            targeted_range[0] = targeted_range[1]
+            if targeted_range[1] + (num_all_vowels + 1) / parts < num_all_vowels:
+                targeted_range[1] += (num_all_vowels + 1) / parts
+            else:
+                targeted_range[1] = num_all_vowels
+            del X, y, X_pure
         print('CREATED ' + str(h) + '. PART OF SHUFFLED MATRIX')
-        create_and_save_inputs(name, str(h), new_X, new_y, new_X_pure)
+        # create_and_save_inputs(name, str(h), new_X, new_y, new_X_pure)
+        # a =
+        # print (a.shape)
+        # print s
+        # for el in np.array(new_X):
+        #     print el
+        # print 'new_X ' + str(new_X) + ' section_range[0] ' + str(section_range[0]) + ' section_range[1] ' + str(section_range[1])
+        # print new_X.shape
+        # print type(new_X)
+        data_X[section_range[0]:section_range[1]] = new_X
+        data_y[section_range[0]:section_range[1]] = new_y
+        data_X_pure[section_range[0]:section_range[1]] = new_X_pure
         section_range[0] = section_range[1]
         if section_range[1] + (num_all_vowels + 1)/parts < num_all_vowels:
             section_range[1] += (num_all_vowels + 1)/parts
         else:
             section_range[1] = num_all_vowels
+        del new_X, new_X_pure, new_y
+
+    h5f.close()
 
 
 
