@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import numpy as np
 import h5py
 import gc
+import math
 import StringIO
 import copy
 
@@ -75,7 +76,7 @@ def load_model(file_name):
 
 def read_content():
     print('READING CONTENT...')
-    with open('../data/SlovarIJS_BESEDE_utf8.lex') as f:
+    with open('../../data/SlovarIJS_BESEDE_utf8.lex') as f:
         content = f.readlines()
     print('CONTENT READ SUCCESSFULY')
     return [x.decode('utf8').split('\t') for x in content]
@@ -159,97 +160,98 @@ def shuffle_inputs(X, y, X_pure):
     X_pure = X_pure[s]
     return X, y, X_pure
 
-def generate_inputs():
-    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-    
-    print('GENERATING X AND y...')
-    X = np.zeros((len(content), max_word*len(dictionary)))
-    y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
-
-    i = 0
-    for el in content:
-        j = 0
-        for c in list(el[0]):
-            index = 0
-            for d in dictionary:
-                if c == d:
-                    X[i][index + j * max_word] = 1
-                    break
-                index += 1
-            j += 1
-        j = 0
-        word_accetuations = []
-        num_vowels = 0
-        for c in list(el[3]):
-            index = 0
-            if is_vowel(el[3], j, vowels):
-                num_vowels += 1
-            for d in accetuated_vowels:
-                if c == d:
-                    word_accetuations.append(num_vowels)
-                    break
-                index += 1
-            j += 1
-        y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
-        i += 1
-    print('GENERATION SUCCESSFUL!')
-    print('SHUFFELING INPUTS...')
-    X, y = shuffle_inputs(X, y)
-    print('INPUTS SHUFFELED!')
-    return X, y
-
-
-def generate_matrix_inputs():
-    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-    
-    print('GENERATING X AND y...')
-    # X = np.zeros((len(content), max_word*len(dictionary)))
-    y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
-
-    X = []
-
-    i = 0
-    for el in content:
-        # j = 0
-        word = []
-        for c in list(el[0]):
-            index = 0
-            character = np.zeros(len(dictionary))
-            for d in dictionary:
-                if c == d:
-                    # X[i][index + j * max_word] = 1
-                    character[index] = 1
-                    break
-                index += 1
-            word.append(character)
-            # j += 1
-        j = 0
-        X.append(word)
-        word_accetuations = []
-        num_vowels = 0
-        for c in list(el[3]):
-            index = 0
-            if is_vowel(el[3], j, vowels):
-                num_vowels += 1
-            for d in accetuated_vowels:
-                if c == d:
-                    word_accetuations.append(num_vowels)
-                    break
-                index += 1
-            j += 1
-        y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
-        i += 1
-    X = np.array(X)
-    print('GENERATION SUCCESSFUL!')
-    print('SHUFFELING INPUTS...')
-    X, y = shuffle_inputs(X, y)
-    print('INPUTS SHUFFELED!')
-    return X, y
+# def generate_inputs():
+#     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
+#
+#     print('GENERATING X AND y...')
+#     X = np.zeros((len(content), max_word*len(dictionary)))
+#     y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
+#
+#     i = 0
+#     for el in content:
+#         j = 0
+#         for c in list(el[0]):
+#             index = 0
+#             for d in dictionary:
+#                 if c == d:
+#                     X[i][index + j * max_word] = 1
+#                     break
+#                 index += 1
+#             j += 1
+#         j = 0
+#         word_accetuations = []
+#         num_vowels = 0
+#         for c in list(el[3]):
+#             index = 0
+#             if is_vowel(el[3], j, vowels):
+#                 num_vowels += 1
+#             for d in accetuated_vowels:
+#                 if c == d:
+#                     word_accetuations.append(num_vowels)
+#                     break
+#                 index += 1
+#             j += 1
+#         y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
+#         i += 1
+#     print('GENERATION SUCCESSFUL!')
+#     print('SHUFFELING INPUTS...')
+#     X, y = shuffle_inputs(X, y)
+#     print('INPUTS SHUFFELED!')
+#     return X, y
+#
+#
+# def generate_matrix_inputs():
+#     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
+#
+#     print('GENERATING X AND y...')
+#     # X = np.zeros((len(content), max_word*len(dictionary)))
+#     y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
+#
+#     X = []
+#
+#     i = 0
+#     for el in content:
+#         # j = 0
+#         word = []
+#         for c in list(el[0]):
+#             index = 0
+#             character = np.zeros(len(dictionary))
+#             for d in dictionary:
+#                 if c == d:
+#                     # X[i][index + j * max_word] = 1
+#                     character[index] = 1
+#                     break
+#                 index += 1
+#             word.append(character)
+#             # j += 1
+#         j = 0
+#         X.append(word)
+#         word_accetuations = []
+#         num_vowels = 0
+#         for c in list(el[3]):
+#             index = 0
+#             if is_vowel(el[3], j, vowels):
+#                 num_vowels += 1
+#             for d in accetuated_vowels:
+#                 if c == d:
+#                     word_accetuations.append(num_vowels)
+#                     break
+#                 index += 1
+#             j += 1
+#         y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
+#         i += 1
+#     X = np.array(X)
+#     print('GENERATION SUCCESSFUL!')
+#     print('SHUFFELING INPUTS...')
+#     X, y = shuffle_inputs(X, y)
+#     print('INPUTS SHUFFELED!')
+#     return X, y
 
 
 def generate_full_matrix_inputs():
     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-    
+
+
     print('GENERATING X AND y...')
     # X = np.zeros((len(content), max_word*len(dictionary)))
     y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
@@ -553,3 +555,54 @@ def generate_input_from_word(word, max_word, dictionary):
             index += 1
         j += 1
     return x
+
+def generate_input_per_vowel_from_word(word, max_word, dictionary, vowels):
+    X_el = np.zeros((max_word, len(dictionary)))
+    j = 0
+    for c in list(word):
+        index = 0
+        for d in dictionary:
+            if c == d:
+                X_el[j][index] = 1
+                break
+            index += 1
+        j += 1
+
+    X = []
+    X_pure = []
+    vowel_i = 0
+    for i in range(len(word)):
+        if is_vowel(list(word), i, vowels):
+            X.append(X_el)
+            X_pure.append(vowel_i)
+            vowel_i += 1
+    return np.array(X), np.array(X_pure)
+
+def decode_position_from_vowel_to_final_number(y):
+    res = []
+    for i in range(len(y)):
+        if y[i][0] > 0.5:
+            res.append(i + 1)
+    return res
+
+
+def split_content(content, ratio):
+    expanded_content = [el[1] if el[1] != '=' else el[0] for el in content]
+    # print(len(content))
+    unique_content = sorted(set(expanded_content))
+
+    s = np.arange(len(unique_content))
+    np.random.shuffle(s)
+
+    split_num = math.floor(len(unique_content) * ratio)
+    validate_content = []
+    shuffled_unique_train_content = [unique_content[i] for i in range(len(s)) if s[i] >= split_num]
+
+    shuffled_unique_train_content_set = set(shuffled_unique_train_content)
+    shuffled_unique_validate_content = [unique_content[i] for i in range(len(s)) if s[i] < split_num]
+
+    shuffled_unique_validate_content_set = set(shuffled_unique_validate_content)
+
+    train_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_train_content_set]
+    validate_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_validate_content_set]
+    return train_content, validate_content
