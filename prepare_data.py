@@ -152,13 +152,16 @@ def generate_presentable_y(accetuations_list, word_list, max_num_vowels):
     final_position = accetuations_list[0] + max_num_vowels * accetuations_list[1]
     return final_position
     
-def shuffle_inputs(X, y, X_pure):
+def shuffle_inputs(X, y, X_pure=False):
     s = np.arange(X.shape[0])
     np.random.shuffle(s)
     X = X[s]
     y = y[s]
-    X_pure = X_pure[s]
-    return X, y, X_pure
+    if X_pure:
+        X_pure = X_pure[s]
+        return X, y, X_pure
+    else:
+        return X, y
 
 # def generate_inputs():
 #     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
@@ -250,12 +253,21 @@ def shuffle_inputs(X, y, X_pure):
 
 def generate_full_matrix_inputs():
     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
+    train_content, validate_content = split_content(content, 0.2)
 
-
+    # Generate X and y
     print('GENERATING X AND y...')
+    X_train, y_train = generate_X_and_y(dictionary, max_word, max_num_vowels, train_content, vowels, accetuated_vowels)
+    X_validate, y_validate = generate_X_and_y(dictionary, max_word, max_num_vowels, validate_content, vowels, accetuated_vowels)
+    print('GENERATION SUCCESSFUL!')
+    return X_train, y_train, X_validate, y_validate
+
+def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels):
+
     # X = np.zeros((len(content), max_word*len(dictionary)))
     y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
     X = np.zeros((len(content), max_word, len(dictionary)))
+    X_aditional_data = []
 
     i = 0
     for el in content:
@@ -289,7 +301,7 @@ def generate_full_matrix_inputs():
         y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
         i += 1
     # X = np.array(X)
-    print('GENERATION SUCCESSFUL!')
+
     print('SHUFFELING INPUTS...')
     X, y = shuffle_inputs(X, y)
     print('INPUTS SHUFFELED!')
@@ -303,8 +315,11 @@ def count_vowels(content, vowels):
                 num_all_vowels += 1
     return num_all_vowels
 
+# def generate_full_vowel_matrix_inputs(name, split_number):
 
-def generate_full_vowel_matrix_inputs(name, split_number):
+
+
+def generate_X_and_y_RAM_efficient(name, split_number):
     h5f = h5py.File(name + '.h5', 'w')
     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
     num_all_vowels = count_vowels(content, vowels)
