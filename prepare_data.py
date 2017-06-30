@@ -78,7 +78,7 @@ def read_content():
     with open('../../data/SlovarIJS_BESEDE_utf8.lex') as f:
         content = f.readlines()
     print('CONTENT READ SUCCESSFULY')
-    return [x.decode('utf8').split('\t') for x in content]
+    return [x.split('\t') for x in content]
 
 
 def is_vowel(word_list, position, vowels):
