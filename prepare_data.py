@@ -6,7 +6,6 @@ import numpy as np
 import h5py
 import gc
 import math
-import StringIO
 import copy
 
 def save_inputs(file_name, X, y):
@@ -131,9 +130,9 @@ def create_dict():
                     dictionary.append(c)
             if num_vowels > max_num_vowels:
                 max_num_vowels = num_vowels
-        except Exception, e:
-            print line - 1
-            print el
+        except Exception:
+            print(line - 1)
+            print(el)
             break
         line += 1
     dictionary = sorted(dictionary)
@@ -394,7 +393,7 @@ def generate_X_and_y_RAM_efficient(name, split_number):
                     current_part_generation += 1
                 num_all_vowels += 1
         if i%10000 == 0:
-            print i
+            print(i)
         # text_file.write("Purchase Amount: %s" % TotalAmount)
         j = 0
         # X.append(word)
