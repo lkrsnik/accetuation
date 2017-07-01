@@ -493,14 +493,11 @@ def decode_X_features(feature_dictionary, X_other_features):
             for j in range(1, len(feature_dictionary[z])):
                 if j == 1:
                     if word[i] == 1:
-#                         print feature_dictionary[z][1]
                         final_word.append(feature_dictionary[z][1])
                     i += 1
                 else:
                     for k in range(len(feature_dictionary[z][j])):
-#                         print (i)
                         if word[i] == 1:
-#                             print feature_dictionary[z][j][k]
                             final_word.append(feature_dictionary[z][j][k])
                         i += 1
         print(u''.join(final_word))
