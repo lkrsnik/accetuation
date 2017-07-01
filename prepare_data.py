@@ -6,37 +6,14 @@ import numpy as np
 import h5py
 import gc
 import math
-import copy
 
+# functions for saving, loading and shuffling whole arrays to ram
 def save_inputs(file_name, X, y):
     h5f = h5py.File(file_name, 'w')
-    adict=dict(X=X, y=y)
-    for k,v in adict.items():
+    adict = dict(X=X, y=y)
+    for k, v in adict.items():
         h5f.create_dataset(k,data=v)
     h5f.close()
-
-def create_and_save_inputs(file_name, part, X, y, X_pure):
-    # X, y, X_pure = generate_full_vowel_matrix_inputs()
-    h5f = h5py.File(file_name + part + '.h5', 'w')
-    adict=dict(X=X, y=y, X_pure=X_pure)
-    for k,v in adict.items():
-        h5f.create_dataset(k,data=v)
-    h5f.close()
-
-def create_and_save_shuffle_vector(file_name, shuffle_vector):
-    # X, y, X_pure = generate_full_vowel_matrix_inputs()
-    h5f = h5py.File(file_name + '_shuffle_vector.h5', 'w')
-    adict=dict(shuffle_vector=shuffle_vector)
-    for k,v in adict.items():
-        h5f.create_dataset(k,data=v)
-    h5f.close()
-
-def load_shuffle_vector(file_name):
-    h5f = h5py.File(file_name,'r')
-    shuffle_vector = h5f['shuffle_vector'][[179859, 385513, 893430]]
-
-    h5f.close()
-    return shuffle_vector
 
 def load_inputs(file_name):
     h5f = h5py.File(file_name,'r')
@@ -45,6 +22,27 @@ def load_inputs(file_name):
 
     h5f.close()
     return X, y
+
+
+def shuffle_inputs(X, y, X_pure=False):
+    s = np.arange(X.shape[0])
+    np.random.shuffle(s)
+    X = X[s]
+    y = y[s]
+    if X_pure:
+        X_pure = X_pure[s]
+        return X, y, X_pure
+    else:
+        return X, y
+
+# functions for saving and loading partial arrays to ram
+def create_and_save_inputs(file_name, part, X, y, X_pure):
+    # X, y, X_pure = generate_full_vowel_matrix_inputs()
+    h5f = h5py.File(file_name + part + '.h5', 'w')
+    adict=dict(X=X, y=y, X_pure=X_pure)
+    for k,v in adict.items():
+        h5f.create_dataset(k,data=v)
+    h5f.close()
 
 def load_extended_inputs(file_name, obtain_range):
     h5f = h5py.File(file_name,'r')
@@ -55,13 +53,33 @@ def load_extended_inputs(file_name, obtain_range):
     h5f.close()
     return X, y, X_pure
 
+
+# functions for creating and loading shuffle vector
+def create_and_save_shuffle_vector(file_name, shuffle_vector):
+    # X, y, X_pure = generate_full_vowel_matrix_inputs()
+    h5f = h5py.File(file_name + '_shuffle_vector.h5', 'w')
+    adict=dict(shuffle_vector=shuffle_vector)
+    for k, v in adict.items():
+        h5f.create_dataset(k,data=v)
+    h5f.close()
+
+def load_shuffle_vector(file_name):
+    h5f = h5py.File(file_name,'r')
+    shuffle_vector = h5f['shuffle_vector'][[179859, 385513, 893430]]
+
+    h5f.close()
+    return shuffle_vector
+
+
+# functions for saving and loading model - ONLY WHERE KERAS IS NOT NEEDED
 def save_model(model, file_name):
     h5f = h5py.File(file_name, 'w')
-    adict=dict(W1=model['W1'], b1=model['b1'], W2=model['W2'], b2=model['b2'])
+    adict = dict(W1=model['W1'], b1=model['b1'], W2=model['W2'], b2=model['b2'])
     for k,v in adict.items():
         h5f.create_dataset(k,data=v)
 
     h5f.close()
+
 
 def load_model(file_name):
     h5f = h5py.File(file_name,'r')
@@ -73,6 +91,7 @@ def load_model(file_name):
     h5f.close()
     return model
 
+# functions for creating X and y from content
 def read_content():
     print('READING CONTENT...')
     with open('../../data/SlovarIJS_BESEDE_utf8.lex') as f:
@@ -88,15 +107,15 @@ def is_vowel(word_list, position, vowels):
         return True
     return False
 
+
 def is_accetuated_vowel(word_list, position, accetuated_vowels):
     if word_list[position] in accetuated_vowels:
         return True
     return False
 
+
 def create_dict():
-    
     content = read_content()
-    
     print('CREATING DICTIONARY...')
 
     # CREATE dictionary AND max_word
@@ -150,17 +169,7 @@ def generate_presentable_y(accetuations_list, word_list, max_num_vowels):
     accetuations_list = np.array(accetuations_list)
     final_position = accetuations_list[0] + max_num_vowels * accetuations_list[1]
     return final_position
-    
-def shuffle_inputs(X, y, X_pure=False):
-    s = np.arange(X.shape[0])
-    np.random.shuffle(s)
-    X = X[s]
-    y = y[s]
-    if X_pure:
-        X_pure = X_pure[s]
-        return X, y, X_pure
-    else:
-        return X, y
+
 
 # def generate_inputs():
 #     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
@@ -262,29 +271,21 @@ def generate_full_matrix_inputs():
     return X_train, y_train, X_validate, y_validate
 
 def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels):
-
-    # X = np.zeros((len(content), max_word*len(dictionary)))
     y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
     X = np.zeros((len(content), max_word, len(dictionary)))
-    X_aditional_data = []
 
     i = 0
     for el in content:
         j = 0
-        # word = []
         for c in list(el[0]):
             index = 0
-            # character = np.zeros(len(dictionary))
             for d in dictionary:
                 if c == d:
                     X[i][j][index] = 1
-                    # character[index] = 1
                     break
                 index += 1
-            # word.append(character)
             j += 1
         j = 0
-        # X.append(word)
         word_accetuations = []
         num_vowels = 0
         for c in list(el[3]):
@@ -299,12 +300,12 @@ def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, acce
             j += 1
         y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
         i += 1
-    # X = np.array(X)
 
     print('SHUFFELING INPUTS...')
     X, y = shuffle_inputs(X, y)
     print('INPUTS SHUFFELED!')
     return X, y
+
 
 def count_vowels(content, vowels):
     num_all_vowels = 0
@@ -314,10 +315,8 @@ def count_vowels(content, vowels):
                 num_all_vowels += 1
     return num_all_vowels
 
-# def generate_full_vowel_matrix_inputs(name, split_number):
 
-
-
+# Data generation for generator inputs
 def generate_X_and_y_RAM_efficient(name, split_number):
     h5f = h5py.File(name + '.h5', 'w')
     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
@@ -332,14 +331,8 @@ def generate_X_and_y_RAM_efficient(name, split_number):
                                      maxshape=(num_all_vowels,),
                                      dtype=np.uint8)
 
-
-
     gc.collect()
-    # print (2018553 * max_word * len(dictionary) / (2**30.0))
     print('GENERATING X AND y...')
-    # X = np.zeros((len(content), max_word*len(dictionary)))
-    # y = np.zeros((len(content), max_num_vowels * max_num_vowels))
-    # X = np.zeros((2018553, max_word, len(dictionary)))
     X_pure = []
     X = []
     y = []
@@ -373,12 +366,6 @@ def generate_X_and_y_RAM_efficient(name, split_number):
 
                 if current_part_generation * part_len <= i:
                     print('Saving part '+ str(current_part_generation))
-                    # create_and_save_inputs(name, str(current_part_generation), np.array(X), np.zeros(len(X)), np.array(X_pure))
-
-                    # adict = dict(X=np.array(X), y=np.zeros(len(X)), X_pure=np.array(X_pure))
-                    # for k, v in adict.items():
-                    #     h5f.create_dataset(k, data=v)
-                    # print (len(np.array(X)))
                     data_X[old_num_all_vowels:num_all_vowels + 1] = np.array(X)
                     data_y[old_num_all_vowels:num_all_vowels + 1] = np.array(y)
                     data_X_pure[old_num_all_vowels:num_all_vowels + 1] = np.array(X_pure)
@@ -394,39 +381,18 @@ def generate_X_and_y_RAM_efficient(name, split_number):
                 num_all_vowels += 1
         if i%10000 == 0:
             print(i)
-        # text_file.write("Purchase Amount: %s" % TotalAmount)
-        j = 0
-        # X.append(word)
-        # word_accetuations = []
-        # num_vowels = 0
-        # for c in list(el[3]):
-        #     index = 0
-        #     if is_vowel(el[3], j, vowels):
-        #         num_vowels += 1
-        #     for d in accetuated_vowels:
-        #         if c == d:
-        #             word_accetuations.append(num_vowels)
-        #             break
-        #         index += 1
-        #     j += 1
-        # y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
         i += 1
 
     print('Saving part ' + str(current_part_generation))
-    # create_and_save_inputs(name, str(current_part_generation), np.array(X), np.zeros(len(X)), np.array(X_pure))
 
     data_X[old_num_all_vowels:num_all_vowels] = np.array(X)
     data_y[old_num_all_vowels:num_all_vowels] = np.array(y)
     data_X_pure[old_num_all_vowels:num_all_vowels] = np.array(X_pure)
 
-    # adict = dict(X=X, y=y, X_pure=X_pure)
-    # for k, v in adict.items():
-    #     h5f.create_dataset(k, data=v)
-
-
     h5f.close()
 
 
+# generator for inputs
 def generate_arrays_from_file(path, batch_size):
     h5f = h5py.File(path, 'r')
 
@@ -446,25 +412,15 @@ def generate_arrays_from_file(path, batch_size):
     h5f.close()
 
 
-
-
+# shuffle inputs for generator
 def shuffle_full_vowel_inputs(name, orderd_name, parts):
-#     internal_representations/inputs/X_ordered_part
     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
     num_all_vowels = count_vowels(content, vowels)
-    num_all_vowels = 12
+    # num_all_vowels = 12
 
 
     s = np.arange(num_all_vowels)
     np.random.shuffle(s)
-    # create_and_save_shuffle_vector(name, s)
-
-    # s = load_shuffle_vector('internal_representations/inputs/X_shuffled_part_shuffle_vector.h5')
-
-# try:
-    #     h5f.close()
-    # except Exception, e:
-    #     pass
 
     h5f = h5py.File(name, 'w')
     data_X = h5f.create_dataset('X', (num_all_vowels, max_word, len(dictionary)),
@@ -491,9 +447,6 @@ def shuffle_full_vowel_inputs(name, orderd_name, parts):
         for i in range(1, parts+1):
             X, y, X_pure = load_extended_inputs(orderd_name, targeted_range)
             for j in range(X.shape[0]):
-                # print targeted_range[0]
-                # print targeted_range[1]
-                # print s[j]
                 if s[j + targeted_range[0]] >= section_range[0] and s[j + targeted_range[0]] < section_range[1]:
                     # print 's[j] ' + str(s[j + targeted_range[0]]) + ' section_range[0] ' + str(section_range[0]) + ' section_range[1] ' + str(section_range[1])
                     new_X[s[j + targeted_range[0]] - section_range[0]] = X[j]
@@ -506,15 +459,6 @@ def shuffle_full_vowel_inputs(name, orderd_name, parts):
                 targeted_range[1] = num_all_vowels
             del X, y, X_pure
         print('CREATED ' + str(h) + '. PART OF SHUFFLED MATRIX')
-        # create_and_save_inputs(name, str(h), new_X, new_y, new_X_pure)
-        # a =
-        # print (a.shape)
-        # print s
-        # for el in np.array(new_X):
-        #     print el
-        # print 'new_X ' + str(new_X) + ' section_range[0] ' + str(section_range[0]) + ' section_range[1] ' + str(section_range[1])
-        # print new_X.shape
-        # print type(new_X)
         data_X[section_range[0]:section_range[1]] = new_X
         data_y[section_range[0]:section_range[1]] = new_y
         data_X_pure[section_range[0]:section_range[1]] = new_X_pure
@@ -528,8 +472,7 @@ def shuffle_full_vowel_inputs(name, orderd_name, parts):
     h5f.close()
 
 
-
-
+# Decoders for inputs and outputs
 def decode_position(y, max_num_vowels):
     max_el = 0
     i = 0
@@ -540,6 +483,7 @@ def decode_position(y, max_num_vowels):
             pos = i
         i += 1
     return [pos % max_num_vowels, pos / max_num_vowels]
+
 
 def decode_input(word_encoded, dictionary):
     word = ''
@@ -570,6 +514,7 @@ def generate_input_from_word(word, max_word, dictionary):
         j += 1
     return x
 
+
 def generate_input_per_vowel_from_word(word, max_word, dictionary, vowels):
     X_el = np.zeros((max_word, len(dictionary)))
     j = 0
@@ -592,6 +537,7 @@ def generate_input_per_vowel_from_word(word, max_word, dictionary, vowels):
             vowel_i += 1
     return np.array(X), np.array(X_pure)
 
+
 def decode_position_from_vowel_to_final_number(y):
     res = []
     for i in range(len(y)):
@@ -600,6 +546,7 @@ def decode_position_from_vowel_to_final_number(y):
     return res
 
 
+# split content so that there is no overfitting
 def split_content(content, ratio):
     expanded_content = [el[1] if el[1] != '=' else el[0] for el in content]
     # print(len(content))
@@ -609,7 +556,6 @@ def split_content(content, ratio):
     np.random.shuffle(s)
 
     split_num = math.floor(len(unique_content) * ratio)
-    validate_content = []
     shuffled_unique_train_content = [unique_content[i] for i in range(len(s)) if s[i] >= split_num]
 
     shuffled_unique_train_content_set = set(shuffled_unique_train_content)

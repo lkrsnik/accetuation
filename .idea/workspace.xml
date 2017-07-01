@@ -2,8 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/character_based_ffnn/character_based_ffnn_theano.ipynb" afterPath="$PROJECT_DIR$/character_based_ffnn/character_based_ffnn_theano.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/character_based_ffnn/word_accetuation/character_based_ffnn_keras.ipynb" afterPath="$PROJECT_DIR$/character_based_ffnn/word_accetuation/character_based_ffnn_keras.ipynb" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/character_based_ffnn.ipynb" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/character_based_ffnn_keras.ipynb" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/character_based_ffnn_theano.ipynb" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/cnn_per_vowel_3epoch.h5" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/create_and_save_inputs.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/internal_representations/models/cnn_i2_s_c43-3relu_d20_c43-3relu_mp2_f_516relu_d20_121sigmoid_mse_adam_a65.h5" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/internal_representations/models/cnn_i2_s_c43-3relu_d20_c43-3relu_mp2_f_516relu_d20_121sigmoid_mse_adam_a65_10epoch.h5" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/internal_representations/models/cnn_i2_s_c43-3relu_d20_c43-3relu_mp2_f_516relu_d20_121sigmoid_mse_adam_a65_5epoch.h5" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/internal_representations/models/ffnn_i1_s500relu_121sigmoid_mse_adam_a65.h5" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/internal_representations/models/ffnn_i1_s500relu_d20_121sigmoid_mse_adam_a65.h5" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/test.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/word_accetuation/character_based_ffnn_keras.ipynb" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/word_accetuation/cnn_i2_s_c43-3relu_d20_c43-3relu_mp2_f_516relu_d20_121sigmoid_mse_adam_a65_10epoch_no_overfitting.h5" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prepare_data.py" afterPath="$PROJECT_DIR$/prepare_data.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -34,8 +46,8 @@
       <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="80" column="13" lean-forward="false" selection-start-line="80" selection-start-column="13" selection-end-line="80" selection-end-column="13" />
+            <state relative-caret-position="410">
+              <caret line="545" column="14" lean-forward="true" selection-start-line="545" selection-start-column="14" selection-end-line="545" selection-end-column="14" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
               </folding>
@@ -174,8 +186,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -188,40 +198,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="accetuation" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="accetuation" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="character_based_ffnn" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="accetuation" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="accetuation" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="character_based_ffnn" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="internal_representations" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1010,8 +990,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/prepare_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="80" column="13" lean-forward="false" selection-start-line="80" selection-start-column="13" selection-end-line="80" selection-end-column="13" />
+        <state relative-caret-position="410">
+          <caret line="545" column="14" lean-forward="true" selection-start-line="545" selection-start-column="14" selection-end-line="545" selection-end-column="14" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
           </folding>

@@ -90,4 +90,4 @@ ENV/
 
 # Custom
 data/
-character_based_ffnn/internal_representations/inputs/
+cnn/internal_representations/inputs/
