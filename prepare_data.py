@@ -8,28 +8,35 @@ import gc
 import math
 
 # functions for saving, loading and shuffling whole arrays to ram
-def save_inputs(file_name, X, y):
+def save_inputs(file_name, X, y, other_features=[]):
     h5f = h5py.File(file_name, 'w')
-    adict = dict(X=X, y=y)
+    if other_features == []:
+        adict = dict(X=X, y=y)
+    else:
+        adict = dict(X=X, X_other_features=other_features, y=y)
     for k, v in adict.items():
-        h5f.create_dataset(k,data=v)
+        h5f.create_dataset(k, data=v)
     h5f.close()
 
-def load_inputs(file_name):
+def load_inputs(file_name, other_features=False):
     h5f = h5py.File(file_name,'r')
     X = h5f['X'][:]
     y = h5f['y'][:]
+    if other_features:
+        X_other_features = h5f['X_other_features'][:]
+        h5f.close()
+        return X, X_other_features, y
 
     h5f.close()
     return X, y
 
 
-def shuffle_inputs(X, y, X_pure=False):
+def shuffle_inputs(X, y, X_pure=[]):
     s = np.arange(X.shape[0])
     np.random.shuffle(s)
     X = X[s]
     y = y[s]
-    if X_pure:
+    if X_pure != []:
         X_pure = X_pure[s]
         return X, y, X_pure
     else:
@@ -40,7 +47,7 @@ def create_and_save_inputs(file_name, part, X, y, X_pure):
     # X, y, X_pure = generate_full_vowel_matrix_inputs()
     h5f = h5py.File(file_name + part + '.h5', 'w')
     adict=dict(X=X, y=y, X_pure=X_pure)
-    for k,v in adict.items():
+    for k, v in adict.items():
         h5f.create_dataset(k,data=v)
     h5f.close()
 
@@ -94,7 +101,7 @@ def load_model(file_name):
 # functions for creating X and y from content
 def read_content():
     print('READING CONTENT...')
-    with open('../../data/SlovarIJS_BESEDE_utf8.lex') as f:
+    with open('../../../data/SlovarIJS_BESEDE_utf8.lex') as f:
         content = f.readlines()
     print('CONTENT READ SUCCESSFULY')
     return [x.split('\t') for x in content]
@@ -262,17 +269,22 @@ def generate_presentable_y(accetuations_list, word_list, max_num_vowels):
 def generate_full_matrix_inputs():
     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
     train_content, validate_content = split_content(content, 0.2)
+    feature_dictionary = create_feature_dictionary(content)
 
     # Generate X and y
     print('GENERATING X AND y...')
-    X_train, y_train = generate_X_and_y(dictionary, max_word, max_num_vowels, train_content, vowels, accetuated_vowels)
-    X_validate, y_validate = generate_X_and_y(dictionary, max_word, max_num_vowels, validate_content, vowels, accetuated_vowels)
+    X_train, X_other_features_train, y_train = generate_X_and_y(dictionary, max_word, max_num_vowels, train_content, vowels, accetuated_vowels, feature_dictionary)
+    X_validate, X_other_features_validate, y_validate = generate_X_and_y(dictionary, max_word, max_num_vowels, validate_content, vowels, accetuated_vowels, feature_dictionary)
     print('GENERATION SUCCESSFUL!')
-    return X_train, y_train, X_validate, y_validate
+    return X_train, X_other_features_train, y_train, X_validate, X_other_features_validate, y_validate
 
-def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels):
+
+def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary):
     y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
     X = np.zeros((len(content), max_word, len(dictionary)))
+    print('CREATING OTHER FEATURES...')
+    X_other_features = create_X_features(content, feature_dictionary)
+    print('OTHER FEATURES CREATED!')
 
     i = 0
     for el in content:
@@ -302,9 +314,9 @@ def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, acce
         i += 1
 
     print('SHUFFELING INPUTS...')
-    X, y = shuffle_inputs(X, y)
+    X, y, X_other_features = shuffle_inputs(X, y, X_pure=X_other_features)
     print('INPUTS SHUFFELED!')
-    return X, y
+    return X, X_other_features, y
 
 
 def count_vowels(content, vowels):
@@ -473,6 +485,27 @@ def shuffle_full_vowel_inputs(name, orderd_name, parts):
 
 
 # Decoders for inputs and outputs
+def decode_X_features(feature_dictionary, X_other_features):
+    for word in X_other_features:
+        final_word = []
+        i = 0
+        for z in range(len(feature_dictionary)):
+            for j in range(1, len(feature_dictionary[z])):
+                if j == 1:
+                    if word[i] == 1:
+#                         print feature_dictionary[z][1]
+                        final_word.append(feature_dictionary[z][1])
+                    i += 1
+                else:
+                    for k in range(len(feature_dictionary[z][j])):
+#                         print (i)
+                        if word[i] == 1:
+#                             print feature_dictionary[z][j][k]
+                            final_word.append(feature_dictionary[z][j][k])
+                        i += 1
+        print(u''.join(final_word))
+
+
 def decode_position(y, max_num_vowels):
     max_el = 0
     i = 0
@@ -566,3 +599,42 @@ def split_content(content, ratio):
     train_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_train_content_set]
     validate_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_validate_content_set]
     return train_content, validate_content
+
+
+#  create feature dictionary
+def create_feature_dictionary(content):
+    additional_data = [el[2] for el in content]
+    possible_variants = sorted(set(additional_data))
+    categories = sorted(set([el[0] for el in possible_variants]))
+
+    feature_dictionary = []
+    for category in categories:
+        category_features = [1, category]
+        examples_per_category = [el for el in possible_variants if el[0] == category]
+        longest_element = max(examples_per_category, key=len)
+        for i in range(1, len(longest_element)):
+            possibilities_per_el = sorted(set([el[i] for el in examples_per_category if i < len(el)]))
+            category_features[0] += len(possibilities_per_el)
+            category_features.append(possibilities_per_el)
+        feature_dictionary.append(category_features)
+    return feature_dictionary
+
+
+def create_X_features(content, feature_dictionary):
+    content = content
+    X_other_features = []
+    for el in content:
+        X_el_other_features = []
+        for feature in feature_dictionary:
+            if el[2][0] == feature[1]:
+                X_el_other_features.append(1)
+                for i in range(2, len(feature)):
+                    for j in range(len(feature[i])):
+                        if i-1 < len(el[2]) and feature[i][j] == el[2][i-1]:
+                            X_el_other_features.append(1)
+                        else:
+                            X_el_other_features.append(0)
+            else:
+                X_el_other_features.extend([0] * feature[0])
+        X_other_features.append(X_el_other_features)
+    return np.array(X_other_features)

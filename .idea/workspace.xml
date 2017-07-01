@@ -2,20 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/character_based_ffnn.ipynb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/character_based_ffnn_keras.ipynb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/character_based_ffnn_theano.ipynb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/cnn_per_vowel_3epoch.h5" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/create_and_save_inputs.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/internal_representations/models/cnn_i2_s_c43-3relu_d20_c43-3relu_mp2_f_516relu_d20_121sigmoid_mse_adam_a65.h5" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/internal_representations/models/cnn_i2_s_c43-3relu_d20_c43-3relu_mp2_f_516relu_d20_121sigmoid_mse_adam_a65_10epoch.h5" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/internal_representations/models/cnn_i2_s_c43-3relu_d20_c43-3relu_mp2_f_516relu_d20_121sigmoid_mse_adam_a65_5epoch.h5" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/internal_representations/models/ffnn_i1_s500relu_121sigmoid_mse_adam_a65.h5" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/internal_representations/models/ffnn_i1_s500relu_d20_121sigmoid_mse_adam_a65.h5" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/test.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/word_accetuation/character_based_ffnn_keras.ipynb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/character_based_ffnn/word_accetuation/cnn_i2_s_c43-3relu_d20_c43-3relu_mp2_f_516relu_d20_121sigmoid_mse_adam_a65_10epoch_no_overfitting.h5" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/character_based_ffnn_keras.ipynb" afterPath="$PROJECT_DIR$/cnn/character_based_ffnn_keras.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prepare_data.py" afterPath="$PROJECT_DIR$/prepare_data.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -46,8 +33,8 @@
       <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="410">
-              <caret line="545" column="14" lean-forward="true" selection-start-line="545" selection-start-column="14" selection-end-line="545" selection-end-column="14" />
+            <state relative-caret-position="442">
+              <caret line="494" column="36" lean-forward="true" selection-start-line="494" selection-start-column="36" selection-end-line="494" selection-end-column="36" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
               </folding>
@@ -137,7 +124,6 @@
       <find>nearly_zeros</find>
       <find>rand</find>
       <find>u</find>
-      <find>shuffle_inputs</find>
       <find>num_all_vowels</find>
       <find>load_shuffle_vector</find>
       <find>create_and_save_inputs</find>
@@ -147,6 +133,7 @@
       <find>generate_inputs</find>
       <find>split_number</find>
       <find>StringIO</find>
+      <find>shuffle_inputs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -990,8 +977,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/prepare_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="410">
-          <caret line="545" column="14" lean-forward="true" selection-start-line="545" selection-start-column="14" selection-end-line="545" selection-end-column="14" />
+        <state relative-caret-position="442">
+          <caret line="494" column="36" lean-forward="true" selection-start-line="494" selection-start-column="36" selection-end-line="494" selection-end-column="36" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
           </folding>
