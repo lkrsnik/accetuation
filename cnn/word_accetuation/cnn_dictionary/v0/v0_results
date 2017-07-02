@@ -1,0 +1,48 @@
+word_processor = Sequential()
+word_processor.add(Conv1D(43, (3), input_shape=(23, 43), padding='same', activation='relu'))
+word_processor.add(Conv1D(43, (3), padding='same', activation='relu'))
+word_processor.add(MaxPooling1D(pool_size=2))
+word_processor.add(Flatten())
+word_processor.add(Dense(516, activation='relu', kernel_constraint=maxnorm(3)))
+
+metadata_processor = Sequential()
+metadata_processor.add(Dense(256, input_dim=167, activation='relu'))
+
+model = Sequential()
+model.add(Merge([word_processor, metadata_processor], mode='concat'))  # Merge is your sensor fusion buddy
+model.add(Dense(516, input_dim=(516 + 256), activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(nn_output_dim, activation='sigmoid'))
+
+
+# compile
+model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
+
+# fit
+model.fit([X_train, X_other_features_train], y_train, validation_data=([X_validate, X_other_features_validate], y_validate), epochs=10, batch_size=10)
+
+
+===========================================================
+
+
+Train on 427470 samples, validate on 108961 samples
+Epoch 1/10
+427470/427470 [==============================] - 2837s - loss: 0.0015 - acc: 0.8845 - val_loss: 0.0021 - val_acc: 0.8492
+Epoch 2/10
+427470/427470 [==============================] - 3751s - loss: 6.0312e-04 - acc: 0.9549 - val_loss: 0.0023 - val_acc: 0.8409
+Epoch 3/10
+427470/427470 [==============================] - 4255s - loss: 4.9516e-04 - acc: 0.9638 - val_loss: 0.0022 - val_acc: 0.8500
+Epoch 4/10
+427470/427470 [==============================] - 4300s - loss: 4.5456e-04 - acc: 0.9677 - val_loss: 0.0024 - val_acc: 0.8413
+Epoch 5/10
+427470/427470 [==============================] - 4290s - loss: 4.3962e-04 - acc: 0.9696 - val_loss: 0.0021 - val_acc: 0.8618
+Epoch 6/10
+427470/427470 [==============================] - 4320s - loss: 4.7746e-04 - acc: 0.9683 - val_loss: 0.0024 - val_acc: 0.8479
+Epoch 7/10
+427470/427470 [==============================] - 4312s - loss: 4.8713e-04 - acc: 0.9680 - val_loss: 0.0024 - val_acc: 0.8472
+Epoch 8/10
+427470/427470 [==============================] - 4378s - loss: 5.2600e-04 - acc: 0.9663 - val_loss: 0.0024 - val_acc: 0.8494
+Epoch 9/10
+427470/427470 [==============================] - 4428s - loss: 6.2929e-04 - acc: 0.9612 - val_loss: 0.0026 - val_acc: 0.8376
+Epoch 10/10
+427470/427470 [==============================] - 4526s - loss: 8.2364e-04 - acc: 0.9506 - val_loss: 0.0027 - val_acc: 0.8325
