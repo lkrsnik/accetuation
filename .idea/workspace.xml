@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prepare_data.py" afterPath="$PROJECT_DIR$/prepare_data.py" />
     </list>
@@ -33,8 +34,8 @@
       <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="532">
-              <caret line="499" column="40" lean-forward="false" selection-start-line="499" selection-start-column="40" selection-end-line="499" selection-end-column="40" />
+            <state relative-caret-position="781">
+              <caret line="318" column="23" lean-forward="false" selection-start-line="318" selection-start-column="23" selection-end-line="318" selection-end-column="23" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
               </folding>
@@ -148,6 +149,7 @@
         <option value="$PROJECT_DIR$/theano_tutorial/tutorial_loop.py" />
         <option value="$PROJECT_DIR$/theano_tutorial/logistic_regression.py" />
         <option value="$PROJECT_DIR$/theano_tutorial/logistic_regression_loop.py" />
+        <option value="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn_test_on_other_attributes.ipynb" />
         <option value="$PROJECT_DIR$/prepare_data.py" />
       </list>
     </option>
@@ -173,6 +175,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -185,9 +188,40 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cnn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cnn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="word_accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -197,6 +231,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary" />
       <recent name="$PROJECT_DIR$/theano_tutorial" />
     </key>
   </component>
@@ -505,16 +540,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/theano_tutorial/tutorial_conditions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="31" lean-forward="false" selection-start-line="1" selection-start-column="31" selection-end-line="1" selection-end-column="31" />
-          <folding>
-            <element signature="e#55#85#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/theanoTest.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -919,6 +944,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/theano_tutorial/logistic_regression.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/theano_tutorial/logistic_regression_loop.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="828">
@@ -965,20 +1000,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/theano_tutorial/logistic_regression.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn_test_on_other_attributes.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="-1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/prepare_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="499" column="40" lean-forward="false" selection-start-line="499" selection-start-column="40" selection-end-line="499" selection-end-column="40" />
+        <state relative-caret-position="781">
+          <caret line="318" column="23" lean-forward="false" selection-start-line="318" selection-start-column="23" selection-end-line="318" selection-end-column="23" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
           </folding>

@@ -279,7 +279,55 @@ def generate_full_matrix_inputs():
     return X_train, X_other_features_train, y_train, X_validate, X_other_features_validate, y_validate
 
 
+# Generate each y as an array of 11 numbers (with possible values between 0 and 1)
 def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary):
+    y = np.zeros((len(content), max_num_vowels))
+    X = np.zeros((len(content), max_word, len(dictionary)))
+    print('CREATING OTHER FEATURES...')
+    X_other_features = create_X_features(content, feature_dictionary)
+    print('OTHER FEATURES CREATED!')
+
+    i = 0
+    for el in content:
+        j = 0
+        for c in list(el[0]):
+            index = 0
+            for d in dictionary:
+                if c == d:
+                    X[i][j][index] = 1
+                    break
+                index += 1
+            j += 1
+        j = 0
+        word_accetuations = []
+        num_vowels = 0
+        for c in list(el[3]):
+            index = 0
+            if is_vowel(el[3], j, vowels):
+                num_vowels += 1
+            for d in accetuated_vowels:
+                if c == d:
+                    word_accetuations.append(num_vowels)
+                    break
+                index += 1
+            j += 1
+        if len(word_accetuations) > 0:
+            y_value = 1/len(word_accetuations)
+            for el in word_accetuations:
+                y[i][el] = y_value
+        else:
+            y[i][0] = 1
+        # y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
+        i += 1
+
+    print('SHUFFELING INPUTS...')
+    X, y, X_other_features = shuffle_inputs(X, y, X_pure=X_other_features)
+    print('INPUTS SHUFFELED!')
+    return X, X_other_features, y
+
+
+# Generate each y as an array of 121 numbers (with one 1 per line and the rest zeros)
+def generate_X_and_y_one_classification(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary):
     y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
     X = np.zeros((len(content), max_word, len(dictionary)))
     print('CREATING OTHER FEATURES...')
