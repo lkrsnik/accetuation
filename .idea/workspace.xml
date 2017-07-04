@@ -2,16 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1_1/v1_1.h5" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1_2/v1_2.h5" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1_3/v1_3.h5" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1_1/character_based_ffnn_keras.ipynb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1_1/notes" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1_2/character_based_ffnn_keras.ipynb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1_2/notes" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1_3/character_based_ffnn_keras.ipynb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1_3/notes" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1/character_based_ffnn_keras.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v1/character_based_ffnn_keras.ipynb" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -171,6 +164,7 @@
         <option value="$PROJECT_DIR$/prepare_data.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.py" />
         <option value="$PROJECT_DIR$/workbench.py" />
+        <option value="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.ipynb" />
       </list>
     </option>
   </component>
@@ -527,7 +521,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1855" height="1056" extended-state="7" />
+    <frame x="65" y="24" width="1855" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16375546" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
