@@ -79,24 +79,24 @@ def load_shuffle_vector(file_name):
 
 
 # functions for saving and loading model - ONLY WHERE KERAS IS NOT NEEDED
-def save_model(model, file_name):
-    h5f = h5py.File(file_name, 'w')
-    adict = dict(W1=model['W1'], b1=model['b1'], W2=model['W2'], b2=model['b2'])
-    for k,v in adict.items():
-        h5f.create_dataset(k,data=v)
-
-    h5f.close()
-
-
-def load_model(file_name):
-    h5f = h5py.File(file_name,'r')
-    model = {}
-    W1.set_value(h5f['W1'][:])
-    b1.set_value(h5f['b1'][:])
-    W2.set_value(h5f['W2'][:])
-    b2.set_value(h5f['b2'][:])
-    h5f.close()
-    return model
+# def save_model(model, file_name):
+#     h5f = h5py.File(file_name, 'w')
+#     adict = dict(W1=model['W1'], b1=model['b1'], W2=model['W2'], b2=model['b2'])
+#     for k,v in adict.items():
+#         h5f.create_dataset(k,data=v)
+#
+#     h5f.close()
+#
+#
+# def load_model(file_name):
+#     h5f = h5py.File(file_name,'r')
+#     model = {}
+#     W1.set_value(h5f['W1'][:])
+#     b1.set_value(h5f['b1'][:])
+#     W2.set_value(h5f['W2'][:])
+#     b2.set_value(h5f['b2'][:])
+#     h5f.close()
+#     return model
 
 # functions for creating X and y from content
 def read_content():
