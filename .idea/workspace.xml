@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/1_epoch.h5" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/1_epoch.h5" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/1_epoch_history.pkl" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/1_epoch_history.pkl" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prepare_data.py" afterPath="$PROJECT_DIR$/prepare_data.py" />
     </list>
@@ -34,8 +35,8 @@
       <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="406">
-              <caret line="461" column="22" lean-forward="false" selection-start-line="461" selection-start-column="22" selection-end-line="461" selection-end-column="22" />
+            <state relative-caret-position="442">
+              <caret line="462" column="19" lean-forward="false" selection-start-line="462" selection-start-column="4" selection-end-line="462" selection-end-column="19" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
               </folding>
@@ -823,8 +824,8 @@
     <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn_test_on_other_attributes.ipynb" />
     <entry file="file://$PROJECT_DIR$/prepare_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="461" column="22" lean-forward="false" selection-start-line="461" selection-start-column="22" selection-end-line="461" selection-end-column="22" />
+        <state relative-caret-position="442">
+          <caret line="462" column="19" lean-forward="false" selection-start-line="462" selection-start-column="4" selection-end-line="462" selection-end-column="19" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
           </folding>

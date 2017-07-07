@@ -6,6 +6,7 @@ import numpy as np
 import h5py
 import gc
 import math
+import keras.backend as K
 
 
 # functions for saving, loading and shuffling whole arrays to ram
@@ -319,7 +320,8 @@ def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, acce
         if len(word_accetuations) > 0:
             y_value = 1/len(word_accetuations)
             for el in word_accetuations:
-                y[i][el] = y_value
+                # y[i][el] = y_value
+                y[i][el] = 1
         else:
             y[i][0] = 1
         # y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
@@ -455,6 +457,11 @@ def generate_X_and_y_RAM_efficient(name, split_number):
     data_X_pure[old_num_all_vowels:num_all_vowels] = np.array(X_pure)
 
     h5f.close()
+
+
+# metric for calculation of correct results
+def actual_accuracy(y_true, y_pred):
+    return K.mean(K.equal(K.mean(K.equal(K.round(y_true), K.round(y_pred)), axis=-1), 1.0))
 
 
 # generator for inputs for tracking of data fitting
