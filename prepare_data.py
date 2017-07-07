@@ -7,6 +7,7 @@ import h5py
 import gc
 import math
 
+
 # functions for saving, loading and shuffling whole arrays to ram
 def save_inputs(file_name, X, y, other_features=[]):
     h5f = h5py.File(file_name, 'w')
@@ -17,6 +18,7 @@ def save_inputs(file_name, X, y, other_features=[]):
     for k, v in adict.items():
         h5f.create_dataset(k, data=v)
     h5f.close()
+
 
 def load_inputs(file_name, other_features=False):
     h5f = h5py.File(file_name,'r')
@@ -42,6 +44,7 @@ def shuffle_inputs(X, y, X_pure=[]):
     else:
         return X, y
 
+
 # functions for saving and loading partial arrays to ram
 def create_and_save_inputs(file_name, part, X, y, X_pure):
     # X, y, X_pure = generate_full_vowel_matrix_inputs()
@@ -50,6 +53,7 @@ def create_and_save_inputs(file_name, part, X, y, X_pure):
     for k, v in adict.items():
         h5f.create_dataset(k,data=v)
     h5f.close()
+
 
 def load_extended_inputs(file_name, obtain_range):
     h5f = h5py.File(file_name,'r')
@@ -69,6 +73,7 @@ def create_and_save_shuffle_vector(file_name, shuffle_vector):
     for k, v in adict.items():
         h5f.create_dataset(k,data=v)
     h5f.close()
+
 
 def load_shuffle_vector(file_name):
     h5f = h5py.File(file_name,'r')
@@ -450,6 +455,19 @@ def generate_X_and_y_RAM_efficient(name, split_number):
     data_X_pure[old_num_all_vowels:num_all_vowels] = np.array(X_pure)
 
     h5f.close()
+
+
+# generator for inputs for tracking of data fitting
+def generate_fake_epoch(orig_X, orig_X_additional, orig_y, batch_size):
+    size = orig_X.shape[0]
+    while 1:
+        loc = 0
+        while loc < size:
+            if loc + batch_size >= size:
+                yield([orig_X[loc:size], orig_X_additional[loc:size]], orig_y[loc:size])
+            else:
+                yield([orig_X[loc:loc + batch_size], orig_X_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+            loc += batch_size
 
 
 # generator for inputs
