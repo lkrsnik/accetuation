@@ -7,6 +7,7 @@ import h5py
 import gc
 import math
 import keras.backend as K
+import os.path
 
 
 # functions for saving, loading and shuffling whole arrays to ram
@@ -34,9 +35,15 @@ def load_inputs(file_name, other_features=False):
     return X, y
 
 
-def shuffle_inputs(X, y, X_pure=[]):
-    s = np.arange(X.shape[0])
-    np.random.shuffle(s)
+def shuffle_inputs(X, y, shuffle_vector_location, X_pure=[]):
+    if os.path.exists(shuffle_vector_location):
+        s = load_shuffle_vector(shuffle_vector_location)
+    else:
+        s = np.arange(X.shape[0])
+        np.random.shuffle(s)
+        create_and_save_shuffle_vector(shuffle_vector_location, s)
+    # s = np.arange(X.shape[0])
+    # np.random.shuffle(s)
     X = X[s]
     y = y[s]
     if X_pure != []:
@@ -57,7 +64,7 @@ def create_and_save_inputs(file_name, part, X, y, X_pure):
 
 
 def load_extended_inputs(file_name, obtain_range):
-    h5f = h5py.File(file_name,'r')
+    h5f = h5py.File(file_name, 'r')
     X = h5f['X'][obtain_range[0]:obtain_range[1]]
     y = h5f['y'][obtain_range[0]:obtain_range[1]]
     X_pure = h5f['X_pure'][obtain_range[0]:obtain_range[1]]
@@ -69,16 +76,17 @@ def load_extended_inputs(file_name, obtain_range):
 # functions for creating and loading shuffle vector
 def create_and_save_shuffle_vector(file_name, shuffle_vector):
     # X, y, X_pure = generate_full_vowel_matrix_inputs()
-    h5f = h5py.File(file_name + '_shuffle_vector.h5', 'w')
-    adict=dict(shuffle_vector=shuffle_vector)
+    h5f = h5py.File(file_name, 'w')
+    adict = dict(shuffle_vector=shuffle_vector)
     for k, v in adict.items():
-        h5f.create_dataset(k,data=v)
+        h5f.create_dataset(k, data=v)
     h5f.close()
 
 
 def load_shuffle_vector(file_name):
-    h5f = h5py.File(file_name,'r')
-    shuffle_vector = h5f['shuffle_vector'][[179859, 385513, 893430]]
+    h5f = h5py.File(file_name, 'r')
+    # shuffle_vector = h5f['shuffle_vector'][[179859, 385513, 893430]]
+    shuffle_vector = h5f['shuffle_vector'][:]
 
     h5f.close()
     return shuffle_vector
@@ -138,7 +146,8 @@ def create_dict():
     vowels.extend(accetuated_vowels)
     vowels.extend(default_vowels)
 
-    dictionary = ['']
+    dictionary_output = ['']
+    dictionary_input = ['']
     line = 0
     max_word = 0
     # ADD 'EMPTY' VOWEL
@@ -154,12 +163,12 @@ def create_dict():
             for c in list(el[3]):
                 if is_vowel(list(el[3]), i, vowels):
                     num_vowels += 1
-                if c not in dictionary:
-                    dictionary.append(c)
+                if c not in dictionary_output:
+                    dictionary_output.append(c)
                 i += 1
             for c in list(el[0]):
-                if c not in dictionary:
-                    dictionary.append(c)
+                if c not in dictionary_input:
+                    dictionary_input.append(c)
             if num_vowels > max_num_vowels:
                 max_num_vowels = num_vowels
         except Exception:
@@ -167,10 +176,10 @@ def create_dict():
             print(el)
             break
         line += 1
-    dictionary = sorted(dictionary)
+    dictionary_input = sorted(dictionary_input)
     max_num_vowels += 1
     print('DICTIONARY CREATION SUCCESSFUL!')
-    return dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels
+    return dictionary_input, max_word, max_num_vowels, content, vowels, accetuated_vowels
 
 
 # GENERATE X and y
@@ -272,7 +281,22 @@ def generate_presentable_y(accetuations_list, word_list, max_num_vowels):
 #     return X, y
 
 
-def generate_full_matrix_inputs():
+def generate_full_matrix_inputs(content_shuffle_vector_location, shuffle_vector_location):
+    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
+    train_content, test_content, validate_content = split_content(content, 0.2, content_shuffle_vector_location)
+    feature_dictionary = create_feature_dictionary()
+
+    # Generate X and y
+    print('GENERATING X AND y...')
+    X_train, X_other_features_train, y_train = generate_X_and_y(dictionary, max_word, max_num_vowels, train_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_train.h5')
+    X_test, X_other_features_test, y_test = generate_X_and_y(dictionary, max_word, max_num_vowels, test_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_test.h5')
+    X_validate, X_other_features_validate, y_validate = generate_X_and_y(dictionary, max_word, max_num_vowels, validate_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_validate.h5')
+    print('GENERATION SUCCESSFUL!')
+    return X_train, X_other_features_train, y_train, X_test, X_other_features_test, y_test, X_validate, X_other_features_validate, y_validate
+
+
+# generate full matrix, with old features
+def old_generate_full_matrix_inputs():
     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
     train_content, validate_content = split_content(content, 0.2)
     feature_dictionary = create_feature_dictionary(content)
@@ -286,7 +310,7 @@ def generate_full_matrix_inputs():
 
 
 # Generate each y as an array of 11 numbers (with possible values between 0 and 1)
-def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary):
+def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location):
     y = np.zeros((len(content), max_num_vowels))
     X = np.zeros((len(content), max_word, len(dictionary)))
     print('CREATING OTHER FEATURES...')
@@ -328,7 +352,7 @@ def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, acce
         i += 1
 
     print('SHUFFELING INPUTS...')
-    X, y, X_other_features = shuffle_inputs(X, y, X_pure=X_other_features)
+    X, y, X_other_features = shuffle_inputs(X, y, shuffle_vector_location, X_pure=X_other_features)
     print('INPUTS SHUFFELED!')
     return X, X_other_features, y
 
@@ -559,6 +583,7 @@ def shuffle_full_vowel_inputs(name, orderd_name, parts):
 
 # Decoders for inputs and outputs
 def decode_X_features(feature_dictionary, X_other_features):
+    final_word = []
     for word in X_other_features:
         final_word = []
         i = 0
@@ -574,6 +599,7 @@ def decode_X_features(feature_dictionary, X_other_features):
                             final_word.append(feature_dictionary[z][j][k])
                         i += 1
         print(u''.join(final_word))
+    return u''.join(final_word)
 
 
 def decode_position(y, max_num_vowels):
@@ -650,7 +676,37 @@ def decode_position_from_vowel_to_final_number(y):
 
 
 # split content so that there is no overfitting
-def split_content(content, ratio):
+def split_content(content, test_and_validation_ratio, content_shuffle_vector_location, validation_ratio=0.5):
+    expanded_content = [el[1] if el[1] != '=' else el[0] for el in content]
+    # print(len(content))
+    unique_content = sorted(set(expanded_content))
+
+    if os.path.exists(content_shuffle_vector_location):
+        s = load_shuffle_vector(content_shuffle_vector_location)
+    else:
+        s = np.arange(len(unique_content))
+        np.random.shuffle(s)
+        create_and_save_shuffle_vector(content_shuffle_vector_location, s)
+
+    split_num = math.floor(len(unique_content) * test_and_validation_ratio)
+    validation_num = math.floor(split_num * validation_ratio)
+    shuffled_unique_train_content = [unique_content[i] for i in range(len(s)) if s[i] >= split_num]
+    shuffled_unique_train_content_set = set(shuffled_unique_train_content)
+
+    shuffled_unique_test_content = [unique_content[i] for i in range(len(s)) if split_num > s[i] >= validation_num]
+    shuffled_unique_test_content_set = set(shuffled_unique_test_content)
+
+    shuffled_unique_validate_content = [unique_content[i] for i in range(len(s)) if s[i] < validation_num]
+    shuffled_unique_validate_content_set = set(shuffled_unique_validate_content)
+
+    train_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_train_content_set]
+    test_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_test_content_set]
+    validate_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_validate_content_set]
+    return train_content, test_content, validate_content
+
+
+# split content so that there is no overfitting with out split of validation and test data
+def old_split_content(content, ratio):
     expanded_content = [el[1] if el[1] != '=' else el[0] for el in content]
     # print(len(content))
     unique_content = sorted(set(expanded_content))
@@ -671,8 +727,8 @@ def split_content(content, ratio):
     return train_content, validate_content
 
 
-#  create feature dictionary
-def create_feature_dictionary(content):
+# X features that use MULTEX v3 as their encoding
+def create_old_feature_dictionary(content):
     additional_data = [el[2] for el in content]
     possible_variants = sorted(set(additional_data))
     categories = sorted(set([el[0] for el in possible_variants]))
@@ -690,7 +746,8 @@ def create_feature_dictionary(content):
     return feature_dictionary
 
 
-def create_X_features(content, feature_dictionary):
+# X features that use MULTEX v3 as their encoding
+def create_old_X_features(content, feature_dictionary):
     content = content
     X_other_features = []
     for el in content:
@@ -708,3 +765,212 @@ def create_X_features(content, feature_dictionary):
                 X_el_other_features.extend([0] * feature[0])
         X_other_features.append(X_el_other_features)
     return np.array(X_other_features)
+
+
+def convert_to_MULTEXT_east_v4(old_features, feature_dictionary):
+    new_features = ['-'] * 9
+    new_features[:len(old_features)] = old_features
+    if old_features[0] == 'A':
+        if old_features[1] == 'f' or old_features[1] == 'o':
+            new_features[1] = 'g'
+        return new_features[:len(feature_dictionary[0]) - 1]
+    if old_features[0] == 'C':
+        return new_features[:len(feature_dictionary[1]) - 1]
+    if old_features[0] == 'I':
+        return new_features[:len(feature_dictionary[2]) - 1]
+    if old_features[0] == 'M':
+        new_features[2:6] = old_features[1:5]
+        new_features[1] = old_features[5]
+        if new_features[2] == 'm':
+            new_features[2] = '-'
+        return new_features[:len(feature_dictionary[3]) - 1]
+    if old_features[0] == 'N':
+        if len(old_features) > 5:
+            new_features[5] = old_features[7]
+        return new_features[:len(feature_dictionary[4]) - 1]
+    if old_features[0] == 'P':
+        if new_features[8] == 'n':
+            new_features[8] = 'b'
+        return new_features[:len(feature_dictionary[5]) - 1]
+    if old_features[0] == 'Q':
+        return new_features[:len(feature_dictionary[6]) - 1]
+    if old_features[0] == 'R':
+        return new_features[:len(feature_dictionary[7]) - 1]
+    if old_features[0] == 'S':
+        if len(old_features) == 4:
+            new_features[1] = old_features[3]
+        else:
+            new_features[1] = '-'
+        return new_features[:len(feature_dictionary[8]) - 1]
+    if old_features[0] == 'V':
+        if old_features[1] == 'o' or old_features[1] == 'c':
+            new_features[1] = 'm'
+        new_features[3] = old_features[2]
+        new_features[2] = '-'
+        if old_features[2] == 'i':
+            new_features[3] = 'r'
+        if len(old_features) > 3 and old_features[3] == 'p':
+            new_features[3] = 'r'
+        elif len(old_features) > 3 and old_features[3] == 'f':
+            new_features[3] = 'f'
+        if len(old_features) >= 9:
+            new_features[7] = old_features[8]
+        else:
+            new_features[7] = '-'
+        return new_features[:len(feature_dictionary[9]) - 1]
+    return ''
+
+
+def create_X_features(content, feature_dictionary):
+    content = content
+    X_other_features = []
+    for el in content:
+        X_el_other_features = []
+        converted_el = ''.join(convert_to_MULTEXT_east_v4(list(el[2]), feature_dictionary))
+#         converted_el = el[2]
+        for feature in feature_dictionary:
+            if converted_el[0] == feature[1]:
+                X_el_other_features.append(1)
+                for i in range(2, len(feature)):
+                    for j in range(len(feature[i])):
+                        if i-1 < len(converted_el) and feature[i][j] == converted_el[i-1]:
+                            X_el_other_features.append(1)
+                        else:
+                            X_el_other_features.append(0)
+            else:
+                X_el_other_features.extend([0] * feature[0])
+        X_other_features.append(X_el_other_features)
+    return np.array(X_other_features)
+
+
+def create_feature_dictionary():
+    # old: http://nl.ijs.si/ME/Vault/V3/msd/html/
+    # new: http://nl.ijs.si/ME/V4/msd/html/
+    # changes: http://nl.ijs.si/jos/msd/html-en/msd.diffs.html
+
+    return [[21,
+          'A',
+          ['g', 's'],
+          ['p', 'c', 's'],
+          ['m', 'f', 'n'],
+          ['s', 'd', 'p'],
+          ['n', 'g', 'd', 'a', 'l', 'i'],
+          ['-', 'n', 'y']],
+         [3, 'C', ['c', 's']],
+         [1, 'I'],
+         [21,
+          'M',
+          ['l'],
+          ['-', 'c', 'o', 's'],
+          ['m', 'f', 'n'],
+          ['s', 'd', 'p'],
+          ['n', 'g', 'd', 'a', 'l', 'i'],
+          ['-', 'n', 'y']],
+         [17,
+          'N',
+          ['c'],
+          ['m', 'f', 'n'],
+          ['s', 'd', 'p'],
+          ['n', 'g', 'd', 'a', 'l', 'i'],
+          ['-', 'n', 'y']],
+         [40,
+          'P',
+          ['p', 's', 'd', 'r', 'x', 'g', 'q', 'i', 'z'],
+          ['-', '1', '2', '3'],
+          ['-', 'm', 'f', 'n'],
+          ['-', 's', 'd', 'p'],
+          ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
+          ['-', 's', 'd', 'p'],
+          ['-', 'm', 'f', 'n'],
+          ['-', 'y', 'b']],
+         [1, 'Q'],
+         [5, 'R', ['g'], ['p', 'c', 's']],
+         [7, 'S', ['-', 'g', 'd', 'a', 'l', 'i']],
+         [24,
+          'V',
+          ['m'],
+          ['-'],
+          ['n', 'u', 'p', 'r', 'f', 'c'],
+          ['-', '1', '2', '3'],
+          ['-', 's', 'p', 'd'],
+          ['-', 'm', 'f', 'n'],
+          ['-', 'n', 'y']]
+        ]
+
+
+def complete_feature_dict():
+    # old: http://nl.ijs.si/ME/Vault/V3/msd/html/
+    # new: http://nl.ijs.si/ME/V4/msd/html/
+    # changes: http://nl.ijs.si/jos/msd/html-en/msd.diffs.html
+    return [[27,
+             'A',
+             ['-', 'g', 's', 'p'],
+             ['-', 'p', 'c', 's'],
+             ['-', 'm', 'f', 'n'],
+             ['-', 's', 'd', 'p'],
+             ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
+             ['-', 'n', 'y']],
+            [4, 'C', ['-', 'c', 's']],
+            [1, 'I'],
+            [28,
+             'M',
+             ['-', 'd', 'r', 'l'],
+             ['-', 'c', 'o', 'p', 's'],
+             ['-', 'm', 'f', 'n'],
+             ['-', 's', 'd', 'p'],
+             ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
+             ['-', 'n', 'y']],
+            [22,
+             'N',
+             ['-', 'c', 'p'],
+             ['-', 'm', 'f', 'n'],
+             ['-', 's', 'd', 'p'],
+             ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
+             ['-', 'n', 'y']],
+            [41,
+             'P',
+             ['-', 'p', 's', 'd', 'r', 'x', 'g', 'q', 'i', 'z'],
+             ['-', '1', '2', '3'],
+             ['-', 'm', 'f', 'n'],
+             ['-', 's', 'd', 'p'],
+             ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
+             ['-', 's', 'd', 'p'],
+             ['-', 'm', 'f', 'n'],
+             ['-', 'y', 'b']],
+            [1, 'Q'],
+            [8, 'R', ['-', 'g', 'r'], ['-', 'p', 'c', 's']],
+            [8, 'S', ['-', 'n', 'g', 'd', 'a', 'l', 'i']],
+            [31,
+             'V',
+             ['-', 'm', 'a'],
+             ['-', 'e', 'p', 'b'],
+             ['-', 'n', 'u', 'p', 'r', 'f', 'c', 'm'],
+             ['-', '1', '2', '3'],
+             ['-', 's', 'p', 'd'],
+             ['-', 'm', 'f', 'n'],
+             ['-', 'n', 'y']]
+            ]
+
+
+def check_feature_letter_usage(X_other_features, feature_dictionary):
+    case_numbers = np.sum(X_other_features, axis=0)
+    arrays = [1] * 164
+    letters = list(decode_X_features(feature_dictionary, [arrays]))
+    print(sum(case_numbers))
+    for i in range(len(letters)):
+        print(letters[i] + ': ' + str(case_numbers[i]))
+
+
+def dict_occurances_in_dataset_rate(content):
+    feature_dictionary = complete_feature_dict()
+    # case = 3107
+    # print(content[case])
+    # print(feature_dictionary)
+    # X_other_features = create_X_features([content[case]], feature_dictionary)
+    X_other_features = create_X_features(content, feature_dictionary)
+    # print(X_other_features)
+    # print(decode_X_features(feature_dictionary, X_other_features))
+    X_other_features = np.array(X_other_features)
+
+    case_numbers = np.sum(X_other_features, axis=0)
+    print(case_numbers)
