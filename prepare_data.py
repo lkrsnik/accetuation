@@ -124,7 +124,7 @@ def read_content():
 def is_vowel(word_list, position, vowels):
     if word_list[position] in vowels:
         return True
-    if word_list[position] == u'r' and     (position - 1 < 0 or word_list[position - 1] not in vowels) and     (position + 1 >= len(word_list) or word_list[position + 1] not in vowels):
+    if (word_list[position] == u'r' or word_list[position] == u'R') and     (position - 1 < 0 or word_list[position - 1] not in vowels) and     (position + 1 >= len(word_list) or word_list[position + 1] not in vowels):
         return True
     return False
 
@@ -310,7 +310,7 @@ def old_generate_full_matrix_inputs():
 
 
 # Generate each y as an array of 11 numbers (with possible values between 0 and 1)
-def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location):
+def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location, shuffle=True):
     y = np.zeros((len(content), max_num_vowels))
     X = np.zeros((len(content), max_word, len(dictionary)))
     print('CREATING OTHER FEATURES...')
@@ -350,10 +350,10 @@ def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, acce
             y[i][0] = 1
         # y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
         i += 1
-
-    print('SHUFFELING INPUTS...')
-    X, y, X_other_features = shuffle_inputs(X, y, shuffle_vector_location, X_pure=X_other_features)
-    print('INPUTS SHUFFELED!')
+    if shuffle:
+        print('SHUFFELING INPUTS...')
+        X, y, X_other_features = shuffle_inputs(X, y, shuffle_vector_location, X_pure=X_other_features)
+        print('INPUTS SHUFFELED!')
     return X, X_other_features, y
 
 
@@ -484,6 +484,12 @@ def generate_X_and_y_RAM_efficient(name, split_number):
 
 
 # metric for calculation of correct results
+# test with:
+# print(mean_pred(y_validate[pos], predictions[pos]).eval())
+# print(mean_pred(np.array([[ 0.,  1.,  0.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.],
+#                           [ 0.,  1.,  0.,  1.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]]),
+#                 np.array([[ 0.,  0.51,  0.,  0.51,  0.,  0.,  0.,  0.,  0.,  0.,  0.],
+#                           [ 0.,  0.92,  0.,  0.51,  0.,  0.,  0.,  0.,  0.,  0.,  0.]])).eval())
 def actual_accuracy(y_true, y_pred):
     return K.mean(K.equal(K.mean(K.equal(K.round(y_true), K.round(y_pred)), axis=-1), 1.0))
 
@@ -602,7 +608,17 @@ def decode_X_features(feature_dictionary, X_other_features):
     return u''.join(final_word)
 
 
-def decode_position(y, max_num_vowels):
+def decode_position(y):
+    i = 0
+    res = []
+    for el in y:
+        if el >= 0.5:
+            res.append(i)
+        i += 1
+    return res
+
+
+def old_decode_position(y, max_num_vowels):
     max_el = 0
     i = 0
     pos = -1
@@ -785,7 +801,7 @@ def convert_to_MULTEXT_east_v4(old_features, feature_dictionary):
             new_features[2] = '-'
         return new_features[:len(feature_dictionary[3]) - 1]
     if old_features[0] == 'N':
-        if len(old_features) > 5:
+        if len(old_features) >= 7:
             new_features[5] = old_features[7]
         return new_features[:len(feature_dictionary[4]) - 1]
     if old_features[0] == 'P':
@@ -974,3 +990,187 @@ def dict_occurances_in_dataset_rate(content):
 
     case_numbers = np.sum(X_other_features, axis=0)
     print(case_numbers)
+
+
+def get_voiced_consonants():
+    return ['m', 'n', 'v', 'l', 'r', 'j', 'y', 'w']
+
+def get_resonant_silent_consonants():
+    return ['b', 'd', 'z', 'ž', 'g']
+
+def get_unresonant_silent_consonants():
+    return ['p', 't', 's', 'š', 'č', 'k', 'f', 'h', 'c']
+
+
+def split_consonants(consonants):
+    # def voiced_consonants():
+    #     return ['m', 'n', 'v', 'l', 'r', 'j', 'y', 'w']
+    #
+    # def resonant_silent_consonants():
+    #     return ['b', 'd', 'z', 'ž', 'g']
+    #
+    # def unresonant_silent_consonants():
+    #     return ['p', 't', 's', 'š', 'č', 'k', 'f', 'h', 'c']
+    # test = get_voiced_consonants()
+    voiced_consonants = get_voiced_consonants()
+    resonant_silent_consonants = get_resonant_silent_consonants()
+    unresonant_silent_consonants = get_unresonant_silent_consonants()
+    if len(consonants) == 0:
+        return [''], ['']
+    elif len(consonants) == 1:
+        return [''], consonants
+    else:
+        split_options = []
+        for i in range(len(consonants)-1):
+            if consonants[i] == '-' or consonants[i] == '_':
+                split_options.append([i, -1])
+            elif consonants[i] == consonants[i+1]:
+                split_options.append([i, 0])
+            elif consonants[i] in voiced_consonants:
+                if consonants[i+1] in resonant_silent_consonants or consonants[i+1] in unresonant_silent_consonants:
+                    split_options.append([i, 2])
+            elif consonants[i] in resonant_silent_consonants:
+                if consonants[i+1] in resonant_silent_consonants:
+                    split_options.append([i, 1])
+                elif consonants[i+1] in unresonant_silent_consonants:
+                    split_options.append([i, 3])
+            elif consonants[i] in unresonant_silent_consonants:
+                if consonants[i+1] in resonant_silent_consonants:
+                    split_options.append([i, 4])
+            else:
+                print(consonants)
+                print('UNRECOGNIZED LETTERS!')
+        if split_options == []:
+            return [''], consonants
+        else:
+            split = min(split_options, key=lambda x:x[1])
+            return consonants[:split[0]+1], consonants[split[0]+1:]
+    # print(consonants)
+    return [''], ['']
+
+
+def create_syllables(word, vowels):
+    word_list = list(word)
+    consonants = []
+    syllables = []
+    for i in range(len(word_list)):
+        if is_vowel(word_list, i, vowels):
+            if syllables == []:
+                consonants.append(word_list[i])
+                syllables.append(''.join(consonants))
+            else:
+                left_consonants, right_consonants = split_consonants(consonants)
+                syllables[-1] += ''.join(left_consonants)
+                right_consonants.append(word_list[i])
+                syllables.append(''.join(right_consonants))
+            consonants = []
+        else:
+            consonants.append(word_list[i])
+    if len(syllables) < 1:
+        return word
+    syllables[-1] += ''.join(consonants)
+
+    return syllables
+
+
+def create_syllables_dictionary(content, vowels):
+    dictionary = []
+    for el in content:
+        syllables = create_syllables(el[0], vowels)
+        for syllable in syllables:
+            if syllable not in dictionary:
+                dictionary.append(syllable)
+    dictionary.append('')
+    return sorted(dictionary)
+
+
+def generate_syllable_inputs(content_shuffle_vector_location, shuffle_vector_location):
+    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
+    train_content, test_content, validate_content = split_content(content, 0.2, content_shuffle_vector_location)
+    feature_dictionary = create_feature_dictionary()
+    print('CREATING SYLLABLE DICTIONARY...')
+    syllable_dictionary = create_syllables_dictionary(content, vowels)
+    print('CREATION SUCCESSFUL!')
+
+    # Generate X and y
+    print('GENERATING X AND y...')
+    X_train, X_other_features_train, y_train = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, train_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_train.h5')
+    X_test, X_other_features_test, y_test = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, test_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_test.h5')
+    X_validate, X_other_features_validate, y_validate = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, validate_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_validate.h5')
+    print('GENERATION SUCCESSFUL!')
+    return X_train, X_other_features_train, y_train, X_test, X_other_features_test, y_test, X_validate, X_other_features_validate, y_validate
+
+
+# Generate each y as an array of 11 numbers (with possible values between 0 and 1)
+def generate_syllable_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location, shuffle=True):
+    y = np.zeros((len(content), max_num_vowels))
+    X = np.zeros((len(content), max_num_vowels), dtype=int)
+    # X = []
+    print('CREATING OTHER FEATURES...')
+    X_other_features = create_X_features(content, feature_dictionary)
+    print('OTHER FEATURES CREATED!')
+
+    i = 0
+    for el in content:
+        j = 0
+        syllables = create_syllables(el[0], vowels)
+        # X_el = [''] * max_num_vowels
+        for syllable in syllables:
+
+            index = dictionary.index(syllable)
+            X[i][j] = index
+            # X[i][j][index] = 1
+            j += 1
+        # X.append(X_el)
+        j = 0
+        word_accetuations = []
+        num_vowels = 0
+        for c in list(el[3]):
+            index = 0
+            if is_vowel(el[3], j, vowels):
+                num_vowels += 1
+            for d in accetuated_vowels:
+                if c == d:
+                    word_accetuations.append(num_vowels)
+                    break
+                index += 1
+            j += 1
+        if len(word_accetuations) > 0:
+            y_value = 1/len(word_accetuations)
+            for el in word_accetuations:
+                # y[i][el] = y_value
+                y[i][el] = 1
+        else:
+            y[i][0] = 1
+        # y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
+        i += 1
+    # print(len(X))
+    # print(X[0])
+    X = np.array(X)
+    # print(X.shape)
+    # print(X[0])
+    # print(len(X))
+    if shuffle:
+        print('SHUFFELING INPUTS...')
+        X, y, X_other_features = shuffle_inputs(X, y, shuffle_vector_location, X_pure=X_other_features)
+        print('INPUTS SHUFFELED!')
+    return X, X_other_features, y
+
+
+# generator for inputs for tracking of data fitting
+def generate_fake_epoch_syllables(orig_X, orig_X_additional, orig_y, batch_size, dictionary_size=5168):
+    size = orig_X.shape[0]
+    eye = np.eye(dictionary_size, dtype=int)
+    while 1:
+        loc = 0
+        while loc < size:
+            if loc + batch_size >= size:
+                # [eye[i] for i in range(size-loc)]
+                # gen_orig_X = eye[orig_X[loc:size]]
+                # gen_orig_X = [eye[i] for i in range(size-loc)]
+                gen_orig_X = eye[orig_X[loc:size]]
+                yield([gen_orig_X, orig_X_additional[loc:size]], orig_y[loc:size])
+            else:
+                gen_orig_X = eye[orig_X[loc:loc + batch_size]]
+                yield([gen_orig_X, orig_X_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+            loc += batch_size
