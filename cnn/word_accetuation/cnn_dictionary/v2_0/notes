@@ -1,3 +1,3 @@
-512-1024-512 - Best preforming nn with feature and test data. It is also the first of a kind because of X_features being MULTEXT-East v4 and not v3. Changed c with a roof. Input dictionary changed (erased accetuated vowels, because they were unnecessary).
+256-512-256 - Best preforming nn with feature and test data. It is also the first of a kind because of X_features being MULTEXT-East v4 and not v3. Changed c with a roof. Input dictionary changed (erased accetuated vowels, because they were unnecessary).
 
 Results IMPROVED (first time some results scored above 88%)
