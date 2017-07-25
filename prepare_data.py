@@ -310,9 +310,16 @@ def old_generate_full_matrix_inputs():
 
 
 # Generate each y as an array of 11 numbers (with possible values between 0 and 1)
-def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location, shuffle=True):
+def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location, shuffle=True, aditional_letter_attributes=True):
     y = np.zeros((len(content), max_num_vowels))
-    X = np.zeros((len(content), max_word, len(dictionary)))
+    if aditional_letter_attributes:
+        X = np.zeros((len(content), max_word, len(dictionary) + 6))
+        voiced_consonants = get_voiced_consonants()
+        resonant_silent_consonants = get_resonant_silent_consonants()
+        unresonant_silent_consonants = get_unresonant_silent_consonants()
+
+    else:
+        X = np.zeros((len(content), max_word, len(dictionary)))
     print('CREATING OTHER FEATURES...')
     X_other_features = create_X_features(content, feature_dictionary)
     print('OTHER FEATURES CREATED!')
@@ -327,6 +334,20 @@ def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, acce
                     X[i][j][index] = 1
                     break
                 index += 1
+            if aditional_letter_attributes:
+                if is_vowel(el[0], j, vowels):
+                    X[i][j][len(dictionary)] = 1
+                else:
+                    X[i][j][len(dictionary) + 1] = 1
+                    if c in voiced_consonants:
+                        X[i][j][len(dictionary) + 2] = 1
+                    else:
+                        X[i][j][len(dictionary) + 3] = 1
+                        if c in resonant_silent_consonants:
+                            X[i][j][len(dictionary) + 4] = 1
+                        elif c in unresonant_silent_consonants:
+                            X[i][j][len(dictionary) + 5] = 1
+
             j += 1
         j = 0
         word_accetuations = []
@@ -991,7 +1012,6 @@ def dict_occurances_in_dataset_rate(content):
     case_numbers = np.sum(X_other_features, axis=0)
     print(case_numbers)
 
-
 def get_voiced_consonants():
     return ['m', 'n', 'v', 'l', 'r', 'j', 'y', 'w']
 
@@ -1003,15 +1023,6 @@ def get_unresonant_silent_consonants():
 
 
 def split_consonants(consonants):
-    # def voiced_consonants():
-    #     return ['m', 'n', 'v', 'l', 'r', 'j', 'y', 'w']
-    #
-    # def resonant_silent_consonants():
-    #     return ['b', 'd', 'z', 'ž', 'g']
-    #
-    # def unresonant_silent_consonants():
-    #     return ['p', 't', 's', 'š', 'č', 'k', 'f', 'h', 'c']
-    # test = get_voiced_consonants()
     voiced_consonants = get_voiced_consonants()
     resonant_silent_consonants = get_resonant_silent_consonants()
     unresonant_silent_consonants = get_unresonant_silent_consonants()
@@ -1146,7 +1157,7 @@ def generate_syllable_X_and_y(dictionary, max_word, max_num_vowels, content, vow
         i += 1
     # print(len(X))
     # print(X[0])
-    X = np.array(X)
+    # X = np.array(X)
     # print(X.shape)
     # print(X[0])
     # print(len(X))
@@ -1174,3 +1185,97 @@ def generate_fake_epoch_syllables(orig_X, orig_X_additional, orig_y, batch_size,
                 gen_orig_X = eye[orig_X[loc:loc + batch_size]]
                 yield([gen_orig_X, orig_X_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
             loc += batch_size
+
+
+def get_max_syllable(syllable_dictionary):
+    max_len = 0
+    for el in syllable_dictionary:
+        if len(el) > max_len:
+            max_len = len(el)
+    return max_len
+
+
+def generate_syllabled_letters_inputs(content_shuffle_vector_location, shuffle_vector_location):
+    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
+    train_content, test_content, validate_content = split_content(content, 0.2, content_shuffle_vector_location)
+    feature_dictionary = create_feature_dictionary()
+    print('CREATING SYLLABLE DICTIONARY...')
+    syllable_dictionary = create_syllables_dictionary(content, vowels)
+    max_syllable = get_max_syllable(syllable_dictionary)
+    print('CREATION SUCCESSFUL!')
+
+    # Generate X and y
+    print('GENERATING X AND y...')
+    X_train, X_other_features_train, y_train = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, train_content, vowels,
+                                                                         accetuated_vowels, feature_dictionary, shuffle_vector_location + '_train.h5')
+    X_test, X_other_features_test, y_test = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, test_content, vowels,
+                                                                      accetuated_vowels, feature_dictionary, shuffle_vector_location + '_test.h5')
+    X_validate, X_other_features_validate, y_validate = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, validate_content,
+                                                                                  vowels, accetuated_vowels, feature_dictionary,
+                                                                                  shuffle_vector_location + '_validate.h5')
+
+
+    print('GENERATION SUCCESSFUL!')
+    return X_train, X_other_features_train, y_train, X_test, X_other_features_test, y_test, X_validate, X_other_features_validate, y_validate
+
+
+# generator for inputs for tracking of data fitting
+def generate_fake_epoch_syllabled_letters(orig_X, orig_X_additional, orig_y, batch_size, syllable_letters_translator):
+    size = orig_X.shape[0]
+    # eye = np.eye(dictionary_size, dtype=int)
+    while 1:
+        loc = 0
+        while loc < size:
+            if loc + batch_size >= size:
+                # [eye[i] for i in range(size-loc)]
+                # gen_orig_X = eye[orig_X[loc:size]]
+                # gen_orig_X = [eye[i] for i in range(size-loc)]
+                gen_orig_X = syllable_letters_translator[orig_X[loc:size]]
+                yield([gen_orig_X, orig_X_additional[loc:size]], orig_y[loc:size])
+            else:
+                gen_orig_X = syllable_letters_translator[orig_X[loc:loc + batch_size]]
+                yield([gen_orig_X, orig_X_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+            loc += batch_size
+
+
+def create_syllable_letters_translator(max_syllable, syllable_dictionary, dictionary, vowels, aditional_letter_attributes=True):
+    if aditional_letter_attributes:
+        voiced_consonants = get_voiced_consonants()
+        resonant_silent_consonants = get_resonant_silent_consonants()
+        unresonant_silent_consonants = get_unresonant_silent_consonants()
+
+    syllable_letters_translator = []
+    for syllable in syllable_dictionary:
+        di_syllable = []
+        for let in range(max_syllable):
+            # di_let = []
+            for a in dictionary:
+                if let < len(syllable) and a == list(syllable)[let]:
+                    di_syllable.append(1)
+                else:
+                    di_syllable.append(0)
+
+            if aditional_letter_attributes:
+                if let >= len(syllable):
+                    di_syllable.extend([0, 0, 0, 0, 0, 0])
+                elif is_vowel(list(syllable), let, vowels):
+                    di_syllable.extend([1, 0, 0, 0, 0, 0])
+                else:
+                    # X[i][j][len(dictionary) + 1] = 1
+                    if list(syllable)[let] in voiced_consonants:
+                        # X[i][j][len(dictionary) + 2] = 1
+                        di_syllable.extend([0, 1, 1, 0, 0, 0])
+                    else:
+                        # X[i][j][len(dictionary) + 3] = 1
+                        if list(syllable)[let] in resonant_silent_consonants:
+                            # X[i][j][len(dictionary) + 4] = 1
+                            di_syllable.extend([0, 1, 0, 1, 1, 0])
+                        elif list(syllable)[let] in unresonant_silent_consonants:
+                            # X[i][j][len(dictionary) + 5] = 1
+                            di_syllable.extend([0, 1, 0, 1, 0, 1])
+                        else:
+                            di_syllable.extend([0, 0, 0, 0, 0, 0])
+            # di_syllable.append(di_let)
+        syllable_letters_translator.append(di_syllable)
+    syllable_letters_translator = np.array(syllable_letters_translator, dtype=int)
+    return syllable_letters_translator

@@ -4,7 +4,7 @@
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/results_presentation.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/results_presentation.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllables/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/cnn.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prepare_data.py" afterPath="$PROJECT_DIR$/prepare_data.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -35,8 +35,8 @@
       <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="662">
-              <caret line="1166" column="15" lean-forward="false" selection-start-line="1166" selection-start-column="15" selection-end-line="1166" selection-end-column="15" />
+            <state relative-caret-position="378">
+              <caret line="1024" column="33" lean-forward="false" selection-start-line="1024" selection-start-column="33" selection-end-line="1024" selection-end-column="33" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
               </folding>
@@ -156,13 +156,14 @@
       <find>generate</find>
       <find>shuffle</find>
       <find>X_</find>
-      <find>dictionary</find>
       <find>create_dict</find>
       <find>split_content</find>
       <find>decode_position</find>
       <find>'r'</find>
       <find>decode</find>
       <find>complete_feature_dict</find>
+      <find>dictionary</find>
+      <find>voiced_consonants</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -207,6 +208,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -221,8 +224,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -881,8 +882,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/prepare_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="662">
-          <caret line="1166" column="15" lean-forward="false" selection-start-line="1166" selection-start-column="15" selection-end-line="1166" selection-end-column="15" />
+        <state relative-caret-position="378">
+          <caret line="1024" column="33" lean-forward="false" selection-start-line="1024" selection-start-column="33" selection-end-line="1024" selection-end-column="33" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
           </folding>
