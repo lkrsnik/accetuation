@@ -4,504 +4,695 @@ from __future__ import unicode_literals
 
 import numpy as np
 import h5py
-import gc
 import math
 import keras.backend as K
 import os.path
 
 
-# functions for saving, loading and shuffling whole arrays to ram
-def save_inputs(file_name, X, y, other_features=[]):
-    h5f = h5py.File(file_name, 'w')
-    if other_features == []:
-        adict = dict(X=X, y=y)
-    else:
-        adict = dict(X=X, X_other_features=other_features, y=y)
-    for k, v in adict.items():
-        h5f.create_dataset(k, data=v)
-    h5f.close()
+class Data:
+    def __init__(self, input_type, allow_shuffle_vector_generation=False, save_generated_data=True, shuffle_all_inputs=True,
+                 additional_letter_attributes=True, reverse_inputs=True):
+        self._input_type = input_type
+        self._save_generated_data = save_generated_data
+        self._allow_shuffle_vector_generation = allow_shuffle_vector_generation
+        self._shuffle_all_inputs = shuffle_all_inputs
+        self._additional_letter_attributes = additional_letter_attributes
+        self._reverse_inputs = reverse_inputs
 
+        self.x_train = None
+        self.x_other_features_train = None
+        self.y_train = None
+        self.x_test = None
+        self.x_other_features_test = None
+        self.y_test = None
+        self.x_validate = None
+        self.x_other_features_validate = None
+        self.y_validate = None
 
-def load_inputs(file_name, other_features=False):
-    h5f = h5py.File(file_name,'r')
-    X = h5f['X'][:]
-    y = h5f['y'][:]
-    if other_features:
-        X_other_features = h5f['X_other_features'][:]
-        h5f.close()
-        return X, X_other_features, y
-
-    h5f.close()
-    return X, y
-
-
-def shuffle_inputs(X, y, shuffle_vector_location, X_pure=[]):
-    if os.path.exists(shuffle_vector_location):
-        s = load_shuffle_vector(shuffle_vector_location)
-    else:
-        s = np.arange(X.shape[0])
-        np.random.shuffle(s)
-        create_and_save_shuffle_vector(shuffle_vector_location, s)
-    # s = np.arange(X.shape[0])
-    # np.random.shuffle(s)
-    X = X[s]
-    y = y[s]
-    if X_pure != []:
-        X_pure = X_pure[s]
-        return X, y, X_pure
-    else:
-        return X, y
-
-
-# functions for saving and loading partial arrays to ram
-def create_and_save_inputs(file_name, part, X, y, X_pure):
-    # X, y, X_pure = generate_full_vowel_matrix_inputs()
-    h5f = h5py.File(file_name + part + '.h5', 'w')
-    adict=dict(X=X, y=y, X_pure=X_pure)
-    for k, v in adict.items():
-        h5f.create_dataset(k,data=v)
-    h5f.close()
-
-
-def load_extended_inputs(file_name, obtain_range):
-    h5f = h5py.File(file_name, 'r')
-    X = h5f['X'][obtain_range[0]:obtain_range[1]]
-    y = h5f['y'][obtain_range[0]:obtain_range[1]]
-    X_pure = h5f['X_pure'][obtain_range[0]:obtain_range[1]]
-
-    h5f.close()
-    return X, y, X_pure
-
-
-# functions for creating and loading shuffle vector
-def create_and_save_shuffle_vector(file_name, shuffle_vector):
-    # X, y, X_pure = generate_full_vowel_matrix_inputs()
-    h5f = h5py.File(file_name, 'w')
-    adict = dict(shuffle_vector=shuffle_vector)
-    for k, v in adict.items():
-        h5f.create_dataset(k, data=v)
-    h5f.close()
-
-
-def load_shuffle_vector(file_name):
-    h5f = h5py.File(file_name, 'r')
-    # shuffle_vector = h5f['shuffle_vector'][[179859, 385513, 893430]]
-    shuffle_vector = h5f['shuffle_vector'][:]
-
-    h5f.close()
-    return shuffle_vector
-
-
-# functions for saving and loading model - ONLY WHERE KERAS IS NOT NEEDED
-# def save_model(model, file_name):
-#     h5f = h5py.File(file_name, 'w')
-#     adict = dict(W1=model['W1'], b1=model['b1'], W2=model['W2'], b2=model['b2'])
-#     for k,v in adict.items():
-#         h5f.create_dataset(k,data=v)
-#
-#     h5f.close()
-#
-#
-# def load_model(file_name):
-#     h5f = h5py.File(file_name,'r')
-#     model = {}
-#     W1.set_value(h5f['W1'][:])
-#     b1.set_value(h5f['b1'][:])
-#     W2.set_value(h5f['W2'][:])
-#     b2.set_value(h5f['b2'][:])
-#     h5f.close()
-#     return model
-
-# functions for creating X and y from content
-def read_content():
-    print('READING CONTENT...')
-    with open('../../../data/SlovarIJS_BESEDE_utf8.lex') as f:
-        content = f.readlines()
-    print('CONTENT READ SUCCESSFULY')
-    return [x.split('\t') for x in content]
-
-
-def is_vowel(word_list, position, vowels):
-    if word_list[position] in vowels:
-        return True
-    if (word_list[position] == u'r' or word_list[position] == u'R') and     (position - 1 < 0 or word_list[position - 1] not in vowels) and     (position + 1 >= len(word_list) or word_list[position + 1] not in vowels):
-        return True
-    return False
-
-
-def is_accetuated_vowel(word_list, position, accetuated_vowels):
-    if word_list[position] in accetuated_vowels:
-        return True
-    return False
-
-
-def create_dict():
-    content = read_content()
-    print('CREATING DICTIONARY...')
-
-    # CREATE dictionary AND max_word
-    accetuated_vowels = [u'à', u'á', u'ä', u'é', u'ë', u'ì', u'í', u'î', u'ó', u'ô', u'ö', u'ú', u'ü']
-    default_vowels = [u'a', u'e', u'i', u'o', u'u']
-    vowels = []
-    vowels.extend(accetuated_vowels)
-    vowels.extend(default_vowels)
-
-    dictionary_output = ['']
-    dictionary_input = ['']
-    line = 0
-    max_word = 0
-    # ADD 'EMPTY' VOWEL
-    max_num_vowels = 0
-    for el in content:
-        num_vowels = 0
-        i = 0
-        try: 
-            if len(el[3]) > max_word:
-                max_word = len(el[3])
-            if len(el[0]) > max_word:
-                max_word = len(el[0])
-            for c in list(el[3]):
-                if is_vowel(list(el[3]), i, vowels):
-                    num_vowels += 1
-                if c not in dictionary_output:
-                    dictionary_output.append(c)
-                i += 1
-            for c in list(el[0]):
-                if c not in dictionary_input:
-                    dictionary_input.append(c)
-            if num_vowels > max_num_vowels:
-                max_num_vowels = num_vowels
-        except Exception:
-            print(line - 1)
-            print(el)
-            break
-        line += 1
-    dictionary_input = sorted(dictionary_input)
-    max_num_vowels += 1
-    print('DICTIONARY CREATION SUCCESSFUL!')
-    return dictionary_input, max_word, max_num_vowels, content, vowels, accetuated_vowels
-
-
-# GENERATE X and y
-def generate_presentable_y(accetuations_list, word_list, max_num_vowels):
-    while len(accetuations_list) < 2:
-        accetuations_list.append(0)
-    if len(accetuations_list) > 2:
-        accetuations_list = accetuations_list[:2]
-    accetuations_list = np.array(accetuations_list)
-    final_position = accetuations_list[0] + max_num_vowels * accetuations_list[1]
-    return final_position
-
-
-# def generate_inputs():
-#     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-#
-#     print('GENERATING X AND y...')
-#     X = np.zeros((len(content), max_word*len(dictionary)))
-#     y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
-#
-#     i = 0
-#     for el in content:
-#         j = 0
-#         for c in list(el[0]):
-#             index = 0
-#             for d in dictionary:
-#                 if c == d:
-#                     X[i][index + j * max_word] = 1
-#                     break
-#                 index += 1
-#             j += 1
-#         j = 0
-#         word_accetuations = []
-#         num_vowels = 0
-#         for c in list(el[3]):
-#             index = 0
-#             if is_vowel(el[3], j, vowels):
-#                 num_vowels += 1
-#             for d in accetuated_vowels:
-#                 if c == d:
-#                     word_accetuations.append(num_vowels)
-#                     break
-#                 index += 1
-#             j += 1
-#         y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
-#         i += 1
-#     print('GENERATION SUCCESSFUL!')
-#     print('SHUFFELING INPUTS...')
-#     X, y = shuffle_inputs(X, y)
-#     print('INPUTS SHUFFELED!')
-#     return X, y
-#
-#
-# def generate_matrix_inputs():
-#     dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-#
-#     print('GENERATING X AND y...')
-#     # X = np.zeros((len(content), max_word*len(dictionary)))
-#     y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
-#
-#     X = []
-#
-#     i = 0
-#     for el in content:
-#         # j = 0
-#         word = []
-#         for c in list(el[0]):
-#             index = 0
-#             character = np.zeros(len(dictionary))
-#             for d in dictionary:
-#                 if c == d:
-#                     # X[i][index + j * max_word] = 1
-#                     character[index] = 1
-#                     break
-#                 index += 1
-#             word.append(character)
-#             # j += 1
-#         j = 0
-#         X.append(word)
-#         word_accetuations = []
-#         num_vowels = 0
-#         for c in list(el[3]):
-#             index = 0
-#             if is_vowel(el[3], j, vowels):
-#                 num_vowels += 1
-#             for d in accetuated_vowels:
-#                 if c == d:
-#                     word_accetuations.append(num_vowels)
-#                     break
-#                 index += 1
-#             j += 1
-#         y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
-#         i += 1
-#     X = np.array(X)
-#     print('GENERATION SUCCESSFUL!')
-#     print('SHUFFELING INPUTS...')
-#     X, y = shuffle_inputs(X, y)
-#     print('INPUTS SHUFFELED!')
-#     return X, y
-
-
-def generate_full_matrix_inputs(content_shuffle_vector_location, shuffle_vector_location):
-    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-    train_content, test_content, validate_content = split_content(content, 0.2, content_shuffle_vector_location)
-    feature_dictionary = create_feature_dictionary()
-
-    # Generate X and y
-    print('GENERATING X AND y...')
-    X_train, X_other_features_train, y_train = generate_X_and_y(dictionary, max_word, max_num_vowels, train_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_train.h5')
-    X_test, X_other_features_test, y_test = generate_X_and_y(dictionary, max_word, max_num_vowels, test_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_test.h5')
-    X_validate, X_other_features_validate, y_validate = generate_X_and_y(dictionary, max_word, max_num_vowels, validate_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_validate.h5')
-    print('GENERATION SUCCESSFUL!')
-    return X_train, X_other_features_train, y_train, X_test, X_other_features_test, y_test, X_validate, X_other_features_validate, y_validate
-
-
-# generate full matrix, with old features
-def old_generate_full_matrix_inputs():
-    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-    train_content, validate_content = split_content(content, 0.2)
-    feature_dictionary = create_feature_dictionary(content)
-
-    # Generate X and y
-    print('GENERATING X AND y...')
-    X_train, X_other_features_train, y_train = generate_X_and_y(dictionary, max_word, max_num_vowels, train_content, vowels, accetuated_vowels, feature_dictionary)
-    X_validate, X_other_features_validate, y_validate = generate_X_and_y(dictionary, max_word, max_num_vowels, validate_content, vowels, accetuated_vowels, feature_dictionary)
-    print('GENERATION SUCCESSFUL!')
-    return X_train, X_other_features_train, y_train, X_validate, X_other_features_validate, y_validate
-
-
-# Generate each y as an array of 11 numbers (with possible values between 0 and 1)
-def generate_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location, shuffle=True, aditional_letter_attributes=True):
-    y = np.zeros((len(content), max_num_vowels))
-    if aditional_letter_attributes:
-        X = np.zeros((len(content), max_word, len(dictionary) + 6))
-        voiced_consonants = get_voiced_consonants()
-        resonant_silent_consonants = get_resonant_silent_consonants()
-        unresonant_silent_consonants = get_unresonant_silent_consonants()
-
-    else:
-        X = np.zeros((len(content), max_word, len(dictionary)))
-    print('CREATING OTHER FEATURES...')
-    X_other_features = create_X_features(content, feature_dictionary)
-    print('OTHER FEATURES CREATED!')
-
-    i = 0
-    for el in content:
-        j = 0
-        for c in list(el[0]):
-            index = 0
-            for d in dictionary:
-                if c == d:
-                    X[i][j][index] = 1
-                    break
-                index += 1
-            if aditional_letter_attributes:
-                if is_vowel(el[0], j, vowels):
-                    X[i][j][len(dictionary)] = 1
-                else:
-                    X[i][j][len(dictionary) + 1] = 1
-                    if c in voiced_consonants:
-                        X[i][j][len(dictionary) + 2] = 1
-                    else:
-                        X[i][j][len(dictionary) + 3] = 1
-                        if c in resonant_silent_consonants:
-                            X[i][j][len(dictionary) + 4] = 1
-                        elif c in unresonant_silent_consonants:
-                            X[i][j][len(dictionary) + 5] = 1
-
-            j += 1
-        j = 0
-        word_accetuations = []
-        num_vowels = 0
-        for c in list(el[3]):
-            index = 0
-            if is_vowel(el[3], j, vowels):
-                num_vowels += 1
-            for d in accetuated_vowels:
-                if c == d:
-                    word_accetuations.append(num_vowels)
-                    break
-                index += 1
-            j += 1
-        if len(word_accetuations) > 0:
-            y_value = 1/len(word_accetuations)
-            for el in word_accetuations:
-                # y[i][el] = y_value
-                y[i][el] = 1
+    def generate_data(self, train_inputs_name, test_inputs_name, validate_inputs_name, test_and_validation_size=0.1,
+                      content_name='SlovarIJS_BESEDE_utf8.lex',
+                      content_shuffle_vector='content_shuffle_vector', shuffle_vector='shuffle_vector',
+                      inputs_location='../../internal_representations/inputs/', content_location='../../../data/'):
+        content_path = '{}{}'.format(content_location, content_name)
+        train_path = '{}{}.h5'.format(inputs_location, train_inputs_name)
+        test_path = '{}{}.h5'.format(inputs_location, test_inputs_name)
+        validate_path = '{}{}.h5'.format(inputs_location, validate_inputs_name)
+        if os.path.exists(train_path) and os.path.exists(test_path) and os.path.exists(validate_path):
+            print('LOADING DATA...')
+            self.x_train, self.x_other_features_train, self.y_train = self._load_inputs(train_path)
+            self.x_test, self.x_other_features_test, self.y_test = self._load_inputs(test_path)
+            self.x_validate, self.x_other_features_validate, self.y_validate = self._load_inputs(validate_path)
+            print('LOAD SUCCESSFUL!')
         else:
-            y[i][0] = 1
-        # y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
-        i += 1
-    if shuffle:
-        print('SHUFFELING INPUTS...')
-        X, y, X_other_features = shuffle_inputs(X, y, shuffle_vector_location, X_pure=X_other_features)
-        print('INPUTS SHUFFELED!')
-    return X, X_other_features, y
+            content_shuffle_vector_path = '{}{}.h5'.format(inputs_location, content_shuffle_vector)
+            shuffle_vector_path = '{}{}'.format(inputs_location, shuffle_vector)
 
+            # actual generation of inputs
+            self._generate_inputs(content_path, content_shuffle_vector_path, shuffle_vector_path, test_and_validation_size)
 
-# Generate each y as an array of 121 numbers (with one 1 per line and the rest zeros)
-def generate_X_and_y_one_classification(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary):
-    y = np.zeros((len(content), max_num_vowels * max_num_vowels ))
-    X = np.zeros((len(content), max_word, len(dictionary)))
-    print('CREATING OTHER FEATURES...')
-    X_other_features = create_X_features(content, feature_dictionary)
-    print('OTHER FEATURES CREATED!')
+            # save inputs
+            if self._save_generated_data:
+                self._save_inputs(train_path, self.x_train, self.x_other_features_train, self.y_train)
+                self._save_inputs(test_path, self.x_test, self.x_other_features_test, self.y_test)
+                self._save_inputs(validate_path, self.x_validate, self.x_other_features_validate, self.y_validate)
 
-    i = 0
-    for el in content:
-        j = 0
-        for c in list(el[0]):
-            index = 0
-            for d in dictionary:
-                if c == d:
-                    X[i][j][index] = 1
-                    break
-                index += 1
-            j += 1
-        j = 0
-        word_accetuations = []
-        num_vowels = 0
-        for c in list(el[3]):
-            index = 0
-            if is_vowel(el[3], j, vowels):
-                num_vowels += 1
-            for d in accetuated_vowels:
-                if c == d:
-                    word_accetuations.append(num_vowels)
-                    break
-                index += 1
-            j += 1
-        y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
-        i += 1
+    def _generate_inputs(self, content_location, content_shuffle_vector_location, shuffle_vector_location, test_and_validation_size):
+        print('READING CONTENT...')
+        content = self._read_content(content_location)
+        print('CONTENT READ SUCCESSFULLY')
+        print('CREATING DICTIONARY...')
+        dictionary, max_word, max_num_vowels, vowels, accented_vowels = self._create_dict(content)
+        if self._input_type == 's' or self._input_type == 'ls':
+            dictionary = self._create_syllables_dictionary(content, vowels)
+        print('DICTIONARY CREATION SUCCESSFUL!')
+        # test_and_validation_size = 0.1
+        train_content, test_content, validate_content = self._split_content(content, test_and_validation_size, content_shuffle_vector_location)
+        feature_dictionary = self._create_feature_dictionary()
 
-    print('SHUFFELING INPUTS...')
-    X, y, X_other_features = shuffle_inputs(X, y, X_pure=X_other_features)
-    print('INPUTS SHUFFELED!')
-    return X, X_other_features, y
+        # Generate X and y
+        print('GENERATING X AND y...')
+        self.x_train, self.x_other_features_train, self.y_train = self._generate_x_and_y(dictionary, max_word, max_num_vowels, train_content, vowels,
+                                                                                         accented_vowels,
+                                                                                         feature_dictionary, shuffle_vector_location + '_train.h5')
+        self.x_test, self.x_other_features_test, self.y_test = self._generate_x_and_y(dictionary, max_word, max_num_vowels, test_content, vowels,
+                                                                                      accented_vowels,
+                                                                                      feature_dictionary, shuffle_vector_location + '_test.h5')
+        self.x_validate, self.x_other_features_validate, self.y_validate = self._generate_x_and_y(dictionary, max_word, max_num_vowels,
+                                                                                                  validate_content, vowels,
+                                                                                                  accented_vowels, feature_dictionary,
+                                                                                                  shuffle_vector_location + '_validate.h5')
+        print('GENERATION SUCCESSFUL!')
+        # return X_train, X_other_features_train, y_train, X_test, X_other_features_test, y_test, X_validate, X_other_features_validate, y_validate
 
+    # functions for creating X and y from content
+    @staticmethod
+    def _read_content(content_path):
+        with open(content_path) as f:
+            content = f.readlines()
+        return [x.split('\t') for x in content]
 
-def count_vowels(content, vowels):
-    num_all_vowels = 0
-    for el in content:
-        for m in range(len(el[0])):
-            if is_vowel(list(el[0]), m, vowels):
-                num_all_vowels += 1
-    return num_all_vowels
+    def _create_dict(self, content):
+        # CREATE dictionary AND max_word
+        accented_vowels = self._get_accented_vowels()
+        unaccented_vowels = self._get_unaccented_vowels()
+        vowels = []
+        vowels.extend(accented_vowels)
+        vowels.extend(unaccented_vowels)
 
+        dictionary_input = ['']
+        line = 0
+        max_word = 0
+        # ADD 'EMPTY' VOWEL
+        max_num_vowels = 0
+        for el in content:
+            num_vowels = 0
+            try:
+                if len(el[3]) > max_word:
+                    max_word = len(el[3])
+                if len(el[0]) > max_word:
+                    max_word = len(el[0])
+                for i in range(len(el[3])):
+                    if self._is_vowel(list(el[3]), i, vowels):
+                        num_vowels += 1
+                for c in list(el[0]):
+                    if c not in dictionary_input:
+                        dictionary_input.append(c)
+                if num_vowels > max_num_vowels:
+                    max_num_vowels = num_vowels
+            except Exception:
+                print(line - 1)
+                print(el)
+                break
+            line += 1
+        dictionary_input = sorted(dictionary_input)
+        max_num_vowels += 1
+        return dictionary_input, max_word, max_num_vowels, vowels, accented_vowels
 
-# Data generation for generator inputs
-def generate_X_and_y_RAM_efficient(name, split_number):
-    h5f = h5py.File(name + '.h5', 'w')
-    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-    num_all_vowels = count_vowels(content, vowels)
-    data_X = h5f.create_dataset('X', (num_all_vowels, max_word, len(dictionary)),
-                                maxshape=(num_all_vowels, max_word, len(dictionary)),
-                                dtype=np.uint8)
-    data_y = h5f.create_dataset('y', (num_all_vowels,),
-                                maxshape=(num_all_vowels,),
-                                dtype=np.uint8)
-    data_X_pure = h5f.create_dataset('X_pure', (num_all_vowels,),
-                                     maxshape=(num_all_vowels,),
-                                     dtype=np.uint8)
+    # split content so that there is no overfitting
+    def _split_content(self, content, test_and_validation_ratio, content_shuffle_vector_location):
+        expanded_content = [el[1] if el[1] != '=' else el[0] for el in content]
+        # print(len(content))
+        unique_content = sorted(set(expanded_content))
 
-    gc.collect()
-    print('GENERATING X AND y...')
-    X_pure = []
-    X = []
-    y = []
-    part_len = len(content)/float(split_number)
-    current_part_generation = 1
+        s = self._load_shuffle_vector(content_shuffle_vector_location, len(unique_content))
 
-    i = 0
-    num_all_vowels = 0
-    old_num_all_vowels = 0
-    for el in content:
-        j = 0
-        X_el = np.zeros((max_word, len(dictionary)))
-        for c in list(el[0]):
-            index = 0
-            for d in dictionary:
-                if c == d:
-                    X_el[j][index] = 1
-                    break
-                index += 1
-            j += 1
-        vowel_i = 0
-        for m in range(len(el[0])):
-            if is_vowel(list(el[0]), m, vowels):
-                X.append(X_el)
-                X_pure.append(vowel_i)
-                vowel_i += 1
-                if is_accetuated_vowel(list(el[3]), m, accetuated_vowels):
-                    y.append(1)
+        test_num = math.floor(len(unique_content) * (test_and_validation_ratio * 2))
+        validation_num = math.floor(test_num * 0.5)
+        shuffled_unique_train_content = [unique_content[i] for i in range(len(s)) if s[i] >= test_num]
+        shuffled_unique_train_content_set = set(shuffled_unique_train_content)
+
+        shuffled_unique_test_content = [unique_content[i] for i in range(len(s)) if test_num > s[i] >= validation_num]
+        shuffled_unique_test_content_set = set(shuffled_unique_test_content)
+
+        shuffled_unique_validate_content = [unique_content[i] for i in range(len(s)) if s[i] < validation_num]
+        shuffled_unique_validate_content_set = set(shuffled_unique_validate_content)
+
+        train_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_train_content_set]
+        test_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_test_content_set]
+        validate_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_validate_content_set]
+        return train_content, test_content, validate_content
+
+    @staticmethod
+    def _create_and_save_shuffle_vector(file_name, length):
+        shuffle_vector = np.arange(length)
+        np.random.shuffle(shuffle_vector)
+        h5f = h5py.File(file_name, 'w')
+        adict = dict(shuffle_vector=shuffle_vector)
+        for k, v in adict.items():
+            h5f.create_dataset(k, data=v)
+        h5f.close()
+        return shuffle_vector
+
+    def _x_letter_input(self, content, dictionary, max_word, vowels):
+        if self._additional_letter_attributes:
+            x = np.zeros((len(content), max_word, len(dictionary) + 6), dtype=int)
+            voiced_consonants = self._get_voiced_consonants()
+            resonant_silent_consonants = self._get_resonant_silent_consonants()
+            nonresonant_silent_consonants = self._get_nonresonant_silent_consonants()
+            # print('HERE!!!')
+        else:
+            # print('HERE!!!')
+            x = np.zeros((len(content), max_word, len(dictionary)), dtype=int)
+
+        i = 0
+        for el in content:
+            word = el[0]
+            if self._reverse_inputs:
+                word = word[::-1]
+            j = 0
+            for c in list(word):
+                index = 0
+                for d in dictionary:
+                    if c == d:
+                        x[i][j][index] = 1
+                        break
+                    index += 1
+                if self._additional_letter_attributes:
+                    if self._is_vowel(word, j, vowels):
+                        x[i][j][len(dictionary)] = 1
+                    else:
+                        x[i][j][len(dictionary) + 1] = 1
+                        if c in voiced_consonants:
+                            x[i][j][len(dictionary) + 2] = 1
+                        else:
+                            x[i][j][len(dictionary) + 3] = 1
+                            if c in resonant_silent_consonants:
+                                x[i][j][len(dictionary) + 4] = 1
+                            elif c in nonresonant_silent_consonants:
+                                x[i][j][len(dictionary) + 5] = 1
+                j += 1
+            i += 1
+        return x
+
+    def _x_syllable_input(self, content, dictionary, max_num_vowels, vowels):
+        x = np.zeros((len(content), max_num_vowels), dtype=int)
+
+        i = 0
+        for el in content:
+            j = 0
+            syllables = self._create_syllables(el[0], vowels)
+            if self._reverse_inputs:
+                syllables = syllables[::-1]
+            for syllable in syllables:
+                index = dictionary.index(syllable)
+                x[i][j] = index
+                j += 1
+            i += 1
+        return x
+
+    def _y_output(self, content, max_num_vowels, vowels, accentuated_vowels):
+        y = np.zeros((len(content), max_num_vowels))
+        i = 0
+
+        for el in content:
+            word = el[3]
+            if self._reverse_inputs:
+                word = word[::-1]
+
+            j = 0
+            word_accentuations = []
+            num_vowels = 0
+            for c in list(word):
+                index = 0
+                if self._is_vowel(word, j, vowels):
+                    num_vowels += 1
+                for d in accentuated_vowels:
+                    if c == d:
+                        word_accentuations.append(num_vowels)
+                        break
+                    index += 1
+                j += 1
+            if len(word_accentuations) > 0:
+                for word_accentuation in word_accentuations:
+                    y[i][word_accentuation] = 1
+            else:
+                y[i][0] = 1
+            i += 1
+        return y
+
+    # Generate each y as an array of 11 numbers (with possible values between 0 and 1)
+    def _generate_x_and_y(self, dictionary, max_word, max_num_vowels, content, vowels, accentuated_vowels, feature_dictionary,
+                          shuffle_vector_location):
+        if self._input_type == 'l':
+            x = self._x_letter_input(content, dictionary, max_word, vowels)
+        elif self._input_type == 's' or self._input_type == 'ls':
+            x = self._x_syllable_input(content, dictionary, max_num_vowels, vowels)
+        else:
+            raise ValueError('No input_type provided. It could be \'l\', \'s\' or \'ls\'.')
+        y = self._y_output(content, max_num_vowels, vowels, accentuated_vowels)
+
+        print('CREATING OTHER FEATURES...')
+        x_other_features = self._create_x_features(content, feature_dictionary)
+        print('OTHER FEATURES CREATED!')
+
+        if self._shuffle_all_inputs:
+            print('SHUFFELING INPUTS...')
+            x, x_other_features, y = self._shuffle_inputs(x, x_other_features, y, shuffle_vector_location)
+            print('INPUTS SHUFFELED!')
+        return x, x_other_features, y
+
+    def _create_syllables_dictionary(self, content, vowels):
+        dictionary = []
+        for el in content:
+            syllables = self._create_syllables(el[0], vowels)
+            for syllable in syllables:
+                if syllable not in dictionary:
+                    dictionary.append(syllable)
+        dictionary.append('')
+        return sorted(dictionary)
+
+    def _create_syllables(self, word, vowels):
+        word_list = list(word)
+        consonants = []
+        syllables = []
+        for i in range(len(word_list)):
+            if self._is_vowel(word_list, i, vowels):
+                if syllables == []:
+                    consonants.append(word_list[i])
+                    syllables.append(''.join(consonants))
                 else:
-                    y.append(0)
+                    left_consonants, right_consonants = self._split_consonants(consonants)
+                    syllables[-1] += ''.join(left_consonants)
+                    right_consonants.append(word_list[i])
+                    syllables.append(''.join(right_consonants))
+                consonants = []
+            else:
+                consonants.append(word_list[i])
+        if len(syllables) < 1:
+            return word
+        syllables[-1] += ''.join(consonants)
 
-                if current_part_generation * part_len <= i:
-                    print('Saving part '+ str(current_part_generation))
-                    data_X[old_num_all_vowels:num_all_vowels + 1] = np.array(X)
-                    data_y[old_num_all_vowels:num_all_vowels + 1] = np.array(y)
-                    data_X_pure[old_num_all_vowels:num_all_vowels + 1] = np.array(X_pure)
+        return syllables
+
+    def _is_vowel(self, word_list, position, vowels):
+        if word_list[position] in vowels:
+            return True
+        if (word_list[position] == u'r' or word_list[position] == u'R') and (position - 1 < 0 or word_list[position - 1] not in vowels) and (
+                            position + 1 >= len(word_list) or word_list[position + 1] not in vowels):
+            return True
+        return False
+
+    def _split_consonants(self, consonants):
+        voiced_consonants = self._get_voiced_consonants()
+        resonant_silent_consonants = self._get_resonant_silent_consonants()
+        unresonant_silent_consonants = self._get_nonresonant_silent_consonants()
+        if len(consonants) == 0:
+            return [''], ['']
+        elif len(consonants) == 1:
+            return [''], consonants
+        else:
+            split_options = []
+            for i in range(len(consonants) - 1):
+                if consonants[i] == '-' or consonants[i] == '_':
+                    split_options.append([i, -1])
+                elif consonants[i] == consonants[i + 1]:
+                    split_options.append([i, 0])
+                elif consonants[i] in voiced_consonants:
+                    if consonants[i + 1] in resonant_silent_consonants or consonants[i + 1] in unresonant_silent_consonants:
+                        split_options.append([i, 2])
+                elif consonants[i] in resonant_silent_consonants:
+                    if consonants[i + 1] in resonant_silent_consonants:
+                        split_options.append([i, 1])
+                    elif consonants[i + 1] in unresonant_silent_consonants:
+                        split_options.append([i, 3])
+                elif consonants[i] in unresonant_silent_consonants:
+                    if consonants[i + 1] in resonant_silent_consonants:
+                        split_options.append([i, 4])
+                else:
+                    print(consonants)
+                    print('UNRECOGNIZED LETTERS!')
+            if split_options == []:
+                return [''], consonants
+            else:
+                split = min(split_options, key=lambda x: x[1])
+                return consonants[:split[0] + 1], consonants[split[0] + 1:]
+
+    def _create_x_features(self, content, feature_dictionary):
+        content = content
+        x_other_features = []
+        for el in content:
+            x_el_other_features = []
+            converted_el = ''.join(self._convert_to_multext_east_v4(list(el[2]), feature_dictionary))
+            for feature in feature_dictionary:
+                if converted_el[0] == feature[1]:
+                    x_el_other_features.append(1)
+                    for i in range(2, len(feature)):
+                        for j in range(len(feature[i])):
+                            if i - 1 < len(converted_el) and feature[i][j] == converted_el[i - 1]:
+                                x_el_other_features.append(1)
+                            else:
+                                x_el_other_features.append(0)
+                else:
+                    x_el_other_features.extend([0] * feature[0])
+            x_other_features.append(x_el_other_features)
+        return np.array(x_other_features)
+
+    def _shuffle_inputs(self, x, x_other_features, y, shuffle_vector_location):
+        s = self._load_shuffle_vector(shuffle_vector_location, x.shape[0])
+        x = x[s]
+        y = y[s]
+        x_other_features = x_other_features[s]
+        return x, x_other_features, y
+
+    # functions for saving, loading and shuffling whole arrays to ram
+    @staticmethod
+    def _save_inputs(file_name, x, x_other_features, y):
+        h5f = h5py.File(file_name, 'w')
+        a_dict = dict(X=x, X_other_features=x_other_features, y=y)
+        for k, v in a_dict.items():
+            h5f.create_dataset(k, data=v)
+        h5f.close()
+
+    @staticmethod
+    def _load_inputs(file_name):
+        h5f = h5py.File(file_name, 'r')
+        x = h5f['X'][:]
+        y = h5f['y'][:]
+        x_other_features = h5f['X_other_features'][:]
+        h5f.close()
+        return x, x_other_features, y
+
+    def _load_shuffle_vector(self, file_path, length=0):
+        if os.path.exists(file_path):
+            h5f = h5py.File(file_path, 'r')
+            shuffle_vector = h5f['shuffle_vector'][:]
+            h5f.close()
+        else:
+            if self._allow_shuffle_vector_generation:
+                shuffle_vector = self._create_and_save_shuffle_vector(file_path, length)
+            else:
+                raise ValueError('Shuffle vector on path: \'{}\' does not exist! Either generate new vector (with initializing new Data object with '
+                                 'parameter allow_shuffle_vector_generation=True or paste one that is already generated!'.format(file_path))
+        return shuffle_vector
+
+    @staticmethod
+    def _convert_to_multext_east_v4(old_features, feature_dictionary):
+        new_features = ['-'] * 9
+        new_features[:len(old_features)] = old_features
+        if old_features[0] == 'A':
+            if old_features[1] == 'f' or old_features[1] == 'o':
+                new_features[1] = 'g'
+            return new_features[:len(feature_dictionary[0]) - 1]
+        if old_features[0] == 'C':
+            return new_features[:len(feature_dictionary[1]) - 1]
+        if old_features[0] == 'I':
+            return new_features[:len(feature_dictionary[2]) - 1]
+        if old_features[0] == 'M':
+            new_features[2:6] = old_features[1:5]
+            new_features[1] = old_features[5]
+            if new_features[2] == 'm':
+                new_features[2] = '-'
+            return new_features[:len(feature_dictionary[3]) - 1]
+        if old_features[0] == 'N':
+            if len(old_features) >= 7:
+                new_features[5] = old_features[7]
+            return new_features[:len(feature_dictionary[4]) - 1]
+        if old_features[0] == 'P':
+            if new_features[8] == 'n':
+                new_features[8] = 'b'
+            return new_features[:len(feature_dictionary[5]) - 1]
+        if old_features[0] == 'Q':
+            return new_features[:len(feature_dictionary[6]) - 1]
+        if old_features[0] == 'R':
+            return new_features[:len(feature_dictionary[7]) - 1]
+        if old_features[0] == 'S':
+            if len(old_features) == 4:
+                new_features[1] = old_features[3]
+            else:
+                new_features[1] = '-'
+            return new_features[:len(feature_dictionary[8]) - 1]
+        if old_features[0] == 'V':
+            if old_features[1] == 'o' or old_features[1] == 'c':
+                new_features[1] = 'm'
+            new_features[3] = old_features[2]
+            new_features[2] = '-'
+            if old_features[2] == 'i':
+                new_features[3] = 'r'
+            if len(old_features) > 3 and old_features[3] == 'p':
+                new_features[3] = 'r'
+            elif len(old_features) > 3 and old_features[3] == 'f':
+                new_features[3] = 'f'
+            if len(old_features) >= 9:
+                new_features[7] = old_features[8]
+            else:
+                new_features[7] = '-'
+            return new_features[:len(feature_dictionary[9]) - 1]
+        return ''
+
+    # generator for inputs for tracking of data fitting
+    def generator(self, data_type, batch_size, x=None, x_other_features_validate=None, y_validate=None, content_name='SlovarIJS_BESEDE_utf8.lex',
+                  content_location='../../../data/'):
+        content_path = '{}{}'.format(content_location, content_name)
+        if data_type == 'train':
+            return self._generator_instance(self.x_train, self.x_other_features_train, self.y_train, batch_size, content_path)
+        elif data_type == 'test':
+            return self._generator_instance(self.x_test, self.x_other_features_test, self.y_test, batch_size, content_path)
+        elif data_type == 'validate':
+            return self._generator_instance(self.x_validate, self.x_other_features_validate, self.y_validate, batch_size, content_path)
+        else:
+            return self._generator_instance(x, x_other_features_validate, y_validate, batch_size)
+
+            # if self._input_type
+
+    def _generator_instance(self, orig_x, orig_x_additional, orig_y, batch_size, content_path):
+        if self._input_type == 'l':
+            return self._letter_generator(orig_x, orig_x_additional, orig_y, batch_size)
+        elif self._input_type == 's':
+            content = self._read_content(content_path)
+            dictionary, max_word, max_num_vowels, vowels, accented_vowels = self._create_dict(content)
+            syllable_dictionary = self._create_syllables_dictionary(content, vowels)
+            eye = np.eye(len(syllable_dictionary), dtype=int)
+            return self._syllable_generator(orig_x, orig_x_additional, orig_y, batch_size, eye)
+        elif self._input_type == 'sl':
+            content = self._read_content(content_path)
+            dictionary, max_word, max_num_vowels, vowels, accented_vowels = self._create_dict(content)
+            syllable_dictionary = self._create_syllables_dictionary(content, vowels)
+            max_syllable = self._get_max_syllable(syllable_dictionary)
+            syllable_letters_translator = self._create_syllable_letters_translator(max_syllable, syllable_dictionary, dictionary, vowels)
+            return self._syllable_generator(orig_x, orig_x_additional, orig_y, batch_size, syllable_letters_translator)
+
+    # generator for inputs for tracking of data fitting
+    def _letter_generator(self, orig_x, orig_x_additional, orig_y, batch_size):
+        size = orig_x.shape[0]
+        while 1:
+            loc = 0
+            while loc < size:
+                if loc + batch_size >= size:
+                    yield ([orig_x[loc:size], orig_x_additional[loc:size]], orig_y[loc:size])
+                else:
+                    yield ([orig_x[loc:loc + batch_size], orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+                loc += batch_size
+
+    # generator for inputs for tracking of data fitting
+    def _syllable_generator(self, orig_x, orig_x_additional, orig_y, batch_size, translator):
+        size = orig_x.shape[0]
+        while 1:
+            loc = 0
+            while loc < size:
+                if loc + batch_size >= size:
+                    gen_orig_x = translator[orig_x[loc:size]]
+                    yield ([gen_orig_x, orig_x_additional[loc:size]], orig_y[loc:size])
+                else:
+                    gen_orig_x = translator[orig_x[loc:loc + batch_size]]
+                    yield ([gen_orig_x, orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+                loc += batch_size
+
+    def _get_max_syllable(self, syllable_dictionary):
+        max_len = 0
+        for el in syllable_dictionary:
+            if len(el) > max_len:
+                max_len = len(el)
+        return max_len
+
+    def _create_syllable_letters_translator(self, max_syllable, syllable_dictionary, dictionary, vowels, aditional_letter_attributes=True):
+        if aditional_letter_attributes:
+            voiced_consonants = self._get_voiced_consonants()
+            resonant_silent_consonants = self._get_resonant_silent_consonants()
+            nonresonant_silent_consonants = self._get_nonresonant_silent_consonants()
+
+        syllable_letters_translator = []
+        for syllable in syllable_dictionary:
+            di_syllable = []
+            for let in range(max_syllable):
+                # di_let = []
+                for a in dictionary:
+                    if let < len(syllable) and a == list(syllable)[let]:
+                        di_syllable.append(1)
+                    else:
+                        di_syllable.append(0)
+
+                if aditional_letter_attributes:
+                    if let >= len(syllable):
+                        di_syllable.extend([0, 0, 0, 0, 0, 0])
+                    elif self._is_vowel(list(syllable), let, vowels):
+                        di_syllable.extend([1, 0, 0, 0, 0, 0])
+                    else:
+                        # X[i][j][len(dictionary) + 1] = 1
+                        if list(syllable)[let] in voiced_consonants:
+                            # X[i][j][len(dictionary) + 2] = 1
+                            di_syllable.extend([0, 1, 1, 0, 0, 0])
+                        else:
+                            # X[i][j][len(dictionary) + 3] = 1
+                            if list(syllable)[let] in resonant_silent_consonants:
+                                # X[i][j][len(dictionary) + 4] = 1
+                                di_syllable.extend([0, 1, 0, 1, 1, 0])
+                            elif list(syllable)[let] in nonresonant_silent_consonants:
+                                # X[i][j][len(dictionary) + 5] = 1
+                                di_syllable.extend([0, 1, 0, 1, 0, 1])
+                            else:
+                                di_syllable.extend([0, 0, 0, 0, 0, 0])
+                                # di_syllable.append(di_let)
+            syllable_letters_translator.append(di_syllable)
+        syllable_letters_translator = np.array(syllable_letters_translator, dtype=int)
+        return syllable_letters_translator
+
+    @staticmethod
+    def _get_accented_vowels():
+        return [u'à', u'á', u'ä', u'é', u'ë', u'ì', u'í', u'î', u'ó', u'ô', u'ö', u'ú', u'ü']
+
+    @staticmethod
+    def _get_unaccented_vowels():
+        return [u'a', u'e', u'i', u'o', u'u']
+
+    @staticmethod
+    def _get_voiced_consonants():
+        return ['m', 'n', 'v', 'l', 'r', 'j', 'y', 'w']
+
+    @staticmethod
+    def _get_resonant_silent_consonants():
+        return ['b', 'd', 'z', 'ž', 'g']
+
+    @staticmethod
+    def _get_nonresonant_silent_consonants():
+        return ['p', 't', 's', 'š', 'č', 'k', 'f', 'h', 'c']
+
+    @staticmethod
+    def _create_feature_dictionary():
+        # old: http://nl.ijs.si/ME/Vault/V3/msd/html/
+        # new: http://nl.ijs.si/ME/V4/msd/html/
+        # changes: http://nl.ijs.si/jos/msd/html-en/msd.diffs.html
+        return [[21,
+                 'A',
+                 ['g', 's'],
+                 ['p', 'c', 's'],
+                 ['m', 'f', 'n'],
+                 ['s', 'd', 'p'],
+                 ['n', 'g', 'd', 'a', 'l', 'i'],
+                 ['-', 'n', 'y']],
+                [3, 'C', ['c', 's']],
+                [1, 'I'],
+                [21,
+                 'M',
+                 ['l'],
+                 ['-', 'c', 'o', 's'],
+                 ['m', 'f', 'n'],
+                 ['s', 'd', 'p'],
+                 ['n', 'g', 'd', 'a', 'l', 'i'],
+                 ['-', 'n', 'y']],
+                [17,
+                 'N',
+                 ['c'],
+                 ['m', 'f', 'n'],
+                 ['s', 'd', 'p'],
+                 ['n', 'g', 'd', 'a', 'l', 'i'],
+                 ['-', 'n', 'y']],
+                [40,
+                 'P',
+                 ['p', 's', 'd', 'r', 'x', 'g', 'q', 'i', 'z'],
+                 ['-', '1', '2', '3'],
+                 ['-', 'm', 'f', 'n'],
+                 ['-', 's', 'd', 'p'],
+                 ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
+                 ['-', 's', 'd', 'p'],
+                 ['-', 'm', 'f', 'n'],
+                 ['-', 'y', 'b']],
+                [1, 'Q'],
+                [5, 'R', ['g'], ['p', 'c', 's']],
+                [7, 'S', ['-', 'g', 'd', 'a', 'l', 'i']],
+                [24,
+                 'V',
+                 ['m'],
+                 ['-'],
+                 ['n', 'u', 'p', 'r', 'f', 'c'],
+                 ['-', '1', '2', '3'],
+                 ['-', 's', 'p', 'd'],
+                 ['-', 'm', 'f', 'n'],
+                 ['-', 'n', 'y']]
+                ]
+
+    # Decoders for inputs and outputs
+    @staticmethod
+    def decode_x(word_encoded, dictionary):
+        word = ''
+        for el in word_encoded:
+            i = 0
+            for num in el:
+                if num == 1:
+                    word += dictionary[i]
+                    break
+                i += 1
+        return word
+
+    @staticmethod
+    def decode_x_other_features(feature_dictionary, x_other_features):
+        final_word = []
+        for word in x_other_features:
+            final_word = []
+            i = 0
+            for z in range(len(feature_dictionary)):
+                for j in range(1, len(feature_dictionary[z])):
+                    if j == 1:
+                        if word[i] == 1:
+                            final_word.append(feature_dictionary[z][1])
+                        i += 1
+                    else:
+                        for k in range(len(feature_dictionary[z][j])):
+                            if word[i] == 1:
+                                final_word.append(feature_dictionary[z][j][k])
+                            i += 1
+            print(u''.join(final_word))
+        return u''.join(final_word)
+
+    @staticmethod
+    def decode_y(y):
+        i = 0
+        res = []
+        for el in y:
+            if el >= 0.5:
+                res.append(i)
+            i += 1
+        return res
 
 
-                    old_num_all_vowels = num_all_vowels + 1
 
+# def count_vowels(content, vowels):
+#     num_all_vowels = 0
+#     for el in content:
+#         for m in range(len(el[0])):
+#             if is_vowel(list(el[0]), m, vowels):
+#                 num_all_vowels += 1
+#     return num_all_vowels
 
-                    X_pure = []
-                    X = []
-                    y = []
-                    current_part_generation += 1
-                num_all_vowels += 1
-        if i%10000 == 0:
-            print(i)
-        i += 1
-
-    print('Saving part ' + str(current_part_generation))
-
-    data_X[old_num_all_vowels:num_all_vowels] = np.array(X)
-    data_y[old_num_all_vowels:num_all_vowels] = np.array(y)
-    data_X_pure[old_num_all_vowels:num_all_vowels] = np.array(X_pure)
-
-    h5f.close()
 
 
 # metric for calculation of correct results
@@ -513,769 +704,3 @@ def generate_X_and_y_RAM_efficient(name, split_number):
 #                           [ 0.,  0.92,  0.,  0.51,  0.,  0.,  0.,  0.,  0.,  0.,  0.]])).eval())
 def actual_accuracy(y_true, y_pred):
     return K.mean(K.equal(K.mean(K.equal(K.round(y_true), K.round(y_pred)), axis=-1), 1.0))
-
-
-# generator for inputs for tracking of data fitting
-def generate_fake_epoch(orig_X, orig_X_additional, orig_y, batch_size):
-    size = orig_X.shape[0]
-    while 1:
-        loc = 0
-        while loc < size:
-            if loc + batch_size >= size:
-                yield([orig_X[loc:size], orig_X_additional[loc:size]], orig_y[loc:size])
-            else:
-                yield([orig_X[loc:loc + batch_size], orig_X_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
-            loc += batch_size
-
-
-# generator for inputs
-def generate_arrays_from_file(path, batch_size):
-    h5f = h5py.File(path, 'r')
-
-    X = h5f['X'][:]
-    y = h5f['y'][:]
-    X_pure = h5f['X_pure'][:]
-    yield (X, y, X_pure)
-    # while 1:
-    #     f = open(path)
-    #     for line in f:
-    #         # create Numpy arrays of input data
-    #         # and labels, from each line in the file
-    #         x, y = process_line(line)
-    #         yield (x, y)
-    #         # f.close()
-
-    h5f.close()
-
-
-# shuffle inputs for generator
-def shuffle_full_vowel_inputs(name, orderd_name, parts):
-    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-    num_all_vowels = count_vowels(content, vowels)
-    # num_all_vowels = 12
-
-
-    s = np.arange(num_all_vowels)
-    np.random.shuffle(s)
-
-    h5f = h5py.File(name, 'w')
-    data_X = h5f.create_dataset('X', (num_all_vowels, max_word, len(dictionary)),
-                                maxshape=(num_all_vowels, max_word, len(dictionary)),
-                                dtype=np.uint8)
-    data_y = h5f.create_dataset('y', (num_all_vowels,),
-                                maxshape=(num_all_vowels,),
-                                dtype=np.uint8)
-    data_X_pure = h5f.create_dataset('X_pure', (num_all_vowels,),
-                                     maxshape=(num_all_vowels,),
-                                     dtype=np.uint8)
-
-
-    gc.collect()
-
-    print('Shuffled vector loaded!')
-    section_range = [0, (num_all_vowels + 1)/parts]
-    for h in range(1, parts+1):
-        gc.collect()
-        new_X = np.zeros((section_range[1] - section_range[0], max_word, len(dictionary)))
-        new_X_pure = np.zeros(section_range[1] - section_range[0])
-        new_y = np.zeros(section_range[1] - section_range[0])
-        targeted_range = [0, (num_all_vowels + 1)/parts]
-        for i in range(1, parts+1):
-            X, y, X_pure = load_extended_inputs(orderd_name, targeted_range)
-            for j in range(X.shape[0]):
-                if s[j + targeted_range[0]] >= section_range[0] and s[j + targeted_range[0]] < section_range[1]:
-                    # print 's[j] ' + str(s[j + targeted_range[0]]) + ' section_range[0] ' + str(section_range[0]) + ' section_range[1] ' + str(section_range[1])
-                    new_X[s[j + targeted_range[0]] - section_range[0]] = X[j]
-                    new_y[s[j + targeted_range[0]] - section_range[0]] = y[j]
-                    new_X_pure[s[j + targeted_range[0]] - section_range[0]] = X_pure[j]
-            targeted_range[0] = targeted_range[1]
-            if targeted_range[1] + (num_all_vowels + 1) / parts < num_all_vowels:
-                targeted_range[1] += (num_all_vowels + 1) / parts
-            else:
-                targeted_range[1] = num_all_vowels
-            del X, y, X_pure
-        print('CREATED ' + str(h) + '. PART OF SHUFFLED MATRIX')
-        data_X[section_range[0]:section_range[1]] = new_X
-        data_y[section_range[0]:section_range[1]] = new_y
-        data_X_pure[section_range[0]:section_range[1]] = new_X_pure
-        section_range[0] = section_range[1]
-        if section_range[1] + (num_all_vowels + 1)/parts < num_all_vowels:
-            section_range[1] += (num_all_vowels + 1)/parts
-        else:
-            section_range[1] = num_all_vowels
-        del new_X, new_X_pure, new_y
-
-    h5f.close()
-
-
-# Decoders for inputs and outputs
-def decode_X_features(feature_dictionary, X_other_features):
-    final_word = []
-    for word in X_other_features:
-        final_word = []
-        i = 0
-        for z in range(len(feature_dictionary)):
-            for j in range(1, len(feature_dictionary[z])):
-                if j == 1:
-                    if word[i] == 1:
-                        final_word.append(feature_dictionary[z][1])
-                    i += 1
-                else:
-                    for k in range(len(feature_dictionary[z][j])):
-                        if word[i] == 1:
-                            final_word.append(feature_dictionary[z][j][k])
-                        i += 1
-        print(u''.join(final_word))
-    return u''.join(final_word)
-
-
-def decode_position(y):
-    i = 0
-    res = []
-    for el in y:
-        if el >= 0.5:
-            res.append(i)
-        i += 1
-    return res
-
-
-def old_decode_position(y, max_num_vowels):
-    max_el = 0
-    i = 0
-    pos = -1
-    for el in y:
-        if el > max_el:
-            max_el = el
-            pos = i
-        i += 1
-    return [pos % max_num_vowels, pos / max_num_vowels]
-
-
-def decode_input(word_encoded, dictionary):
-    word = ''
-    for el in word_encoded:
-        i = 0
-        for num in el:
-            if num == 1:
-                word += dictionary[i]
-                break
-            i += 1
-    return word
-
-
-def decode_position_from_number(y, max_num_vowels):
-    return [y % max_num_vowels, y / max_num_vowels]
-    
-
-def generate_input_from_word(word, max_word, dictionary):
-    x = np.zeros(max_word*len(dictionary))
-    j = 0
-    for c in list(word):
-        index = 0
-        for d in dictionary:
-            if c == d:
-                x[index + j * max_word] = 1
-                break
-            index += 1
-        j += 1
-    return x
-
-
-def generate_input_per_vowel_from_word(word, max_word, dictionary, vowels):
-    X_el = np.zeros((max_word, len(dictionary)))
-    j = 0
-    for c in list(word):
-        index = 0
-        for d in dictionary:
-            if c == d:
-                X_el[j][index] = 1
-                break
-            index += 1
-        j += 1
-
-    X = []
-    X_pure = []
-    vowel_i = 0
-    for i in range(len(word)):
-        if is_vowel(list(word), i, vowels):
-            X.append(X_el)
-            X_pure.append(vowel_i)
-            vowel_i += 1
-    return np.array(X), np.array(X_pure)
-
-
-def decode_position_from_vowel_to_final_number(y):
-    res = []
-    for i in range(len(y)):
-        if y[i][0] > 0.5:
-            res.append(i + 1)
-    return res
-
-
-# split content so that there is no overfitting
-def split_content(content, test_and_validation_ratio, content_shuffle_vector_location, validation_ratio=0.5):
-    expanded_content = [el[1] if el[1] != '=' else el[0] for el in content]
-    # print(len(content))
-    unique_content = sorted(set(expanded_content))
-
-    if os.path.exists(content_shuffle_vector_location):
-        s = load_shuffle_vector(content_shuffle_vector_location)
-    else:
-        s = np.arange(len(unique_content))
-        np.random.shuffle(s)
-        create_and_save_shuffle_vector(content_shuffle_vector_location, s)
-
-    split_num = math.floor(len(unique_content) * test_and_validation_ratio)
-    validation_num = math.floor(split_num * validation_ratio)
-    shuffled_unique_train_content = [unique_content[i] for i in range(len(s)) if s[i] >= split_num]
-    shuffled_unique_train_content_set = set(shuffled_unique_train_content)
-
-    shuffled_unique_test_content = [unique_content[i] for i in range(len(s)) if split_num > s[i] >= validation_num]
-    shuffled_unique_test_content_set = set(shuffled_unique_test_content)
-
-    shuffled_unique_validate_content = [unique_content[i] for i in range(len(s)) if s[i] < validation_num]
-    shuffled_unique_validate_content_set = set(shuffled_unique_validate_content)
-
-    train_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_train_content_set]
-    test_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_test_content_set]
-    validate_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_validate_content_set]
-    return train_content, test_content, validate_content
-
-
-# split content so that there is no overfitting with out split of validation and test data
-def old_split_content(content, ratio):
-    expanded_content = [el[1] if el[1] != '=' else el[0] for el in content]
-    # print(len(content))
-    unique_content = sorted(set(expanded_content))
-
-    s = np.arange(len(unique_content))
-    np.random.shuffle(s)
-
-    split_num = math.floor(len(unique_content) * ratio)
-    shuffled_unique_train_content = [unique_content[i] for i in range(len(s)) if s[i] >= split_num]
-
-    shuffled_unique_train_content_set = set(shuffled_unique_train_content)
-    shuffled_unique_validate_content = [unique_content[i] for i in range(len(s)) if s[i] < split_num]
-
-    shuffled_unique_validate_content_set = set(shuffled_unique_validate_content)
-
-    train_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_train_content_set]
-    validate_content = [content[i] for i in range(len(content)) if expanded_content[i] in shuffled_unique_validate_content_set]
-    return train_content, validate_content
-
-
-# X features that use MULTEX v3 as their encoding
-def create_old_feature_dictionary(content):
-    additional_data = [el[2] for el in content]
-    possible_variants = sorted(set(additional_data))
-    categories = sorted(set([el[0] for el in possible_variants]))
-
-    feature_dictionary = []
-    for category in categories:
-        category_features = [1, category]
-        examples_per_category = [el for el in possible_variants if el[0] == category]
-        longest_element = max(examples_per_category, key=len)
-        for i in range(1, len(longest_element)):
-            possibilities_per_el = sorted(set([el[i] for el in examples_per_category if i < len(el)]))
-            category_features[0] += len(possibilities_per_el)
-            category_features.append(possibilities_per_el)
-        feature_dictionary.append(category_features)
-    return feature_dictionary
-
-
-# X features that use MULTEX v3 as their encoding
-def create_old_X_features(content, feature_dictionary):
-    content = content
-    X_other_features = []
-    for el in content:
-        X_el_other_features = []
-        for feature in feature_dictionary:
-            if el[2][0] == feature[1]:
-                X_el_other_features.append(1)
-                for i in range(2, len(feature)):
-                    for j in range(len(feature[i])):
-                        if i-1 < len(el[2]) and feature[i][j] == el[2][i-1]:
-                            X_el_other_features.append(1)
-                        else:
-                            X_el_other_features.append(0)
-            else:
-                X_el_other_features.extend([0] * feature[0])
-        X_other_features.append(X_el_other_features)
-    return np.array(X_other_features)
-
-
-def convert_to_MULTEXT_east_v4(old_features, feature_dictionary):
-    new_features = ['-'] * 9
-    new_features[:len(old_features)] = old_features
-    if old_features[0] == 'A':
-        if old_features[1] == 'f' or old_features[1] == 'o':
-            new_features[1] = 'g'
-        return new_features[:len(feature_dictionary[0]) - 1]
-    if old_features[0] == 'C':
-        return new_features[:len(feature_dictionary[1]) - 1]
-    if old_features[0] == 'I':
-        return new_features[:len(feature_dictionary[2]) - 1]
-    if old_features[0] == 'M':
-        new_features[2:6] = old_features[1:5]
-        new_features[1] = old_features[5]
-        if new_features[2] == 'm':
-            new_features[2] = '-'
-        return new_features[:len(feature_dictionary[3]) - 1]
-    if old_features[0] == 'N':
-        if len(old_features) >= 7:
-            new_features[5] = old_features[7]
-        return new_features[:len(feature_dictionary[4]) - 1]
-    if old_features[0] == 'P':
-        if new_features[8] == 'n':
-            new_features[8] = 'b'
-        return new_features[:len(feature_dictionary[5]) - 1]
-    if old_features[0] == 'Q':
-        return new_features[:len(feature_dictionary[6]) - 1]
-    if old_features[0] == 'R':
-        return new_features[:len(feature_dictionary[7]) - 1]
-    if old_features[0] == 'S':
-        if len(old_features) == 4:
-            new_features[1] = old_features[3]
-        else:
-            new_features[1] = '-'
-        return new_features[:len(feature_dictionary[8]) - 1]
-    if old_features[0] == 'V':
-        if old_features[1] == 'o' or old_features[1] == 'c':
-            new_features[1] = 'm'
-        new_features[3] = old_features[2]
-        new_features[2] = '-'
-        if old_features[2] == 'i':
-            new_features[3] = 'r'
-        if len(old_features) > 3 and old_features[3] == 'p':
-            new_features[3] = 'r'
-        elif len(old_features) > 3 and old_features[3] == 'f':
-            new_features[3] = 'f'
-        if len(old_features) >= 9:
-            new_features[7] = old_features[8]
-        else:
-            new_features[7] = '-'
-        return new_features[:len(feature_dictionary[9]) - 1]
-    return ''
-
-
-def create_X_features(content, feature_dictionary):
-    content = content
-    X_other_features = []
-    for el in content:
-        X_el_other_features = []
-        converted_el = ''.join(convert_to_MULTEXT_east_v4(list(el[2]), feature_dictionary))
-#         converted_el = el[2]
-        for feature in feature_dictionary:
-            if converted_el[0] == feature[1]:
-                X_el_other_features.append(1)
-                for i in range(2, len(feature)):
-                    for j in range(len(feature[i])):
-                        if i-1 < len(converted_el) and feature[i][j] == converted_el[i-1]:
-                            X_el_other_features.append(1)
-                        else:
-                            X_el_other_features.append(0)
-            else:
-                X_el_other_features.extend([0] * feature[0])
-        X_other_features.append(X_el_other_features)
-    return np.array(X_other_features)
-
-
-def create_feature_dictionary():
-    # old: http://nl.ijs.si/ME/Vault/V3/msd/html/
-    # new: http://nl.ijs.si/ME/V4/msd/html/
-    # changes: http://nl.ijs.si/jos/msd/html-en/msd.diffs.html
-
-    return [[21,
-          'A',
-          ['g', 's'],
-          ['p', 'c', 's'],
-          ['m', 'f', 'n'],
-          ['s', 'd', 'p'],
-          ['n', 'g', 'd', 'a', 'l', 'i'],
-          ['-', 'n', 'y']],
-         [3, 'C', ['c', 's']],
-         [1, 'I'],
-         [21,
-          'M',
-          ['l'],
-          ['-', 'c', 'o', 's'],
-          ['m', 'f', 'n'],
-          ['s', 'd', 'p'],
-          ['n', 'g', 'd', 'a', 'l', 'i'],
-          ['-', 'n', 'y']],
-         [17,
-          'N',
-          ['c'],
-          ['m', 'f', 'n'],
-          ['s', 'd', 'p'],
-          ['n', 'g', 'd', 'a', 'l', 'i'],
-          ['-', 'n', 'y']],
-         [40,
-          'P',
-          ['p', 's', 'd', 'r', 'x', 'g', 'q', 'i', 'z'],
-          ['-', '1', '2', '3'],
-          ['-', 'm', 'f', 'n'],
-          ['-', 's', 'd', 'p'],
-          ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
-          ['-', 's', 'd', 'p'],
-          ['-', 'm', 'f', 'n'],
-          ['-', 'y', 'b']],
-         [1, 'Q'],
-         [5, 'R', ['g'], ['p', 'c', 's']],
-         [7, 'S', ['-', 'g', 'd', 'a', 'l', 'i']],
-         [24,
-          'V',
-          ['m'],
-          ['-'],
-          ['n', 'u', 'p', 'r', 'f', 'c'],
-          ['-', '1', '2', '3'],
-          ['-', 's', 'p', 'd'],
-          ['-', 'm', 'f', 'n'],
-          ['-', 'n', 'y']]
-        ]
-
-
-def complete_feature_dict():
-    # old: http://nl.ijs.si/ME/Vault/V3/msd/html/
-    # new: http://nl.ijs.si/ME/V4/msd/html/
-    # changes: http://nl.ijs.si/jos/msd/html-en/msd.diffs.html
-    return [[27,
-             'A',
-             ['-', 'g', 's', 'p'],
-             ['-', 'p', 'c', 's'],
-             ['-', 'm', 'f', 'n'],
-             ['-', 's', 'd', 'p'],
-             ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
-             ['-', 'n', 'y']],
-            [4, 'C', ['-', 'c', 's']],
-            [1, 'I'],
-            [28,
-             'M',
-             ['-', 'd', 'r', 'l'],
-             ['-', 'c', 'o', 'p', 's'],
-             ['-', 'm', 'f', 'n'],
-             ['-', 's', 'd', 'p'],
-             ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
-             ['-', 'n', 'y']],
-            [22,
-             'N',
-             ['-', 'c', 'p'],
-             ['-', 'm', 'f', 'n'],
-             ['-', 's', 'd', 'p'],
-             ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
-             ['-', 'n', 'y']],
-            [41,
-             'P',
-             ['-', 'p', 's', 'd', 'r', 'x', 'g', 'q', 'i', 'z'],
-             ['-', '1', '2', '3'],
-             ['-', 'm', 'f', 'n'],
-             ['-', 's', 'd', 'p'],
-             ['-', 'n', 'g', 'd', 'a', 'l', 'i'],
-             ['-', 's', 'd', 'p'],
-             ['-', 'm', 'f', 'n'],
-             ['-', 'y', 'b']],
-            [1, 'Q'],
-            [8, 'R', ['-', 'g', 'r'], ['-', 'p', 'c', 's']],
-            [8, 'S', ['-', 'n', 'g', 'd', 'a', 'l', 'i']],
-            [31,
-             'V',
-             ['-', 'm', 'a'],
-             ['-', 'e', 'p', 'b'],
-             ['-', 'n', 'u', 'p', 'r', 'f', 'c', 'm'],
-             ['-', '1', '2', '3'],
-             ['-', 's', 'p', 'd'],
-             ['-', 'm', 'f', 'n'],
-             ['-', 'n', 'y']]
-            ]
-
-
-def check_feature_letter_usage(X_other_features, feature_dictionary):
-    case_numbers = np.sum(X_other_features, axis=0)
-    arrays = [1] * 164
-    letters = list(decode_X_features(feature_dictionary, [arrays]))
-    print(sum(case_numbers))
-    for i in range(len(letters)):
-        print(letters[i] + ': ' + str(case_numbers[i]))
-
-
-def dict_occurances_in_dataset_rate(content):
-    feature_dictionary = complete_feature_dict()
-    # case = 3107
-    # print(content[case])
-    # print(feature_dictionary)
-    # X_other_features = create_X_features([content[case]], feature_dictionary)
-    X_other_features = create_X_features(content, feature_dictionary)
-    # print(X_other_features)
-    # print(decode_X_features(feature_dictionary, X_other_features))
-    X_other_features = np.array(X_other_features)
-
-    case_numbers = np.sum(X_other_features, axis=0)
-    print(case_numbers)
-
-def get_voiced_consonants():
-    return ['m', 'n', 'v', 'l', 'r', 'j', 'y', 'w']
-
-def get_resonant_silent_consonants():
-    return ['b', 'd', 'z', 'ž', 'g']
-
-def get_unresonant_silent_consonants():
-    return ['p', 't', 's', 'š', 'č', 'k', 'f', 'h', 'c']
-
-
-def split_consonants(consonants):
-    voiced_consonants = get_voiced_consonants()
-    resonant_silent_consonants = get_resonant_silent_consonants()
-    unresonant_silent_consonants = get_unresonant_silent_consonants()
-    if len(consonants) == 0:
-        return [''], ['']
-    elif len(consonants) == 1:
-        return [''], consonants
-    else:
-        split_options = []
-        for i in range(len(consonants)-1):
-            if consonants[i] == '-' or consonants[i] == '_':
-                split_options.append([i, -1])
-            elif consonants[i] == consonants[i+1]:
-                split_options.append([i, 0])
-            elif consonants[i] in voiced_consonants:
-                if consonants[i+1] in resonant_silent_consonants or consonants[i+1] in unresonant_silent_consonants:
-                    split_options.append([i, 2])
-            elif consonants[i] in resonant_silent_consonants:
-                if consonants[i+1] in resonant_silent_consonants:
-                    split_options.append([i, 1])
-                elif consonants[i+1] in unresonant_silent_consonants:
-                    split_options.append([i, 3])
-            elif consonants[i] in unresonant_silent_consonants:
-                if consonants[i+1] in resonant_silent_consonants:
-                    split_options.append([i, 4])
-            else:
-                print(consonants)
-                print('UNRECOGNIZED LETTERS!')
-        if split_options == []:
-            return [''], consonants
-        else:
-            split = min(split_options, key=lambda x:x[1])
-            return consonants[:split[0]+1], consonants[split[0]+1:]
-    # print(consonants)
-    return [''], ['']
-
-
-def create_syllables(word, vowels):
-    word_list = list(word)
-    consonants = []
-    syllables = []
-    for i in range(len(word_list)):
-        if is_vowel(word_list, i, vowels):
-            if syllables == []:
-                consonants.append(word_list[i])
-                syllables.append(''.join(consonants))
-            else:
-                left_consonants, right_consonants = split_consonants(consonants)
-                syllables[-1] += ''.join(left_consonants)
-                right_consonants.append(word_list[i])
-                syllables.append(''.join(right_consonants))
-            consonants = []
-        else:
-            consonants.append(word_list[i])
-    if len(syllables) < 1:
-        return word
-    syllables[-1] += ''.join(consonants)
-
-    return syllables
-
-
-def create_syllables_dictionary(content, vowels):
-    dictionary = []
-    for el in content:
-        syllables = create_syllables(el[0], vowels)
-        for syllable in syllables:
-            if syllable not in dictionary:
-                dictionary.append(syllable)
-    dictionary.append('')
-    return sorted(dictionary)
-
-
-def generate_syllable_inputs(content_shuffle_vector_location, shuffle_vector_location):
-    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-    train_content, test_content, validate_content = split_content(content, 0.2, content_shuffle_vector_location)
-    feature_dictionary = create_feature_dictionary()
-    print('CREATING SYLLABLE DICTIONARY...')
-    syllable_dictionary = create_syllables_dictionary(content, vowels)
-    print('CREATION SUCCESSFUL!')
-
-    # Generate X and y
-    print('GENERATING X AND y...')
-    X_train, X_other_features_train, y_train = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, train_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_train.h5')
-    X_test, X_other_features_test, y_test = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, test_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_test.h5')
-    X_validate, X_other_features_validate, y_validate = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, validate_content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location + '_validate.h5')
-    print('GENERATION SUCCESSFUL!')
-    return X_train, X_other_features_train, y_train, X_test, X_other_features_test, y_test, X_validate, X_other_features_validate, y_validate
-
-
-# Generate each y as an array of 11 numbers (with possible values between 0 and 1)
-def generate_syllable_X_and_y(dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels, feature_dictionary, shuffle_vector_location, shuffle=True):
-    y = np.zeros((len(content), max_num_vowels))
-    X = np.zeros((len(content), max_num_vowels), dtype=int)
-    # X = []
-    print('CREATING OTHER FEATURES...')
-    X_other_features = create_X_features(content, feature_dictionary)
-    print('OTHER FEATURES CREATED!')
-
-    i = 0
-    for el in content:
-        j = 0
-        syllables = create_syllables(el[0], vowels)
-        # X_el = [''] * max_num_vowels
-        for syllable in syllables:
-
-            index = dictionary.index(syllable)
-            X[i][j] = index
-            # X[i][j][index] = 1
-            j += 1
-        # X.append(X_el)
-        j = 0
-        word_accetuations = []
-        num_vowels = 0
-        for c in list(el[3]):
-            index = 0
-            if is_vowel(el[3], j, vowels):
-                num_vowels += 1
-            for d in accetuated_vowels:
-                if c == d:
-                    word_accetuations.append(num_vowels)
-                    break
-                index += 1
-            j += 1
-        if len(word_accetuations) > 0:
-            y_value = 1/len(word_accetuations)
-            for el in word_accetuations:
-                # y[i][el] = y_value
-                y[i][el] = 1
-        else:
-            y[i][0] = 1
-        # y[i][generate_presentable_y(word_accetuations, list(el[3]), max_num_vowels)] = 1
-        i += 1
-    # print(len(X))
-    # print(X[0])
-    # X = np.array(X)
-    # print(X.shape)
-    # print(X[0])
-    # print(len(X))
-    if shuffle:
-        print('SHUFFELING INPUTS...')
-        X, y, X_other_features = shuffle_inputs(X, y, shuffle_vector_location, X_pure=X_other_features)
-        print('INPUTS SHUFFELED!')
-    return X, X_other_features, y
-
-
-# generator for inputs for tracking of data fitting
-def generate_fake_epoch_syllables(orig_X, orig_X_additional, orig_y, batch_size, dictionary_size=5168):
-    size = orig_X.shape[0]
-    eye = np.eye(dictionary_size, dtype=int)
-    while 1:
-        loc = 0
-        while loc < size:
-            if loc + batch_size >= size:
-                # [eye[i] for i in range(size-loc)]
-                # gen_orig_X = eye[orig_X[loc:size]]
-                # gen_orig_X = [eye[i] for i in range(size-loc)]
-                gen_orig_X = eye[orig_X[loc:size]]
-                yield([gen_orig_X, orig_X_additional[loc:size]], orig_y[loc:size])
-            else:
-                gen_orig_X = eye[orig_X[loc:loc + batch_size]]
-                yield([gen_orig_X, orig_X_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
-            loc += batch_size
-
-
-def get_max_syllable(syllable_dictionary):
-    max_len = 0
-    for el in syllable_dictionary:
-        if len(el) > max_len:
-            max_len = len(el)
-    return max_len
-
-
-def generate_syllabled_letters_inputs(content_shuffle_vector_location, shuffle_vector_location):
-    dictionary, max_word, max_num_vowels, content, vowels, accetuated_vowels = create_dict()
-    train_content, test_content, validate_content = split_content(content, 0.2, content_shuffle_vector_location)
-    feature_dictionary = create_feature_dictionary()
-    print('CREATING SYLLABLE DICTIONARY...')
-    syllable_dictionary = create_syllables_dictionary(content, vowels)
-    max_syllable = get_max_syllable(syllable_dictionary)
-    print('CREATION SUCCESSFUL!')
-
-    # Generate X and y
-    print('GENERATING X AND y...')
-    X_train, X_other_features_train, y_train = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, train_content, vowels,
-                                                                         accetuated_vowels, feature_dictionary, shuffle_vector_location + '_train.h5')
-    X_test, X_other_features_test, y_test = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, test_content, vowels,
-                                                                      accetuated_vowels, feature_dictionary, shuffle_vector_location + '_test.h5')
-    X_validate, X_other_features_validate, y_validate = generate_syllable_X_and_y(syllable_dictionary, max_word, max_num_vowels, validate_content,
-                                                                                  vowels, accetuated_vowels, feature_dictionary,
-                                                                                  shuffle_vector_location + '_validate.h5')
-
-
-    print('GENERATION SUCCESSFUL!')
-    return X_train, X_other_features_train, y_train, X_test, X_other_features_test, y_test, X_validate, X_other_features_validate, y_validate
-
-
-# generator for inputs for tracking of data fitting
-def generate_fake_epoch_syllabled_letters(orig_X, orig_X_additional, orig_y, batch_size, syllable_letters_translator):
-    size = orig_X.shape[0]
-    # eye = np.eye(dictionary_size, dtype=int)
-    while 1:
-        loc = 0
-        while loc < size:
-            if loc + batch_size >= size:
-                # [eye[i] for i in range(size-loc)]
-                # gen_orig_X = eye[orig_X[loc:size]]
-                # gen_orig_X = [eye[i] for i in range(size-loc)]
-                gen_orig_X = syllable_letters_translator[orig_X[loc:size]]
-                yield([gen_orig_X, orig_X_additional[loc:size]], orig_y[loc:size])
-            else:
-                gen_orig_X = syllable_letters_translator[orig_X[loc:loc + batch_size]]
-                yield([gen_orig_X, orig_X_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
-            loc += batch_size
-
-
-def create_syllable_letters_translator(max_syllable, syllable_dictionary, dictionary, vowels, aditional_letter_attributes=True):
-    if aditional_letter_attributes:
-        voiced_consonants = get_voiced_consonants()
-        resonant_silent_consonants = get_resonant_silent_consonants()
-        unresonant_silent_consonants = get_unresonant_silent_consonants()
-
-    syllable_letters_translator = []
-    for syllable in syllable_dictionary:
-        di_syllable = []
-        for let in range(max_syllable):
-            # di_let = []
-            for a in dictionary:
-                if let < len(syllable) and a == list(syllable)[let]:
-                    di_syllable.append(1)
-                else:
-                    di_syllable.append(0)
-
-            if aditional_letter_attributes:
-                if let >= len(syllable):
-                    di_syllable.extend([0, 0, 0, 0, 0, 0])
-                elif is_vowel(list(syllable), let, vowels):
-                    di_syllable.extend([1, 0, 0, 0, 0, 0])
-                else:
-                    # X[i][j][len(dictionary) + 1] = 1
-                    if list(syllable)[let] in voiced_consonants:
-                        # X[i][j][len(dictionary) + 2] = 1
-                        di_syllable.extend([0, 1, 1, 0, 0, 0])
-                    else:
-                        # X[i][j][len(dictionary) + 3] = 1
-                        if list(syllable)[let] in resonant_silent_consonants:
-                            # X[i][j][len(dictionary) + 4] = 1
-                            di_syllable.extend([0, 1, 0, 1, 1, 0])
-                        elif list(syllable)[let] in unresonant_silent_consonants:
-                            # X[i][j][len(dictionary) + 5] = 1
-                            di_syllable.extend([0, 1, 0, 1, 0, 1])
-                        else:
-                            di_syllable.extend([0, 0, 0, 0, 0, 0])
-            # di_syllable.append(di_let)
-        syllable_letters_translator.append(di_syllable)
-    syllable_letters_translator = np.array(syllable_letters_translator, dtype=int)
-    return syllable_letters_translator
