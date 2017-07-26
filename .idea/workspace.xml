@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/luka.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/luka.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/cnn.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllables/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/cnn.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prepare_data.py" afterPath="$PROJECT_DIR$/prepare_data.py" />
     </list>
@@ -19,7 +21,7 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="208">
       <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/theano_tutorial/test.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -35,10 +37,22 @@
       <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="1024" column="33" lean-forward="false" selection-start-line="1024" selection-start-column="33" selection-end-line="1024" selection-end-column="33" />
+            <state relative-caret-position="568">
+              <caret line="482" column="74" lean-forward="true" selection-start-line="482" selection-start-column="74" selection-end-line="482" selection-end-column="74" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
+                <element signature="e#5524#5637#0" expanded="false" />
+                <element signature="e#5684#6970#0" expanded="false" />
+                <element signature="e#7131#8538#0" expanded="false" />
+                <element signature="e#8626#8921#0" expanded="false" />
+                <element signature="e#13363#13665#0" expanded="false" />
+                <element signature="e#13722#14551#0" expanded="false" />
+                <element signature="e#14615#14961#0" expanded="false" />
+                <element signature="e#16836#17749#0" expanded="false" />
+                <element signature="e#18179#18375#0" expanded="false" />
+                <element signature="e#18436#18627#0" expanded="false" />
+                <element signature="e#18694#19341#0" expanded="false" />
+                <element signature="e#19440#21738#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -135,35 +149,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>nearly_zeros</find>
-      <find>rand</find>
-      <find>u</find>
-      <find>num_all_vowels</find>
+      <find>_create_X_features</find>
+      <find>raise</find>
+      <find>create_syllables_dictionary</find>
+      <find>decode_</find>
+      <find>create_x_features</find>
+      <find>generate_x_and_y</find>
+      <find>create_syllables</find>
+      <find>split_consonants</find>
+      <find>get_unresonant_silent_consonants</find>
+      <find>dict_occurances_in_dataset_rate</find>
+      <find>count_vowels</find>
+      <find>shuffle_full_vowel_inputs</find>
+      <find>generate_presentable_y</find>
+      <find>is_accetuated_vowel</find>
+      <find>is_vowel</find>
       <find>load_shuffle_vector</find>
-      <find>create_and_save_inputs</find>
-      <find>load_extended_inputs</find>
       <find>create_and_save_shuffle_vector</find>
-      <find>h5f</find>
-      <find>generate_inputs</find>
-      <find>split_number</find>
-      <find>StringIO</find>
+      <find>load_extended_inputs</find>
+      <find>create_and_save_inputs</find>
       <find>shuffle_inputs</find>
-      <find>generator</find>
-      <find>content, feature_dictionary</find>
-      <find>create_feature_dictionary</find>
-      <find>with</find>
-      <find>read</find>
-      <find>generate</find>
-      <find>shuffle</find>
-      <find>X_</find>
-      <find>create_dict</find>
-      <find>split_content</find>
-      <find>decode_position</find>
-      <find>'r'</find>
-      <find>decode</find>
       <find>complete_feature_dict</find>
-      <find>dictionary</find>
-      <find>voiced_consonants</find>
+      <find>create_syllable_letters_translator</find>
+      <find>syllable_letters_translator</find>
+      <find>get_max_syllable</find>
+      <find>check_feature_letter_usage</find>
+      <find>orig_X</find>
+      <find>vowels</find>
+      <find>_create_syllable_letters_translator</find>
+      <find>_get_unresonant_silent_consonants</find>
+      <find>el[0]</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -208,8 +223,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -224,6 +237,8 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -517,7 +532,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="4" />
+      <option name="time" value="5" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -804,6 +819,56 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn_test_on_other_attributes.ipynb" />
+    <entry file="file://$PROJECT_DIR$/theanoTest.py" />
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.py" />
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.ipynb" />
+    <entry file="file://$PROJECT_DIR$/hyphenation">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/prepare_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="568">
+          <caret line="482" column="74" lean-forward="true" selection-start-line="482" selection-start-column="74" selection-end-line="482" selection-end-column="74" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+            <element signature="e#5524#5637#0" expanded="false" />
+            <element signature="e#5684#6970#0" expanded="false" />
+            <element signature="e#7131#8538#0" expanded="false" />
+            <element signature="e#8626#8921#0" expanded="false" />
+            <element signature="e#13363#13665#0" expanded="false" />
+            <element signature="e#13722#14551#0" expanded="false" />
+            <element signature="e#14615#14961#0" expanded="false" />
+            <element signature="e#16836#17749#0" expanded="false" />
+            <element signature="e#18179#18375#0" expanded="false" />
+            <element signature="e#18436#18627#0" expanded="false" />
+            <element signature="e#18694#19341#0" expanded="false" />
+            <element signature="e#19440#21738#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tex_hyphenation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1206">
+          <caret line="67" column="105" lean-forward="false" selection-start-line="67" selection-start-column="105" selection-end-line="67" selection-end-column="105" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="37" column="68" lean-forward="false" selection-start-line="37" selection-start-column="68" selection-end-line="37" selection-end-column="68" />
+          <folding>
+            <element signature="e#53#92#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/theano_tutorial/logistic_regression.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
@@ -848,44 +913,6 @@
           <caret line="1" column="31" lean-forward="false" selection-start-line="1" selection-start-column="31" selection-end-line="1" selection-end-column="31" />
           <folding>
             <element signature="e#55#85#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/theanoTest.py" />
-    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.py" />
-    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.ipynb" />
-    <entry file="file://$PROJECT_DIR$/hyphenation">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/workbench.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="37" column="68" lean-forward="false" selection-start-line="37" selection-start-column="68" selection-end-line="37" selection-end-column="68" />
-          <folding>
-            <element signature="e#53#92#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tex_hyphenation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1206">
-          <caret line="67" column="105" lean-forward="false" selection-start-line="67" selection-start-column="105" selection-end-line="67" selection-end-column="105" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/prepare_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="1024" column="33" lean-forward="false" selection-start-line="1024" selection-start-column="33" selection-end-line="1024" selection-end-column="33" />
-          <folding>
-            <element signature="e#24#63#0" expanded="true" />
           </folding>
         </state>
       </provider>
