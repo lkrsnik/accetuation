@@ -11,13 +11,14 @@ import os.path
 
 class Data:
     def __init__(self, input_type, allow_shuffle_vector_generation=False, save_generated_data=True, shuffle_all_inputs=True,
-                 additional_letter_attributes=True, reverse_inputs=True):
+                 additional_letter_attributes=True, reverse_inputs=True, accent_classification=False):
         self._input_type = input_type
         self._save_generated_data = save_generated_data
         self._allow_shuffle_vector_generation = allow_shuffle_vector_generation
         self._shuffle_all_inputs = shuffle_all_inputs
         self._additional_letter_attributes = additional_letter_attributes
         self._reverse_inputs = reverse_inputs
+        self._accent_classification = accent_classification
 
         self.x_train = None
         self.x_other_features_train = None
@@ -30,14 +31,14 @@ class Data:
         self.y_validate = None
 
     def generate_data(self, train_inputs_name, test_inputs_name, validate_inputs_name, test_and_validation_size=0.1,
-                      content_name='SlovarIJS_BESEDE_utf8.lex',
+                      force_override=False, content_name='SlovarIJS_BESEDE_utf8.lex',
                       content_shuffle_vector='content_shuffle_vector', shuffle_vector='shuffle_vector',
                       inputs_location='../../internal_representations/inputs/', content_location='../../../data/'):
         content_path = '{}{}'.format(content_location, content_name)
         train_path = '{}{}.h5'.format(inputs_location, train_inputs_name)
         test_path = '{}{}.h5'.format(inputs_location, test_inputs_name)
         validate_path = '{}{}.h5'.format(inputs_location, validate_inputs_name)
-        if os.path.exists(train_path) and os.path.exists(test_path) and os.path.exists(validate_path):
+        if not force_override and os.path.exists(train_path) and os.path.exists(test_path) and os.path.exists(validate_path):
             print('LOADING DATA...')
             self.x_train, self.x_other_features_train, self.y_train = self._load_inputs(train_path)
             self.x_test, self.x_other_features_test, self.y_test = self._load_inputs(test_path)
@@ -62,7 +63,7 @@ class Data:
         print('CONTENT READ SUCCESSFULLY')
         print('CREATING DICTIONARY...')
         dictionary, max_word, max_num_vowels, vowels, accented_vowels = self._create_dict(content)
-        if self._input_type == 's' or self._input_type == 'ls':
+        if self._input_type == 's' or self._input_type == 'sl':
             dictionary = self._create_syllables_dictionary(content, vowels)
         print('DICTIONARY CREATION SUCCESSFUL!')
         # test_and_validation_size = 0.1
@@ -125,7 +126,7 @@ class Data:
                 break
             line += 1
         dictionary_input = sorted(dictionary_input)
-        max_num_vowels += 1
+        # max_num_vowels += 1
         return dictionary_input, max_word, max_num_vowels, vowels, accented_vowels
 
     # split content so that there is no overfitting
@@ -230,23 +231,22 @@ class Data:
                 word = word[::-1]
 
             j = 0
-            word_accentuations = []
+            # word_accentuations = []
             num_vowels = 0
             for c in list(word):
                 index = 0
-                if self._is_vowel(word, j, vowels):
-                    num_vowels += 1
                 for d in accentuated_vowels:
                     if c == d:
-                        word_accentuations.append(num_vowels)
+                        if not self._accent_classification:
+                            y[i][num_vowels] = 1
+                        else:
+                            y[i][num_vowels] = index
+                        # word_accentuations.append(num_vowels)
                         break
                     index += 1
+                if self._is_vowel(word, j, vowels):
+                    num_vowels += 1
                 j += 1
-            if len(word_accentuations) > 0:
-                for word_accentuation in word_accentuations:
-                    y[i][word_accentuation] = 1
-            else:
-                y[i][0] = 1
             i += 1
         return y
 
@@ -255,10 +255,10 @@ class Data:
                           shuffle_vector_location):
         if self._input_type == 'l':
             x = self._x_letter_input(content, dictionary, max_word, vowels)
-        elif self._input_type == 's' or self._input_type == 'ls':
+        elif self._input_type == 's' or self._input_type == 'sl':
             x = self._x_syllable_input(content, dictionary, max_num_vowels, vowels)
         else:
-            raise ValueError('No input_type provided. It could be \'l\', \'s\' or \'ls\'.')
+            raise ValueError('No input_type provided. It could be \'l\', \'s\' or \'sl\'.')
         y = self._y_output(content, max_num_vowels, vowels, accentuated_vowels)
 
         print('CREATING OTHER FEATURES...')
@@ -476,46 +476,112 @@ class Data:
 
     def _generator_instance(self, orig_x, orig_x_additional, orig_y, batch_size, content_path):
         if self._input_type == 'l':
-            return self._letter_generator(orig_x, orig_x_additional, orig_y, batch_size)
+            content = self._read_content(content_path)
+            dictionary, max_word, max_num_vowels, vowels, accented_vowels = self._create_dict(content)
+            return self._letter_generator(orig_x, orig_x_additional, orig_y, batch_size, accented_vowels)
         elif self._input_type == 's':
             content = self._read_content(content_path)
             dictionary, max_word, max_num_vowels, vowels, accented_vowels = self._create_dict(content)
             syllable_dictionary = self._create_syllables_dictionary(content, vowels)
             eye = np.eye(len(syllable_dictionary), dtype=int)
-            return self._syllable_generator(orig_x, orig_x_additional, orig_y, batch_size, eye)
+            return self._syllable_generator(orig_x, orig_x_additional, orig_y, batch_size, eye, accented_vowels)
         elif self._input_type == 'sl':
             content = self._read_content(content_path)
             dictionary, max_word, max_num_vowels, vowels, accented_vowels = self._create_dict(content)
             syllable_dictionary = self._create_syllables_dictionary(content, vowels)
             max_syllable = self._get_max_syllable(syllable_dictionary)
             syllable_letters_translator = self._create_syllable_letters_translator(max_syllable, syllable_dictionary, dictionary, vowels)
-            return self._syllable_generator(orig_x, orig_x_additional, orig_y, batch_size, syllable_letters_translator)
+            return self._syllable_generator(orig_x, orig_x_additional, orig_y, batch_size, syllable_letters_translator, accented_vowels)
 
     # generator for inputs for tracking of data fitting
-    def _letter_generator(self, orig_x, orig_x_additional, orig_y, batch_size):
+    def _letter_generator(self, orig_x, orig_x_additional, orig_y, batch_size, accented_vowels):
         size = orig_x.shape[0]
         while 1:
             loc = 0
-            while loc < size:
-                if loc + batch_size >= size:
-                    yield ([orig_x[loc:size], orig_x_additional[loc:size]], orig_y[loc:size])
-                else:
-                    yield ([orig_x[loc:loc + batch_size], orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
-                loc += batch_size
+            if self._accent_classification:
+                eye = np.eye(len(accented_vowels), dtype=int)
+                eye_input_accent = np.eye(len(orig_y[0]), dtype=int)
+                input_x_stack = []
+                input_x_other_features_stack = []
+                input_y_stack = []
+                while loc < size:
+                    while len(input_x_stack) < batch_size and loc < size:
+                        accent_loc = 0
+                        for accent in orig_y[loc]:
+                            if accent > 0:
+                                new_orig_x_additional = orig_x_additional[loc]
+                                new_orig_x_additional = np.concatenate((new_orig_x_additional, eye_input_accent[accent_loc]))
+                                input_x_stack.append(orig_x[loc])
+                                input_x_other_features_stack.append(new_orig_x_additional)
+                                input_y_stack.append(eye[int(accent)])
+                            accent_loc += 1
+                        loc += 1
+                    if len(input_x_stack) > batch_size:
+                        yield ([np.array(input_x_stack[:batch_size]),
+                                np.array(input_x_other_features_stack[:batch_size])], np.array(input_y_stack)[:batch_size])
+                        input_x_stack = input_x_stack[batch_size:]
+                        input_x_other_features_stack = input_x_other_features_stack[batch_size:]
+                        input_y_stack = input_y_stack[batch_size:]
+                    else:
+                        # print('BBB')
+                        # print(np.array(input_stack))
+                        # yield (np.array(input_stack))
+                        yield ([np.array(input_x_stack), np.array(input_x_other_features_stack)], np.array(input_y_stack))
+                        input_x_stack = []
+                        input_x_other_features_stack = []
+                        input_y_stack = []
+            else:
+                while loc < size:
+                    if loc + batch_size >= size:
+                        yield ([orig_x[loc:size], orig_x_additional[loc:size]], orig_y[loc:size])
+                    else:
+                        yield ([orig_x[loc:loc + batch_size], orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+                    loc += batch_size
 
     # generator for inputs for tracking of data fitting
-    def _syllable_generator(self, orig_x, orig_x_additional, orig_y, batch_size, translator):
+    def _syllable_generator(self, orig_x, orig_x_additional, orig_y, batch_size, translator, accented_vowels):
         size = orig_x.shape[0]
         while 1:
             loc = 0
-            while loc < size:
-                if loc + batch_size >= size:
-                    gen_orig_x = translator[orig_x[loc:size]]
-                    yield ([gen_orig_x, orig_x_additional[loc:size]], orig_y[loc:size])
-                else:
-                    gen_orig_x = translator[orig_x[loc:loc + batch_size]]
-                    yield ([gen_orig_x, orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
-                loc += batch_size
+            if self._accent_classification:
+                eye = np.eye(len(accented_vowels), dtype=int)
+                eye_input_accent = np.eye(len(orig_y[0]), dtype=int)
+                input_x_stack = []
+                input_x_other_features_stack = []
+                input_y_stack = []
+                while loc < size:
+                    while len(input_x_stack) < batch_size and loc < size:
+                        accent_loc = 0
+                        for accent in orig_y[loc]:
+                            if accent > 0:
+                                new_orig_x_additional = orig_x_additional[loc]
+                                new_orig_x_additional = np.concatenate((new_orig_x_additional, eye_input_accent[accent_loc]))
+                                input_x_stack.append(orig_x[loc])
+                                input_x_other_features_stack.append(new_orig_x_additional)
+                                input_y_stack.append(eye[int(accent)])
+                            accent_loc += 1
+                        loc += 1
+                    if len(input_x_stack) > batch_size:
+                        gen_orig_x = translator[np.array(input_x_stack[:batch_size])]
+                        yield ([gen_orig_x, np.array(input_x_other_features_stack[:batch_size])], np.array(input_y_stack)[:batch_size])
+                        input_x_stack = input_x_stack[batch_size:]
+                        input_x_other_features_stack = input_x_other_features_stack[batch_size:]
+                        input_y_stack = input_y_stack[batch_size:]
+                    else:
+                        gen_orig_x = translator[np.array(input_x_stack)]
+                        yield ([gen_orig_x, np.array(input_x_other_features_stack)], np.array(input_y_stack))
+                        input_x_stack = []
+                        input_x_other_features_stack = []
+                        input_y_stack = []
+            else:
+                while loc < size:
+                    if loc + batch_size >= size:
+                        gen_orig_x = translator[orig_x[loc:size]]
+                        yield ([gen_orig_x, orig_x_additional[loc:size]], orig_y[loc:size])
+                    else:
+                        gen_orig_x = translator[orig_x[loc:loc + batch_size]]
+                        yield ([gen_orig_x, orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+                    loc += batch_size
 
     def _get_max_syllable(self, syllable_dictionary):
         max_len = 0
