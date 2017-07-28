@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dictionaries/luka.xml" afterPath="$PROJECT_DIR$/.idea/dictionaries/luka.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/cnn.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllables/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/cnn.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prepare_data.py" afterPath="$PROJECT_DIR$/prepare_data.py" />
     </list>
@@ -37,22 +35,25 @@
       <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="568">
-              <caret line="482" column="74" lean-forward="true" selection-start-line="482" selection-start-column="74" selection-end-line="482" selection-end-column="74" />
+            <state relative-caret-position="244">
+              <caret line="252" column="38" lean-forward="true" selection-start-line="252" selection-start-column="38" selection-end-line="252" selection-end-column="38" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
-                <element signature="e#5524#5637#0" expanded="false" />
-                <element signature="e#5684#6970#0" expanded="false" />
-                <element signature="e#7131#8538#0" expanded="false" />
-                <element signature="e#8626#8921#0" expanded="false" />
-                <element signature="e#13363#13665#0" expanded="false" />
-                <element signature="e#13722#14551#0" expanded="false" />
-                <element signature="e#14615#14961#0" expanded="false" />
-                <element signature="e#16836#17749#0" expanded="false" />
-                <element signature="e#18179#18375#0" expanded="false" />
-                <element signature="e#18436#18627#0" expanded="false" />
-                <element signature="e#18694#19341#0" expanded="false" />
-                <element signature="e#19440#21738#0" expanded="false" />
+                <element signature="e#5658#5771#0" expanded="false" />
+                <element signature="e#5818#7106#0" expanded="false" />
+                <element signature="e#7267#8674#0" expanded="false" />
+                <element signature="e#8762#9057#0" expanded="false" />
+                <element signature="e#13496#13798#0" expanded="false" />
+                <element signature="e#13855#14684#0" expanded="false" />
+                <element signature="e#14748#15094#0" expanded="false" />
+                <element signature="e#16969#17882#0" expanded="false" />
+                <element signature="e#18312#18508#0" expanded="false" />
+                <element signature="e#18569#18760#0" expanded="false" />
+                <element signature="e#18827#19474#0" expanded="false" />
+                <element signature="e#19573#21871#0" expanded="false" />
+                <element signature="e#22137#22836#0" expanded="false" />
+                <element signature="e#29631#29772#0" expanded="false" />
+                <element signature="e#29922#32067#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -149,16 +150,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_create_X_features</find>
-      <find>raise</find>
-      <find>create_syllables_dictionary</find>
-      <find>decode_</find>
-      <find>create_x_features</find>
-      <find>generate_x_and_y</find>
-      <find>create_syllables</find>
-      <find>split_consonants</find>
-      <find>get_unresonant_silent_consonants</find>
-      <find>dict_occurances_in_dataset_rate</find>
       <find>count_vowels</find>
       <find>shuffle_full_vowel_inputs</find>
       <find>generate_presentable_y</find>
@@ -179,6 +170,16 @@
       <find>_create_syllable_letters_translator</find>
       <find>_get_unresonant_silent_consonants</find>
       <find>el[0]</find>
+      <find>max_num_vowels</find>
+      <find>index</find>
+      <find>accentuated</find>
+      <find>create_syll</find>
+      <find>shuffle_all_inputs</find>
+      <find>accented</find>
+      <find>_accented</find>
+      <find>size</find>
+      <find>decode_x</find>
+      <find>self._input_type ==</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -532,7 +533,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="5" />
+      <option name="time" value="6" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -831,22 +832,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/prepare_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="568">
-          <caret line="482" column="74" lean-forward="true" selection-start-line="482" selection-start-column="74" selection-end-line="482" selection-end-column="74" />
+        <state relative-caret-position="244">
+          <caret line="252" column="38" lean-forward="true" selection-start-line="252" selection-start-column="38" selection-end-line="252" selection-end-column="38" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
-            <element signature="e#5524#5637#0" expanded="false" />
-            <element signature="e#5684#6970#0" expanded="false" />
-            <element signature="e#7131#8538#0" expanded="false" />
-            <element signature="e#8626#8921#0" expanded="false" />
-            <element signature="e#13363#13665#0" expanded="false" />
-            <element signature="e#13722#14551#0" expanded="false" />
-            <element signature="e#14615#14961#0" expanded="false" />
-            <element signature="e#16836#17749#0" expanded="false" />
-            <element signature="e#18179#18375#0" expanded="false" />
-            <element signature="e#18436#18627#0" expanded="false" />
-            <element signature="e#18694#19341#0" expanded="false" />
-            <element signature="e#19440#21738#0" expanded="false" />
+            <element signature="e#5658#5771#0" expanded="false" />
+            <element signature="e#5818#7106#0" expanded="false" />
+            <element signature="e#7267#8674#0" expanded="false" />
+            <element signature="e#8762#9057#0" expanded="false" />
+            <element signature="e#13496#13798#0" expanded="false" />
+            <element signature="e#13855#14684#0" expanded="false" />
+            <element signature="e#14748#15094#0" expanded="false" />
+            <element signature="e#16969#17882#0" expanded="false" />
+            <element signature="e#18312#18508#0" expanded="false" />
+            <element signature="e#18569#18760#0" expanded="false" />
+            <element signature="e#18827#19474#0" expanded="false" />
+            <element signature="e#19573#21871#0" expanded="false" />
+            <element signature="e#22137#22836#0" expanded="false" />
+            <element signature="e#29631#29772#0" expanded="false" />
+            <element signature="e#29922#32067#0" expanded="false" />
           </folding>
         </state>
       </provider>
