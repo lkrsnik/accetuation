@@ -3,9 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/accent_classification/letters/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/accent_classification/letters/cnn.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllables/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/cnn.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/results_presentation.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/results_presentation.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prepare_data.py" afterPath="$PROJECT_DIR$/prepare_data.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/workbench.py" afterPath="$PROJECT_DIR$/workbench.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -32,28 +34,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="244">
-              <caret line="252" column="38" lean-forward="true" selection-start-line="252" selection-start-column="38" selection-end-line="252" selection-end-column="38" />
+            <state relative-caret-position="198">
+              <caret line="14" column="121" lean-forward="false" selection-start-line="14" selection-start-column="102" selection-end-line="14" selection-end-column="121" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
-                <element signature="e#5658#5771#0" expanded="false" />
-                <element signature="e#5818#7106#0" expanded="false" />
-                <element signature="e#7267#8674#0" expanded="false" />
-                <element signature="e#8762#9057#0" expanded="false" />
-                <element signature="e#13496#13798#0" expanded="false" />
-                <element signature="e#13855#14684#0" expanded="false" />
-                <element signature="e#14748#15094#0" expanded="false" />
-                <element signature="e#16969#17882#0" expanded="false" />
-                <element signature="e#18312#18508#0" expanded="false" />
-                <element signature="e#18569#18760#0" expanded="false" />
-                <element signature="e#18827#19474#0" expanded="false" />
-                <element signature="e#19573#21871#0" expanded="false" />
-                <element signature="e#22137#22836#0" expanded="false" />
-                <element signature="e#29631#29772#0" expanded="false" />
-                <element signature="e#29922#32067#0" expanded="false" />
+                <element signature="e#5979#7267#0" expanded="false" />
+                <element signature="e#7428#8835#0" expanded="false" />
+                <element signature="e#8923#9218#0" expanded="false" />
+                <element signature="e#13669#13971#0" expanded="false" />
+                <element signature="e#14028#14857#0" expanded="false" />
+                <element signature="e#14921#15267#0" expanded="false" />
+                <element signature="e#18834#19030#0" expanded="false" />
+                <element signature="e#19091#19282#0" expanded="false" />
+                <element signature="e#19349#19996#0" expanded="false" />
+                <element signature="e#20095#22393#0" expanded="false" />
+                <element signature="e#30153#30294#0" expanded="false" />
+                <element signature="e#30444#32589#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -69,13 +68,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="workbench.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/workbench.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="37" column="68" lean-forward="false" selection-start-line="37" selection-start-column="68" selection-end-line="37" selection-end-column="68" />
+            <state relative-caret-position="410">
+              <caret line="42" column="17" lean-forward="true" selection-start-line="42" selection-start-column="17" selection-end-line="42" selection-end-column="17" />
               <folding>
-                <element signature="e#53#92#0" expanded="true" />
+                <element signature="e#24#63#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -150,21 +149,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>count_vowels</find>
-      <find>shuffle_full_vowel_inputs</find>
-      <find>generate_presentable_y</find>
-      <find>is_accetuated_vowel</find>
-      <find>is_vowel</find>
-      <find>load_shuffle_vector</find>
-      <find>create_and_save_shuffle_vector</find>
-      <find>load_extended_inputs</find>
-      <find>create_and_save_inputs</find>
-      <find>shuffle_inputs</find>
-      <find>complete_feature_dict</find>
-      <find>create_syllable_letters_translator</find>
-      <find>syllable_letters_translator</find>
-      <find>get_max_syllable</find>
-      <find>check_feature_letter_usage</find>
       <find>orig_X</find>
       <find>vowels</find>
       <find>_create_syllable_letters_translator</find>
@@ -180,6 +164,21 @@
       <find>size</find>
       <find>decode_x</find>
       <find>self._input_type ==</find>
+      <find>../</find>
+      <find>math</find>
+      <find>predict</find>
+      <find>_reverse_inputs</find>
+      <find>_letter_generator</find>
+      <find>_accent_classification</find>
+      <find>_create_feature_dictionary</find>
+      <find>generate_data</find>
+      <find>Data</find>
+      <find>shuffle_vector</find>
+      <find>shuffle_vector_path</find>
+      <find>fit_generator</find>
+      <find>../../../data/</find>
+      <find>self.x_other_features_train</find>
+      <find>_create_x_features</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -196,10 +195,10 @@
         <option value="$PROJECT_DIR$/theano_tutorial/logistic_regression_loop.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn_test_on_other_attributes.ipynb" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.py" />
-        <option value="$PROJECT_DIR$/workbench.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.ipynb" />
         <option value="$PROJECT_DIR$/tex_hyphenation.py" />
         <option value="$PROJECT_DIR$/prepare_data.py" />
+        <option value="$PROJECT_DIR$/workbench.py" />
       </list>
     </option>
   </component>
@@ -224,6 +223,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -238,8 +239,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -830,46 +829,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/prepare_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="252" column="38" lean-forward="true" selection-start-line="252" selection-start-column="38" selection-end-line="252" selection-end-column="38" />
-          <folding>
-            <element signature="e#24#63#0" expanded="true" />
-            <element signature="e#5658#5771#0" expanded="false" />
-            <element signature="e#5818#7106#0" expanded="false" />
-            <element signature="e#7267#8674#0" expanded="false" />
-            <element signature="e#8762#9057#0" expanded="false" />
-            <element signature="e#13496#13798#0" expanded="false" />
-            <element signature="e#13855#14684#0" expanded="false" />
-            <element signature="e#14748#15094#0" expanded="false" />
-            <element signature="e#16969#17882#0" expanded="false" />
-            <element signature="e#18312#18508#0" expanded="false" />
-            <element signature="e#18569#18760#0" expanded="false" />
-            <element signature="e#18827#19474#0" expanded="false" />
-            <element signature="e#19573#21871#0" expanded="false" />
-            <element signature="e#22137#22836#0" expanded="false" />
-            <element signature="e#29631#29772#0" expanded="false" />
-            <element signature="e#29922#32067#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tex_hyphenation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1206">
           <caret line="67" column="105" lean-forward="false" selection-start-line="67" selection-start-column="105" selection-end-line="67" selection-end-column="105" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/workbench.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="37" column="68" lean-forward="false" selection-start-line="37" selection-start-column="68" selection-end-line="37" selection-end-column="68" />
-          <folding>
-            <element signature="e#53#92#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -917,6 +881,38 @@
           <caret line="1" column="31" lean-forward="false" selection-start-line="1" selection-start-column="31" selection-end-line="1" selection-end-column="31" />
           <folding>
             <element signature="e#55#85#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/prepare_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="14" column="121" lean-forward="false" selection-start-line="14" selection-start-column="102" selection-end-line="14" selection-end-column="121" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+            <element signature="e#5979#7267#0" expanded="false" />
+            <element signature="e#7428#8835#0" expanded="false" />
+            <element signature="e#8923#9218#0" expanded="false" />
+            <element signature="e#13669#13971#0" expanded="false" />
+            <element signature="e#14028#14857#0" expanded="false" />
+            <element signature="e#14921#15267#0" expanded="false" />
+            <element signature="e#18834#19030#0" expanded="false" />
+            <element signature="e#19091#19282#0" expanded="false" />
+            <element signature="e#19349#19996#0" expanded="false" />
+            <element signature="e#20095#22393#0" expanded="false" />
+            <element signature="e#30153#30294#0" expanded="false" />
+            <element signature="e#30444#32589#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="410">
+          <caret line="42" column="17" lean-forward="true" selection-start-line="42" selection-start-column="17" selection-end-line="42" selection-end-column="17" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
           </folding>
         </state>
       </provider>

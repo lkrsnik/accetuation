@@ -7,11 +7,12 @@ import h5py
 import math
 import keras.backend as K
 import os.path
+import codecs
 
 
 class Data:
     def __init__(self, input_type, allow_shuffle_vector_generation=False, save_generated_data=True, shuffle_all_inputs=True,
-                 additional_letter_attributes=True, reverse_inputs=True, accent_classification=False):
+                 additional_letter_attributes=True, reverse_inputs=True, accent_classification=False, number_of_syllables=False):
         self._input_type = input_type
         self._save_generated_data = save_generated_data
         self._allow_shuffle_vector_generation = allow_shuffle_vector_generation
@@ -19,6 +20,7 @@ class Data:
         self._additional_letter_attributes = additional_letter_attributes
         self._reverse_inputs = reverse_inputs
         self._accent_classification = accent_classification
+        self._number_of_syllables = number_of_syllables
 
         self.x_train = None
         self.x_other_features_train = None
@@ -88,7 +90,8 @@ class Data:
     # functions for creating X and y from content
     @staticmethod
     def _read_content(content_path):
-        with open(content_path) as f:
+        # with open(content_path) as f:
+        with codecs.open(content_path, encoding='utf8') as f:
             content = f.readlines()
         return [x.split('\t') for x in content]
 
@@ -261,9 +264,9 @@ class Data:
             raise ValueError('No input_type provided. It could be \'l\', \'s\' or \'sl\'.')
         y = self._y_output(content, max_num_vowels, vowels, accentuated_vowels)
 
-        print('CREATING OTHER FEATURES...')
-        x_other_features = self._create_x_features(content, feature_dictionary)
-        print('OTHER FEATURES CREATED!')
+        # print('CREATING OTHER FEATURES...')
+        x_other_features = self._create_x_features(content, feature_dictionary, vowels)
+        # print('OTHER FEATURES CREATED!')
 
         if self._shuffle_all_inputs:
             print('SHUFFELING INPUTS...')
@@ -347,7 +350,7 @@ class Data:
                 split = min(split_options, key=lambda x: x[1])
                 return consonants[:split[0] + 1], consonants[split[0] + 1:]
 
-    def _create_x_features(self, content, feature_dictionary):
+    def _create_x_features(self, content, feature_dictionary, vowels):
         content = content
         x_other_features = []
         for el in content:
@@ -364,6 +367,14 @@ class Data:
                                 x_el_other_features.append(0)
                 else:
                     x_el_other_features.extend([0] * feature[0])
+            if self._number_of_syllables:
+                list_of_letters = list(el[0])
+                num_of_vowels = 0
+                for i in range(len(list_of_letters)):
+                    if self._is_vowel(list(el[0]), i, vowels):
+                        num_of_vowels += 1
+                x_el_other_features.append(num_of_vowels)
+
             x_other_features.append(x_el_other_features)
         return np.array(x_other_features)
 
@@ -651,6 +662,60 @@ class Data:
     @staticmethod
     def _get_nonresonant_silent_consonants():
         return ['p', 't', 's', 'š', 'č', 'k', 'f', 'h', 'c']
+
+    @staticmethod
+    def _create_slovene_feature_dictionary():
+        # old: http://nl.ijs.si/ME/Vault/V3/msd/html/
+        # new: http://nl.ijs.si/ME/V4/msd/html/
+        # changes: http://nl.ijs.si/jos/msd/html-en/msd.diffs.html
+        return [[21,
+                 'P',
+                 ['p', 's'],
+                 ['n', 'p', 's'],
+                 ['m', 'z', 's'],
+                 ['e', 'd', 'm'],
+                 ['i', 'r', 'd', 't', 'm', 'o'],
+                 ['-', 'n', 'd']],
+                [3, 'V', ['p', 'd']],
+                [1, 'M'],
+                [21,
+                 'K',
+                 ['b'],
+                 ['-', 'g', 'v', 'd'],
+                 ['m', 'z', 's'],
+                 ['e', 'd', 'm'],
+                 ['i', 'r', 'd', 't', 'm', 'o'],
+                 ['-', 'n', 'd']],
+                [17,
+                 'S',
+                 ['o'],
+                 ['m', 'z', 's'],
+                 ['e', 'd', 'm'],
+                 ['i', 'r', 'd', 't', 'm', 'o'],
+                 ['-', 'n', 'd']],
+                [40,
+                 'Z',
+                 ['o', 's', 'k', 'z', 'p', 'c', 'v', 'n', 'l'],
+                 ['-', 'p', 'd', 't'],
+                 ['-', 'm', 'z', 's'],
+                 ['-', 'e', 'd', 'm'],
+                 ['-', 'i', 'r', 'd', 't', 'm', 'o'],
+                 ['-', 'e', 'd', 'm'],
+                 ['-', 'm', 'z', 's'],
+                 ['-', 'k', 'z']],
+                [1, 'L'],
+                [5, 'R', ['s'], ['n', 'r', 's']],
+                [7, 'D', ['-', 'r', 'd', 't', 'm', 'o']],
+                [24,
+                 'G',
+                 ['g'],
+                 ['-'],
+                 ['n', 'm', 'd', 's', 'p', 'g'],
+                 ['-', 'p', 'd', 't'],
+                 ['-', 'e', 'm', 'd'],
+                 ['-', 'm', 'z', 's'],
+                 ['-', 'n', 'd']]
+                ]
 
     @staticmethod
     def _create_feature_dictionary():
