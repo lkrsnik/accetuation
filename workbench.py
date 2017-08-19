@@ -82,7 +82,8 @@ history = model.fit_generator(data.generator('train', batch_size, content_name='
                               epochs=actual_epoch*num_fake_epoch,
                               validation_data=data.generator('test', batch_size, content_name='SlovarIJS_BESEDE_utf8.lex', content_location=''),
                               validation_steps=data.x_test.shape[0]/(batch_size * num_fake_epoch),
-                              verbose=2
+                              verbose=2,
+                              workers=4
                               )
 
 name = '60_epoch'
