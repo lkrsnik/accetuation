@@ -93,3 +93,5 @@ data/
 cnn/internal_representations/inputs/
 joblist.xml
 new_sloleks.xml
+grid_results/
+.idea/
