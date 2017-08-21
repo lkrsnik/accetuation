@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/results_presentation.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/results_presentation.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v3_4/notes" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v3_4/notes" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v3_7/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v3_7/cnn.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v4_0/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v4_0/cnn.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/workbench.py" afterPath="$PROJECT_DIR$/workbench.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/workbench.xrsl" afterPath="$PROJECT_DIR$/workbench.xrsl" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -33,7 +38,7 @@
       <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
+            <state relative-caret-position="108">
               <caret line="14" column="121" lean-forward="false" selection-start-line="14" selection-start-column="102" selection-end-line="14" selection-end-column="121" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
@@ -67,8 +72,8 @@
       <file leaf-file-name="workbench.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/workbench.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="680">
-              <caret line="85" column="39" lean-forward="false" selection-start-line="85" selection-start-column="39" selection-end-line="85" selection-end-column="39" />
+            <state relative-caret-position="188">
+              <caret line="53" column="20" lean-forward="false" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
               </folding>
@@ -220,7 +225,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -235,6 +239,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -883,7 +888,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/prepare_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
+        <state relative-caret-position="108">
           <caret line="14" column="121" lean-forward="false" selection-start-line="14" selection-start-column="102" selection-end-line="14" selection-end-column="121" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
@@ -905,8 +910,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/workbench.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="85" column="39" lean-forward="false" selection-start-line="85" selection-start-column="39" selection-end-line="85" selection-end-column="39" />
+        <state relative-caret-position="188">
+          <caret line="53" column="20" lean-forward="false" selection-start-line="53" selection-start-column="20" selection-end-line="53" selection-end-column="20" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
           </folding>
