@@ -1,0 +1,4 @@
+runtimeenvironments=APPS/BASE/THEANO-GPU-0.9;
+nodename=nsc-fp008.ijs.si
+Processors=1
+exitcode=0

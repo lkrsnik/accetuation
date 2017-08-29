@@ -1,0 +1,33 @@
+<ComputingActivity xmlns="http://schemas.ogf.org/glue/2009/03/spec_2.0_r1" BaseType="Activity" CreationTime="2017-08-24T08:19:25Z" Validity="10800">
+  <ID>urn:caid:nsc.ijs.si:org.nordugrid.gridftpjob:B4OLDmrgp4qnOeFSGmVnjcgoABFKDmABFKDm0NMKDmABFKDm031HZn</ID>
+  <Name>accetuation_nn</Name>
+  <OtherInfo>SubmittedVia=org.nordugrid.gridftpjob</OtherInfo>
+  <Type>single</Type>
+  <IDFromEndpoint>urn:idfe:B4OLDmrgp4qnOeFSGmVnjcgoABFKDmABFKDm0NMKDmABFKDm031HZn</IDFromEndpoint>
+  <JobDescription>nordugrid:xrsl</JobDescription>
+  <State>nordugrid:FINISHED</State>
+  <State>bes:Finished</State>
+  <State>emies:terminal</State>
+  <State>emiesattr:client-stageout-possible</State>
+  <ExitCode>0</ExitCode>
+  <Owner>/C=SI/O=SiGNET/O=FRI Uni-Lj/CN=Luka Krsnik</Owner>
+  <LocalOwner>gen0006</LocalOwner>
+  <RequestedTotalWallTime>30000</RequestedTotalWallTime>
+  <RequestedTotalCPUTime>30000</RequestedTotalCPUTime>
+  <RequestedSlots>1</RequestedSlots>
+  <RequestedApplicationEnvironment>APPS/BASE/THEANO-GPU-0.9</RequestedApplicationEnvironment>
+  <StdIn>/dev/null</StdIn>
+  <StdOut>out.txt</StdOut>
+  <StdErr>err.txt</StdErr>
+  <LogDir>gmlog</LogDir>
+  <ExecutionNode>nsc-fp008.ijs.si</ExecutionNode>
+  <Queue>gridlong</Queue>
+  <SubmissionTime>2017-08-23T18:36:13Z</SubmissionTime>
+  <EndTime>2017-08-24T08:18:16Z</EndTime>
+  <WorkingAreaEraseTime>2017-08-31T00:15:54Z</WorkingAreaEraseTime>
+  <ProxyExpirationTime>2017-08-23T19:23:56Z</ProxyExpirationTime>
+  <SubmissionHost>88.200.99.117</SubmissionHost>
+  <Associations>
+    <ComputingShareID>urn:ogf:ComputingShare:nsc.ijs.si:gridlong</ComputingShareID>
+  </Associations>
+</ComputingActivity>

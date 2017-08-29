@@ -1,0 +1,26 @@
+globalid=gsiftp://nsc.ijs.si:2811/jobs/maLLDmeqL4qnOeFSGmVnjcgoABFKDmABFKDmRoLKDmABFKDmnLSaEo
+headnode=gsiftp://nsc.ijs.si:2811/jobs
+interface=org.nordugrid.gridftpjob
+lrms=SLURM
+queue=gridlong
+localid=724698
+args=workbench.sh 
+argscode=0
+subject=/C=SI/O=SiGNET/O=FRI Uni-Lj/CN=Luka Krsnik
+starttime=20170822104420Z
+lifetime=604800
+rerun=0
+downloads=0
+uploads=0
+jobname=accetuation_nn
+gmlog=gmlog
+cleanuptime=20170830003353Z
+delegexpiretime=20170822194350Z
+clientname=88.200.99.117:33684
+delegationid=0b04581a8b67
+sessiondir=/net/hold/data1/arc/session//maLLDmeqL4qnOeFSGmVnjcgoABFKDmABFKDmRoLKDmABFKDmnLSaEo
+diskspace=0
+freestagein=no
+voms=/gen.vo.sling.si
+transfershare=_default
+priority=50

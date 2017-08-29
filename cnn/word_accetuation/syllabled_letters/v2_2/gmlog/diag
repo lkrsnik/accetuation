@@ -1,0 +1,9 @@
+runtimeenvironments=APPS/BASE/THEANO-GPU-0.9;
+
+nodename=nsc-fp003.ijs.si
+WallTime=9543s
+Processors=1
+UserTime=9543s
+LRMSStartTime=20170821085111Z
+LRMSEndTime=20170821113014Z
+exitcode=0
