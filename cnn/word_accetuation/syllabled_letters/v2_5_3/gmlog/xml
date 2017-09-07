@@ -1,9 +1,9 @@
-<ComputingActivity xmlns="http://schemas.ogf.org/glue/2009/03/spec_2.0_r1" BaseType="Activity" CreationTime="2017-08-26T08:33:37Z" Validity="10800">
-  <ID>urn:caid:nsc.ijs.si:org.nordugrid.gridftpjob:O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn</ID>
+<ComputingActivity xmlns="http://schemas.ogf.org/glue/2009/03/spec_2.0_r1" BaseType="Activity" CreationTime="2017-09-06T13:45:52Z" Validity="10800">
+  <ID>urn:caid:nsc.ijs.si:org.nordugrid.gridftpjob:DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm</ID>
   <Name>accetuation_nn</Name>
   <OtherInfo>SubmittedVia=org.nordugrid.gridftpjob</OtherInfo>
   <Type>single</Type>
-  <IDFromEndpoint>urn:idfe:O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn</IDFromEndpoint>
+  <IDFromEndpoint>urn:idfe:DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm</IDFromEndpoint>
   <JobDescription>nordugrid:xrsl</JobDescription>
   <State>nordugrid:FINISHED</State>
   <State>bes:Finished</State>
@@ -12,22 +12,22 @@
   <ExitCode>0</ExitCode>
   <Owner>/C=SI/O=SiGNET/O=FRI Uni-Lj/CN=Luka Krsnik</Owner>
   <LocalOwner>gen0006</LocalOwner>
-  <RequestedTotalWallTime>120000</RequestedTotalWallTime>
-  <RequestedTotalCPUTime>120000</RequestedTotalCPUTime>
+  <RequestedTotalWallTime>45000</RequestedTotalWallTime>
+  <RequestedTotalCPUTime>45000</RequestedTotalCPUTime>
   <RequestedSlots>1</RequestedSlots>
   <RequestedApplicationEnvironment>APPS/BASE/THEANO-GPU-0.9</RequestedApplicationEnvironment>
   <StdIn>/dev/null</StdIn>
   <StdOut>out.txt</StdOut>
   <StdErr>err.txt</StdErr>
   <LogDir>gmlog</LogDir>
-  <ExecutionNode>nsc-fp001.ijs.si</ExecutionNode>
+  <ExecutionNode>nsc-fp004.ijs.si</ExecutionNode>
   <Queue>gridlong</Queue>
-  <UsedTotalWallTime>13255</UsedTotalWallTime>
-  <SubmissionTime>2017-08-25T17:19:56Z</SubmissionTime>
-  <EndTime>2017-08-26T08:33:05Z</EndTime>
-  <WorkingAreaEraseTime>2017-09-01T21:04:36Z</WorkingAreaEraseTime>
-  <ProxyExpirationTime>2017-08-25T19:48:42Z</ProxyExpirationTime>
-  <SubmissionHost>89.212.220.211</SubmissionHost>
+  <UsedTotalWallTime>15883</UsedTotalWallTime>
+  <SubmissionTime>2017-09-06T08:10:16Z</SubmissionTime>
+  <EndTime>2017-09-06T13:45:23Z</EndTime>
+  <WorkingAreaEraseTime>2017-09-13T12:38:07Z</WorkingAreaEraseTime>
+  <ProxyExpirationTime>2017-09-06T20:08:10Z</ProxyExpirationTime>
+  <SubmissionHost>88.200.99.117</SubmissionHost>
   <Associations>
     <ComputingShareID>urn:ogf:ComputingShare:nsc.ijs.si:gridlong</ComputingShareID>
   </Associations>

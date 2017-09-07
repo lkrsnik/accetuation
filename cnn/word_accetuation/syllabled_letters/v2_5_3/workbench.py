@@ -78,7 +78,7 @@ x = Dropout(0.3)(x)
 x = Dense(256, activation='relu')(x)
 x = Dropout(0.3)(x)
 x = Dense(256, activation='relu')(x)
-x = Dropout(0.2)(x)
+x = Dropout(0.3)(x)
 x = Dense(nn_output_dim, activation='sigmoid')(x)
 
 

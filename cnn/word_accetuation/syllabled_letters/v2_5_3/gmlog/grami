@@ -1,12 +1,12 @@
-joboption_directory='/net/hold/data1/arc/session//O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn'
+joboption_directory='/net/hold/data1/arc/session//DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm'
 joboption_controldir='/var/spool/arc/jobstatus/'
 joboption_arg_0='./workbench.sh'
 joboption_stdin='/dev/null'
-joboption_stdout='/net/hold/data1/arc/session//O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn/out.txt'
-joboption_stderr='/net/hold/data1/arc/session//O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn/err.txt'
-joboption_env_0=GRID_GLOBAL_JOBID='gsiftp://nsc.ijs.si:2811/jobs/O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn'
-joboption_cputime=120000
-joboption_walltime=120000
+joboption_stdout='/net/hold/data1/arc/session//DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm/out.txt'
+joboption_stderr='/net/hold/data1/arc/session//DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm/err.txt'
+joboption_env_0=GRID_GLOBAL_JOBID='gsiftp://nsc.ijs.si:2811/jobs/DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm'
+joboption_cputime=45000
+joboption_walltime=45000
 joboption_memory=12000
 joboption_virtualmemory=
 joboption_disk=
@@ -15,7 +15,7 @@ joboption_runtime_0='APPS/BASE/THEANO-GPU-0.9'
 joboption_jobname='accetuation_nn'
 joboption_queue='gridlong'
 joboption_starttime=
-joboption_gridid='O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn'
+joboption_gridid='DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm'
 joboption_priority=50
 joboption_inputfile_0='/workbench.py'
 joboption_inputfile_1='/prepare_data.py'
@@ -36,4 +36,4 @@ joboption_outputfile_4='/notes'
 joboption_outputfile_5='/out.txt'
 joboption_outputfile_6='/err.txt'
 joboption_outputfile_7='/gmlog'
-joboption_jobid=725999
+joboption_jobid=734033

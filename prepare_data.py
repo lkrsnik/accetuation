@@ -801,7 +801,7 @@ class Data:
                             if word[i] == 1:
                                 final_word.append(feature_dictionary[z][j][k])
                             i += 1
-            print(u''.join(final_word))
+                            # print(u''.join(final_word))
         return u''.join(final_word)
 
     @staticmethod
@@ -814,7 +814,188 @@ class Data:
             i += 1
         return res
 
+    def test_accuracy(self, predictions, x, x_other_features, y, dictionary, feature_dictionary, vowels, syllable_dictionary=None):
+        errors = []
+        num_of_pred = len(predictions)
+        num_of_correct_pred = 0
+        for i in range(predictions.shape[0]):
+            if (np.around(predictions[i]) == y[i]).all():
+                num_of_correct_pred += 1
+            else:
+                if self._input_type == 'l':
+                    decoded_x = self.decode_x(x[i], dictionary)
+                else:
+                    decoded_x = self.decode_syllable_x(x[i], syllable_dictionary)
+                errors.append([i,
+                               decoded_x,
+                               self.decode_x_other_features(feature_dictionary, [x_other_features[i]]),
+                               self.assign_stress_locations(decoded_x, np.around(predictions[i]), vowels, syllables=self._input_type != 'l'),
+                               self.assign_stress_locations(decoded_x, y[i], vowels, syllables=self._input_type != 'l')
+                               ])
 
+        return (num_of_correct_pred / float(num_of_pred)) * 100, errors
+
+    @staticmethod
+    def decode_syllable_x(word_encoded, syllable_dictionary):
+        word = []
+        for i in range(len(word_encoded)):
+            word.append(syllable_dictionary[word_encoded[i]])
+        return ''.join(word[::-1])
+
+    def assign_stress_locations(self, word, y, vowels, syllables=False):
+        if not syllables:
+            word_list = list(word)
+        else:
+            word_list = list(word)[::-1]
+        vowel_num = 0
+        for i in range(len(word_list)):
+            if self._is_vowel(word_list, i, vowels):
+                if word_list[i] == 'a' and y[vowel_num] == 1:
+                    word_list[i] = 'á'
+                elif word_list[i] == 'e' and y[vowel_num] == 1:
+                    word_list[i] = 'é'
+                elif word_list[i] == 'i' and y[vowel_num] == 1:
+                    word_list[i] = 'í'
+                elif word_list[i] == 'o' and y[vowel_num] == 1:
+                    word_list[i] = 'ó'
+                elif word_list[i] == 'u' and y[vowel_num] == 1:
+                    word_list[i] = 'ú'
+                elif word_list[i] == 'r' and y[vowel_num] == 1:
+                    word_list[i] = 'ŕ'
+                elif word_list[i] == 'A' and y[vowel_num] == 1:
+                    word_list[i] = 'Á'
+                elif word_list[i] == 'E' and y[vowel_num] == 1:
+                    word_list[i] = 'É'
+                elif word_list[i] == 'I' and y[vowel_num] == 1:
+                    word_list[i] = 'Í'
+                elif word_list[i] == 'O' and y[vowel_num] == 1:
+                    word_list[i] = 'Ó'
+                elif word_list[i] == 'U' and y[vowel_num] == 1:
+                    word_list[i] = 'Ú'
+                elif word_list[i] == 'R' and y[vowel_num] == 1:
+                    word_list[i] = 'Ŕ'
+                vowel_num += 1
+        if not syllables:
+            return ''.join(word_list)
+        else:
+            return ''.join(word_list[::-1])
+
+    def test_type_accuracy(self, predictions, x, x_other_features, y, dictionary, feature_dictionary, vowels, accented_vowels,
+                      syllable_dictionary=None):
+        errors = []
+        num_of_pred = len(predictions)
+        num_of_correct_pred = 0
+        num_of_correct_pred_words = 0
+        accentuation_index = 0
+        eye = np.eye(len(accented_vowels), dtype=int)
+        for i in range(len(y)):
+            correct_prediction = True
+            if self._input_type == 'l':
+                decoded_x = self.decode_x(x[i], dictionary)
+            else:
+                decoded_x = self.decode_syllable_x(x[i], syllable_dictionary)
+            wrong_word = decoded_x
+            correct_word = decoded_x
+
+            for j in range(len(y[i])):
+                if y[i][j] > 0:
+                    # ERROR AS IT IS CALCULATED
+                    # arounded_predictions = np.around(predictions[accentuation_index]).astype(int)
+
+                    # MAX ELEMENT ONLY
+                    # arounded_predictions = np.zeros(len(predictions[accentuation_index]))
+                    # arounded_predictions[np.argmax(predictions[accentuation_index]).astype(int)] = 1
+
+                    # MAX ELEMENT AMONGT POSSIBLE ONES
+                    # if i == 313:
+                    #    print(decoded_x)
+                    stressed_letter = self.get_accentuated_letter(decoded_x, j, vowels, syllables=self._input_type != 'l')
+                    possible_places = np.zeros(len(predictions[accentuation_index]))
+                    if stressed_letter == 'r':
+                        possible_places[0] = 1
+                    elif stressed_letter == 'a':
+                        possible_places[1] = 1
+                        possible_places[2] = 1
+                    elif stressed_letter == 'e':
+                        possible_places[3] = 1
+                        possible_places[4] = 1
+                        possible_places[5] = 1
+                    elif stressed_letter == 'i':
+                        possible_places[6] = 1
+                        possible_places[7] = 1
+                    elif stressed_letter == 'o':
+                        possible_places[8] = 1
+                        possible_places[9] = 1
+                        possible_places[10] = 1
+                    elif stressed_letter == 'u':
+                        possible_places[11] = 1
+                        possible_places[12] = 1
+                    possible_predictions = predictions[accentuation_index] * possible_places
+
+                    arounded_predictions = np.zeros(len(predictions[accentuation_index]), dtype=int)
+                    arounded_predictions[np.argmax(possible_predictions).astype(int)] = 1
+
+                    wrong_word = self.assign_word_accentuation_type(wrong_word, j, arounded_predictions, vowels, accented_vowels,
+                                                               syllables=self._input_type != 'l', debug=i == 313)
+                    correct_word = self.assign_word_accentuation_type(correct_word, j, eye[int(y[i][j])], vowels, accented_vowels,
+                                                                 syllables=self._input_type != 'l', debug=i == 313)
+
+                    if (eye[int(y[i][j])] == arounded_predictions).all():
+                        num_of_correct_pred += 1
+                    else:
+                        correct_prediction = False
+
+                    accentuation_index += 1
+
+            if correct_prediction:
+                num_of_correct_pred_words += 1
+            else:
+                if self._input_type == 'l':
+                    errors.append([i,
+                                   decoded_x[::-1],
+                                   self.decode_x_other_features(feature_dictionary, [x_other_features[i]]),
+                                   wrong_word[::-1],
+                                   correct_word[::-1]
+                                   ])
+                else:
+                    errors.append([i,
+                                   decoded_x,
+                                   self.decode_x_other_features(feature_dictionary, [x_other_features[i]]),
+                                   wrong_word,
+                                   correct_word
+                                   ])
+        return (num_of_correct_pred / float(num_of_pred)) * 100, (num_of_correct_pred_words / float(len(y))) * 100, errors
+
+    def get_accentuated_letter(self, word, location, vowels, syllables=False, debug=False):
+        # print(location)
+        vowel_index = 0
+        word_list = list(word)
+        if not syllables:
+            word_list = list(word)
+        else:
+            word_list = list(word[::-1])
+        for i in range(len(word_list)):
+            if self._is_vowel(word_list, i, vowels):
+                if location == vowel_index:
+                    return word_list[i]
+                vowel_index += 1
+
+    def assign_word_accentuation_type(self, word, location, y, vowels, accented_vowels, syllables=False, debug=False):
+        vowel_index = 0
+        if not syllables:
+            word_list = list(word)
+        else:
+            word_list = list(word[::-1])
+        for i in range(len(word_list)):
+            if self._is_vowel(word_list, i, vowels):
+                if location == vowel_index:
+                    if len(np.where(y == 1)[0]) == 1:
+                        word_list[i] = accented_vowels[np.where(y == 1)[0][0]]
+                vowel_index += 1
+        if not syllables:
+            return ''.join(word_list)
+        else:
+            return ''.join(word_list[::-1])
 
 # def count_vowels(content, vowels):
 #     num_all_vowels = 0

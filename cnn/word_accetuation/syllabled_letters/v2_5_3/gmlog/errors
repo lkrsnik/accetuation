@@ -1,6 +1,6 @@
-2017-08-25T17:19:56Z Job state change UNDEFINED -> ACCEPTED   Reason: (Re)Accepting new job
-2017-08-25T17:19:56Z Job state change ACCEPTED -> PREPARING   Reason: Starting job processing
-2017-08-25T17:21:48Z Job state change PREPARING -> SUBMIT   Reason: Pre-staging finished, passing job to LRMS
+2017-09-06T08:10:16Z Job state change UNDEFINED -> ACCEPTED   Reason: (Re)Accepting new job
+2017-09-06T08:10:16Z Job state change ACCEPTED -> PREPARING   Reason: Starting job processing
+2017-09-06T08:11:14Z Job state change PREPARING -> SUBMIT   Reason: Pre-staging finished, passing job to LRMS
 ----- starting submit_slurm_job -----
 SLURM jobname: accetuation_nn
 SLURM job script built
@@ -9,8 +9,8 @@ SLURM script follows:
 #!/bin/bash -l
 # SLURM batch job script built by grid-manager
 #SBATCH --no-requeue
-#SBATCH -e /net/hold/data1/arc/session//O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn.comment
-#SBATCH -o /net/hold/data1/arc/session//O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn.comment
+#SBATCH -e /net/hold/data1/arc/session//DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm.comment
+#SBATCH -o /net/hold/data1/arc/session//DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm.comment
 
 #SBATCH -p gridlong
 #SBATCH --nice=50
@@ -18,8 +18,8 @@ SLURM script follows:
 #SBATCH --get-user-env=10L
 #SBATCH -n 1
 #SBATCH   --constraint=gpu --gres=gpu:1
-#SBATCH -t 2000:0
-#SBATCH -t 2000:0
+#SBATCH -t 750:0
+#SBATCH -t 750:0
 #SBATCH --mem-per-cpu=12000
 # run singularity image if RTE with singularity is required
 if [ -z $SINGULARITY_CONTAINER ]; then
@@ -36,13 +36,13 @@ shift
 . $script
 }
 # Setting environment variables as specified by user
-export 'GRID_GLOBAL_JOBID=gsiftp://nsc.ijs.si:2811/jobs/O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn'
+export 'GRID_GLOBAL_JOBID=gsiftp://nsc.ijs.si:2811/jobs/DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm'
 
-RUNTIME_JOB_DIR=/net/hold/data1/arc/session//O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn
+RUNTIME_JOB_DIR=/net/hold/data1/arc/session//DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm
 RUNTIME_JOB_STDIN=/dev/null
-RUNTIME_JOB_STDOUT=/net/hold/data1/arc/session//O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn/out.txt
-RUNTIME_JOB_STDERR=/net/hold/data1/arc/session//O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn/err.txt
-RUNTIME_JOB_DIAG=/net/hold/data1/arc/session//O0ELDm8RX5qnOeFSGmVnjcgoABFKDmABFKDmOnLKDmABFKDmLwFemn.diag
+RUNTIME_JOB_STDOUT=/net/hold/data1/arc/session//DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm/out.txt
+RUNTIME_JOB_STDERR=/net/hold/data1/arc/session//DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm/err.txt
+RUNTIME_JOB_DIAG=/net/hold/data1/arc/session//DNoLDmmak9qnOeFSGmVnjcgoABFKDmABFKDmZRHKDmABFKDmwMxnEm.diag
 if [ ! -z "$RUNTIME_GRIDAREA_DIR" ] ; then
   RUNTIME_JOB_DIR=$RUNTIME_GRIDAREA_DIR/`basename $RUNTIME_JOB_DIR`
   RUNTIME_JOB_STDIN=`echo "$RUNTIME_JOB_STDIN" | sed "s#^$RUNTIME_JOB_DIR#$RUNTIME_GRIDAREA_DIR#"`
@@ -241,18 +241,13 @@ fi
 -------------------------------------------------------------------
 
 job submitted successfully!
-local job id: 725999
+local job id: 734033
 ----- exiting submit_slurm_job -----
 
-2017-08-25T17:21:49Z Job state change SUBMIT -> INLRMS   Reason: Job is passed to LRMS
+2017-09-06T08:11:14Z Job state change SUBMIT -> INLRMS   Reason: Job is passed to LRMS
 ------- Contents of output stream forwarded by the LRMS ---------
 WARNING: GNU time not found at: /usr/bin/time
 ------------------------- End of output -------------------------
-2017-08-25T21:04:33Z Job state change INLRMS -> FINISHING   Reason: Job finished executing in LRMS
-2017-08-25T21:04:36Z Job state change FINISHING -> FINISHED   Reason: Stage-out finished.
-2017-08-25T22:31:01Z Job state change UNDEFINED -> FINISHED   Reason: (Re)Accepting new job
-2017-08-26T00:31:09Z Job state change UNDEFINED -> FINISHED   Reason: (Re)Accepting new job
-2017-08-26T02:31:29Z Job state change UNDEFINED -> FINISHED   Reason: (Re)Accepting new job
-2017-08-26T04:32:01Z Job state change UNDEFINED -> FINISHED   Reason: (Re)Accepting new job
-2017-08-26T06:32:27Z Job state change UNDEFINED -> FINISHED   Reason: (Re)Accepting new job
-2017-08-26T08:33:05Z Job state change UNDEFINED -> FINISHED   Reason: (Re)Accepting new job
+2017-09-06T12:37:31Z Job state change INLRMS -> FINISHING   Reason: Job finished executing in LRMS
+2017-09-06T12:38:07Z Job state change FINISHING -> FINISHED   Reason: Stage-out finished.
+2017-09-06T13:45:23Z Job state change UNDEFINED -> FINISHED   Reason: (Re)Accepting new job
