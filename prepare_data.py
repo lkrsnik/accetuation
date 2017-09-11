@@ -218,7 +218,10 @@ class Data:
             if self._reverse_inputs:
                 syllables = syllables[::-1]
             for syllable in syllables:
-                index = dictionary.index(syllable)
+                if syllable in dictionary:
+                    index = dictionary.index(syllable)
+                else:
+                    index = 0
                 x[i][j] = index
                 j += 1
             i += 1
@@ -964,6 +967,11 @@ class Data:
                                    wrong_word,
                                    correct_word
                                    ])
+        print(num_of_pred)
+        print(len(y))
+        print(num_of_correct_pred_words)
+        print(len(errors))
+        print(num_of_correct_pred_words + len(errors))
         return (num_of_correct_pred / float(num_of_pred)) * 100, (num_of_correct_pred_words / float(len(y))) * 100, errors
 
     def get_accentuated_letter(self, word, location, vowels, syllables=False, debug=False):
