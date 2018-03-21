@@ -9,10 +9,20 @@ import keras.backend as K
 import os.path
 import codecs
 
+from keras import optimizers
+from keras.models import Model
+from keras.layers import Dense, Dropout, Input
+from keras.layers.merge import concatenate
+from keras.layers.convolutional import Conv1D
+from keras.layers.convolutional import MaxPooling1D
+from keras.layers import Flatten
+from keras.models import load_model
+
 
 class Data:
     def __init__(self, input_type, allow_shuffle_vector_generation=False, save_generated_data=True, shuffle_all_inputs=True,
-                 additional_letter_attributes=True, reverse_inputs=True, accent_classification=False, number_of_syllables=False):
+                 additional_letter_attributes=True, reverse_inputs=True, accent_classification=False, number_of_syllables=False,
+                 convert_multext=True, bidirectional_basic_input=False):
         self._input_type = input_type
         self._save_generated_data = save_generated_data
         self._allow_shuffle_vector_generation = allow_shuffle_vector_generation
@@ -21,6 +31,8 @@ class Data:
         self._reverse_inputs = reverse_inputs
         self._accent_classification = accent_classification
         self._number_of_syllables = number_of_syllables
+        self._convert_multext = convert_multext
+        self._bidirectional_basic_input = bidirectional_basic_input
 
         self.x_train = None
         self.x_other_features_train = None
@@ -169,14 +181,20 @@ class Data:
 
     def _x_letter_input(self, content, dictionary, max_word, vowels):
         if self._additional_letter_attributes:
-            x = np.zeros((len(content), max_word, len(dictionary) + 6), dtype=int)
+            if not self._bidirectional_basic_input:
+                x = np.zeros((len(content), max_word, len(dictionary) + 6), dtype=int)
+            else:
+                x = np.zeros((len(content), 2 * max_word, len(dictionary) + 6), dtype=int)
             voiced_consonants = self._get_voiced_consonants()
             resonant_silent_consonants = self._get_resonant_silent_consonants()
             nonresonant_silent_consonants = self._get_nonresonant_silent_consonants()
             # print('HERE!!!')
         else:
             # print('HERE!!!')
-            x = np.zeros((len(content), max_word, len(dictionary)), dtype=int)
+            if not self._bidirectional_basic_input:
+                x = np.zeros((len(content), max_word, len(dictionary)), dtype=int)
+            else:
+                x = np.zeros((len(content), 2 * max_word, len(dictionary)), dtype=int)
 
         i = 0
         for el in content:
@@ -185,25 +203,44 @@ class Data:
                 word = word[::-1]
             j = 0
             for c in list(word):
+                if j >= max_word:
+                    continue
                 index = 0
+                if self._bidirectional_basic_input:
+                    j2 = max_word + (len(word) - j - 1)
                 for d in dictionary:
                     if c == d:
                         x[i][j][index] = 1
+                        if self._bidirectional_basic_input:
+                            x[i][j2][index] = 1
                         break
                     index += 1
                 if self._additional_letter_attributes:
                     if self._is_vowel(word, j, vowels):
                         x[i][j][len(dictionary)] = 1
+                        if self._bidirectional_basic_input:
+                            x[i][j2][len(dictionary)] = 1
                     else:
                         x[i][j][len(dictionary) + 1] = 1
+                        if self._bidirectional_basic_input:
+                            x[i][j2][len(dictionary) + 1] = 1
                         if c in voiced_consonants:
                             x[i][j][len(dictionary) + 2] = 1
+                            if self._bidirectional_basic_input:
+                                x[i][j2][len(dictionary) + 2] = 1
                         else:
                             x[i][j][len(dictionary) + 3] = 1
+                            if self._bidirectional_basic_input:
+                                x[i][j2][len(dictionary) + 3] = 1
+
                             if c in resonant_silent_consonants:
                                 x[i][j][len(dictionary) + 4] = 1
+                                if self._bidirectional_basic_input:
+                                    x[i][j2][len(dictionary) + 4] = 1
                             elif c in nonresonant_silent_consonants:
                                 x[i][j][len(dictionary) + 5] = 1
+                                if self._bidirectional_basic_input:
+                                    x[i][j2][len(dictionary) + 5] = 1
                 j += 1
             i += 1
         return x
@@ -218,6 +255,8 @@ class Data:
             if self._reverse_inputs:
                 syllables = syllables[::-1]
             for syllable in syllables:
+                if j >= max_num_vowels:
+                    continue
                 if syllable in dictionary:
                     index = dictionary.index(syllable)
                 else:
@@ -297,7 +336,7 @@ class Data:
                     consonants.append(word_list[i])
                     syllables.append(''.join(consonants))
                 else:
-                    left_consonants, right_consonants = self._split_consonants(consonants)
+                    left_consonants, right_consonants = self._split_consonants(list(''.join(consonants).lower()))
                     syllables[-1] += ''.join(left_consonants)
                     right_consonants.append(word_list[i])
                     syllables.append(''.join(right_consonants))
@@ -344,9 +383,7 @@ class Data:
                 elif consonants[i] in unresonant_silent_consonants:
                     if consonants[i + 1] in resonant_silent_consonants:
                         split_options.append([i, 4])
-                else:
-                    print(consonants)
-                    print('UNRECOGNIZED LETTERS!')
+
             if split_options == []:
                 return [''], consonants
             else:
@@ -358,7 +395,10 @@ class Data:
         x_other_features = []
         for el in content:
             x_el_other_features = []
-            converted_el = ''.join(self._convert_to_multext_east_v4(list(el[2]), feature_dictionary))
+            if self._convert_multext:
+                converted_el = ''.join(self._convert_to_multext_east_v4(list(el[2]), feature_dictionary))
+            else:
+                converted_el = el[2]
             for feature in feature_dictionary:
                 if converted_el[0] == feature[1]:
                     x_el_other_features.append(1)
@@ -582,6 +622,15 @@ class Data:
                         input_x_other_features_stack = input_x_other_features_stack[batch_size:]
                         input_y_stack = input_y_stack[batch_size:]
                     else:
+                        #print('-------------------------------------------------------------------------------------------')
+                        #if dictionary is not None:
+                        #    print(self.decode_x(word_encoded, dictionary))
+                        #print(input_x_stack)
+                        #print(input_x_other_features_stack)
+                        #print(input_y_stack)
+                        #print(loc)
+                        if len(input_x_stack) == 0:
+                            continue
                         gen_orig_x = translator[np.array(input_x_stack)]
                         yield ([gen_orig_x, np.array(input_x_other_features_stack)], np.array(input_y_stack))
                         input_x_stack = []
@@ -1004,6 +1053,310 @@ class Data:
             return ''.join(word_list)
         else:
             return ''.join(word_list[::-1])
+
+    def assign_stress_types(self, predictions, word, y, vowels, accented_vowels):
+        words = []
+        accentuation_index = 0
+        for i in range(len(y)):
+            wrong_word = word[i][::-1]
+
+            for j in range(len(y[i])):
+                if y[i][j] > 0:
+                    stressed_letter = self.get_accentuated_letter(word[i][::-1], j, vowels, syllables=self._input_type != 'l')
+                    possible_places = np.zeros(len(predictions[accentuation_index]))
+                    if stressed_letter == 'r':
+                        possible_places[0] = 1
+                    elif stressed_letter == 'a':
+                        possible_places[1] = 1
+                        possible_places[2] = 1
+                    elif stressed_letter == 'e':
+                        possible_places[3] = 1
+                        possible_places[4] = 1
+                        possible_places[5] = 1
+                    elif stressed_letter == 'i':
+                        possible_places[6] = 1
+                        possible_places[7] = 1
+                    elif stressed_letter == 'o':
+                        possible_places[8] = 1
+                        possible_places[9] = 1
+                        possible_places[10] = 1
+                    elif stressed_letter == 'u':
+                        possible_places[11] = 1
+                        possible_places[12] = 1
+                    possible_predictions = predictions[accentuation_index] * possible_places
+
+                    arounded_predictions = np.zeros(len(predictions[accentuation_index]), dtype=int)
+
+                    arounded_predictions[np.argmax(possible_predictions).astype(int)] = 1
+
+                    if np.max(possible_predictions) != 0:
+                        wrong_word = self.assign_word_accentuation_type(wrong_word, j, arounded_predictions, vowels, accented_vowels,
+                                                                    syllables=self._input_type != 'l', debug=i == 313)
+
+                    accentuation_index += 1
+
+            words.append(wrong_word[::-1])
+        return words
+
+    @staticmethod
+    def load_location_models(letters_path, syllables_path, syllabled_letters_path):
+        ############################ LOCATION ########################
+        letter_location_model = load_model(letters_path, custom_objects={'actual_accuracy': actual_accuracy})
+
+        # num_examples = len(data.x_train)  # training set size
+        nn_output_dim = 10
+
+        conv_input_shape = (10, 5168)
+        othr_input = (140,)
+        conv_input = Input(shape=conv_input_shape, name='conv_input')
+
+        # syllabled letters
+        x_conv = Conv1D(200, (2), padding='same', activation='relu')(conv_input)
+        x_conv = MaxPooling1D(pool_size=2)(x_conv)
+        x_conv = Flatten()(x_conv)
+
+        othr_input = Input(shape=othr_input, name='othr_input')
+
+        x = concatenate([x_conv, othr_input])
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(nn_output_dim, activation='sigmoid')(x)
+
+        syllable_location_model = Model(inputs=[conv_input, othr_input], outputs=x)
+        opt = optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        syllable_location_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
+        syllable_location_model.load_weights(syllables_path)
+
+        conv_input_shape = (10, 252)
+        othr_input = (140,)
+
+        conv_input = Input(shape=conv_input_shape, name='conv_input')
+
+        # syllabled letters
+        x_conv = Conv1D(200, (2), padding='same', activation='relu')(conv_input)
+        x_conv = MaxPooling1D(pool_size=2)(x_conv)
+        x_conv = Flatten()(x_conv)
+
+        othr_input = Input(shape=othr_input, name='othr_input')
+
+        x = concatenate([x_conv, othr_input])
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(nn_output_dim, activation='sigmoid')(x)
+
+        syllabled_letters_location_model = Model(inputs=[conv_input, othr_input], outputs=x)
+        opt = optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        syllabled_letters_location_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
+        syllabled_letters_location_model.load_weights(syllabled_letters_path)
+
+        return letter_location_model, syllable_location_model, syllabled_letters_location_model
+
+    @staticmethod
+    def load_type_models(letters_path, syllables_path, syllabled_letters_path):
+        nn_output_dim = 13
+
+        # letters
+        conv_input_shape = (23, 36)
+        othr_input = (150,)
+        conv_input = Input(shape=conv_input_shape, name='conv_input')
+        # letters
+        x_conv = Conv1D(115, (3), padding='same', activation='relu')(conv_input)
+        x_conv = Conv1D(46, (3), padding='same', activation='relu')(x_conv)
+
+        # syllabled letters
+        x_conv = MaxPooling1D(pool_size=2)(x_conv)
+        x_conv = Flatten()(x_conv)
+
+        othr_input = Input(shape=othr_input, name='othr_input')
+        x = concatenate([x_conv, othr_input])
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(nn_output_dim, activation='sigmoid')(x)
+
+        letter_type_model = Model(inputs=[conv_input, othr_input], outputs=x)
+        opt = optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        letter_type_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
+        letter_type_model.load_weights(letters_path)
+
+        conv_input_shape = (10, 5168)
+        othr_input = (150,)
+        conv_input = Input(shape=conv_input_shape, name='conv_input')
+
+        x_conv = Conv1D(200, (2), padding='same', activation='relu')(conv_input)
+        x_conv = MaxPooling1D(pool_size=2)(x_conv)
+        x_conv = Flatten()(x_conv)
+
+        othr_input = Input(shape=othr_input, name='othr_input')
+        x = concatenate([x_conv, othr_input])
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(nn_output_dim, activation='sigmoid')(x)
+
+        syllable_type_model = Model(inputs=[conv_input, othr_input], outputs=x)
+        opt = optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        syllable_type_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
+        syllable_type_model.load_weights(syllables_path)
+
+        # syllabled letters
+        conv_input_shape = (10, 252)
+        othr_input = (150,)
+        conv_input = Input(shape=conv_input_shape, name='conv_input')
+
+        x_conv = Conv1D(200, (2), padding='same', activation='relu')(conv_input)
+        x_conv = MaxPooling1D(pool_size=2)(x_conv)
+        x_conv = Flatten()(x_conv)
+
+        othr_input = Input(shape=othr_input, name='othr_input')
+        x = concatenate([x_conv, othr_input])
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(nn_output_dim, activation='sigmoid')(x)
+
+        syllabled_letter_type_model = Model(inputs=[conv_input, othr_input], outputs=x)
+        opt = optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        syllabled_letter_type_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
+        syllabled_letter_type_model.load_weights(syllabled_letters_path)
+
+        return letter_type_model, syllable_type_model, syllabled_letter_type_model
+
+    @staticmethod
+    def get_ensemble_location_predictions(input_words, letter_location_model, syllable_location_model, syllabled_letters_location_model,
+                                          dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary, syllable_dictionary):
+        batch_size = 16
+        # print(tagged_input_words[pos])
+
+        data = Data('l', shuffle_all_inputs=False, convert_multext=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(dictionary, max_word, max_num_vowels, input_words, vowels, accented_vowels,
+                                                             feature_dictionary, 'who cares')
+        generator = data._letter_generator(x, x_other_features, fake_y, batch_size, accented_vowels)
+        letter_location_predictions = letter_location_model.predict_generator(generator, len(x) / (batch_size))
+
+        data = Data('s', shuffle_all_inputs=False, convert_multext=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(syllable_dictionary, max_word, max_num_vowels, input_words, vowels,
+                                                             accented_vowels, feature_dictionary, 'who cares')
+        eye = np.eye(len(syllable_dictionary), dtype=int)
+        generator = data._syllable_generator(x, x_other_features, fake_y, batch_size, eye, accented_vowels)
+        syllable_location_predictions = syllable_location_model.predict_generator(generator, len(x) / (batch_size))
+
+        data = Data('sl', shuffle_all_inputs=False, convert_multext=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(syllable_dictionary, max_word, max_num_vowels, input_words, vowels,
+                                                             accented_vowels, feature_dictionary, 'who cares')
+        max_syllable = data._get_max_syllable(syllable_dictionary)
+        syllable_letters_translator = data._create_syllable_letters_translator(max_syllable, syllable_dictionary, dictionary, vowels)
+        generator = data._syllable_generator(x, x_other_features, fake_y, batch_size, syllable_letters_translator, accented_vowels)
+        syllabled_letters_location_predictions = syllabled_letters_location_model.predict_generator(generator, len(x) / (batch_size))
+
+        return np.mean(np.array([letter_location_predictions, syllable_location_predictions, syllabled_letters_location_predictions]), axis=0)
+
+    @staticmethod
+    def get_ensemble_type_predictions(input_words, location_y, letter_type_model, syllable_type_model, syllabled_letter_type_model,
+                                          dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary, syllable_dictionary):
+        batch_size = 16
+        y_array = np.asarray(location_y)
+        accentuation_length = (y_array > 0).sum()
+
+        data = Data('l', shuffle_all_inputs=False, accent_classification=True, convert_multext=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(dictionary, max_word, max_num_vowels, input_words, vowels, accented_vowels,
+                                                             feature_dictionary, 'who cares')
+        generator = data._letter_generator(x, x_other_features, location_y, batch_size, accented_vowels)
+        letter_type_predictions = letter_type_model.predict_generator(generator, accentuation_length / (batch_size))
+
+        data = Data('s', shuffle_all_inputs=False, accent_classification=True, convert_multext=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(syllable_dictionary, max_word, max_num_vowels, input_words, vowels,
+                                                             accented_vowels, feature_dictionary, 'who cares')
+        eye = np.eye(len(syllable_dictionary), dtype=int)
+        generator = data._syllable_generator(x, x_other_features, location_y, batch_size, eye, accented_vowels)
+        syllable_type_predictions = syllable_type_model.predict_generator(generator, accentuation_length / (batch_size))
+
+        data = Data('sl', shuffle_all_inputs=False, accent_classification=True, convert_multext=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(syllable_dictionary, max_word, max_num_vowels, input_words, vowels,
+                                                             accented_vowels, feature_dictionary, 'who cares')
+        max_syllable = data._get_max_syllable(syllable_dictionary)
+        syllable_letters_translator = data._create_syllable_letters_translator(max_syllable, syllable_dictionary, dictionary, vowels)
+        generator = data._syllable_generator(x, x_other_features, location_y, batch_size, syllable_letters_translator, accented_vowels)
+        syllabled_letter_type_predictions = syllabled_letter_type_model.predict_generator(generator, accentuation_length / batch_size)
+
+        return np.mean(np.array([letter_type_predictions, syllable_type_predictions, syllabled_letter_type_predictions]), axis=0)
+
+    def assign_location_stress(self, word, locations, vowels):
+            #     word = list(word)
+        word_list = list(word)
+        for loc in locations:
+            vowel_num = 0
+            # if loc == 0:
+            #    return word
+            for i in range(len(word_list)):
+                if self._is_vowel(word_list, i, vowels):
+                    if word_list[i] == 'a' and vowel_num == loc:
+                        word_list[i] = 'á'
+                    elif word_list[i] == 'e' and vowel_num == loc:
+                        word_list[i] = 'é'
+                    elif word_list[i] == 'i' and vowel_num == loc:
+                        word_list[i] = 'í'
+                    elif word_list[i] == 'o' and vowel_num == loc:
+                        word_list[i] = 'ó'
+                    elif word_list[i] == 'u' and vowel_num == loc:
+                        word_list[i] = 'ú'
+                    elif word_list[i] == 'r' and vowel_num == loc:
+                        word_list[i] = 'ŕ'
+                    elif word_list[i] == 'A' and vowel_num == loc:
+                        word_list[i] = 'Á'
+                    elif word_list[i] == 'E' and vowel_num == loc:
+                        word_list[i] = 'É'
+                    elif word_list[i] == 'I' and vowel_num == loc:
+                        word_list[i] = 'Í'
+                    elif word_list[i] == 'O' and vowel_num == loc:
+                        word_list[i] = 'Ó'
+                    elif word_list[i] == 'U' and vowel_num == loc:
+                        word_list[i] = 'Ú'
+                    elif word_list[i] == 'R' and vowel_num == loc:
+                        word_list[i] = 'Ŕ'
+                    vowel_num += 1
+                    #     print(word_list)
+        return ''.join(word_list)
+
+    def accentuate_word(self, input_words, letter_location_model, syllable_location_model, syllabled_letters_location_model,
+                        letter_type_model, syllable_type_model, syllabled_letter_type_model,
+                        dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary, syllable_dictionary):
+        predictions = self.get_ensemble_location_predictions(input_words, letter_location_model, syllable_location_model,
+                                                             syllabled_letters_location_model,
+                                                             dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary,
+                                                             syllable_dictionary)
+        if 'A' not in vowels:
+            vowels.extend(['A', 'E', 'I', 'O', 'U'])
+        location_accented_words = [self.assign_location_stress(input_words[i][0][::-1], self.decode_y(predictions[i]), vowels)[::-1] for i in
+                          range(len(input_words))]
+
+        location_y = np.around(predictions)
+        type_predictions = self.get_ensemble_type_predictions(input_words, location_y, letter_type_model, syllable_type_model,
+                                                              syllabled_letter_type_model,
+                                                              dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary,
+                                                              syllable_dictionary)
+
+        only_words = [el[0] for el in input_words]
+        accented_words = self.assign_stress_types(type_predictions, only_words, location_y, vowels, accented_vowels)
+
+        return location_accented_words, accented_words
 
 # def count_vowels(content, vowels):
 #     num_all_vowels = 0
