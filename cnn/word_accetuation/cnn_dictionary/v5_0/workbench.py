@@ -30,7 +30,8 @@ from prepare_data import *
 data = Data('l', bidirectional_basic_input=True)
 data.generate_data('letters_word_accetuation_bidirectional_train',
                    'letters_word_accetuation_bidirectional_test',
-                   'letters_word_accetuation_bidirectional_validate')
+                   'letters_word_accetuation_bidirectional_validate', content_name='SlovarIJS_BESEDE_utf8.lex',
+                      inputs_location='../../../internal_representations/inputs/', content_location='../../../../data/')
 
 
 num_examples = len(data.x_train)  # training set size
@@ -75,10 +76,10 @@ model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accurac
 # model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
 
-history = model.fit_generator(data.generator('train', batch_size),
+history = model.fit_generator(data.generator('train', batch_size, content_location='../../../../data/'),
                               data.x_train.shape[0]/(batch_size * num_fake_epoch),
                               epochs=actual_epoch*num_fake_epoch,
-                              validation_data=data.generator('test', batch_size),
+                              validation_data=data.generator('test', batch_size, content_location='../../../../data/'),
                               validation_steps=data.x_test.shape[0]/(batch_size * num_fake_epoch),
                               verbose=2
                               )
