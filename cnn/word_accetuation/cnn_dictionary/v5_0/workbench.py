@@ -16,8 +16,8 @@ np.random.seed(7)
 
 # get_ipython().magic('run ../../../prepare_data.py')
 
-# import sys
-# # sys.path.insert(0, '../../../')
+import sys
+sys.path.insert(0, '../../../../')
 # sys.path.insert(0, '/home/luka/Developement/accetuation/')
 from prepare_data import *
 
