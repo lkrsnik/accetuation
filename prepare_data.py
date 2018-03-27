@@ -22,7 +22,7 @@ from keras.models import load_model
 class Data:
     def __init__(self, input_type, allow_shuffle_vector_generation=False, save_generated_data=True, shuffle_all_inputs=True,
                  additional_letter_attributes=True, reverse_inputs=True, accent_classification=False, number_of_syllables=False,
-                 convert_multext=True, bidirectional_basic_input=False):
+                 convert_multext=True, bidirectional_basic_input=False, bidirectional_architectural_input=False):
         self._input_type = input_type
         self._save_generated_data = save_generated_data
         self._allow_shuffle_vector_generation = allow_shuffle_vector_generation
@@ -33,14 +33,18 @@ class Data:
         self._number_of_syllables = number_of_syllables
         self._convert_multext = convert_multext
         self._bidirectional_basic_input = bidirectional_basic_input
+        self._bidirectional_architectural_input = bidirectional_architectural_input
 
         self.x_train = None
+        # self.x2_train = None
         self.x_other_features_train = None
         self.y_train = None
         self.x_test = None
+        # self.x2_test = None
         self.x_other_features_test = None
         self.y_test = None
         self.x_validate = None
+        # self.x2_validate = None
         self.x_other_features_validate = None
         self.y_validate = None
 
@@ -63,15 +67,11 @@ class Data:
             shuffle_vector_path = '{}{}'.format(inputs_location, shuffle_vector)
 
             # actual generation of inputs
-            self._generate_inputs(content_path, content_shuffle_vector_path, shuffle_vector_path, test_and_validation_size)
+            self._generate_inputs(content_path, content_shuffle_vector_path, shuffle_vector_path, test_and_validation_size, train_path, test_path,
+                                  validate_path)
 
-            # save inputs
-            if self._save_generated_data:
-                self._save_inputs(train_path, self.x_train, self.x_other_features_train, self.y_train)
-                self._save_inputs(test_path, self.x_test, self.x_other_features_test, self.y_test)
-                self._save_inputs(validate_path, self.x_validate, self.x_other_features_validate, self.y_validate)
-
-    def _generate_inputs(self, content_location, content_shuffle_vector_location, shuffle_vector_location, test_and_validation_size):
+    def _generate_inputs(self, content_location, content_shuffle_vector_location, shuffle_vector_location, test_and_validation_size, train_path,
+                         test_path, validate_path):
         print('READING CONTENT...')
         content = self._read_content(content_location)
         print('CONTENT READ SUCCESSFULLY')
@@ -97,6 +97,13 @@ class Data:
                                                                                                   accented_vowels, feature_dictionary,
                                                                                                   shuffle_vector_location + '_validate.h5')
         print('GENERATION SUCCESSFUL!')
+
+        # save inputs
+        if self._save_generated_data:
+            self._save_inputs(train_path, self.x_train, self.x_other_features_train, self.y_train)
+            self._save_inputs(test_path, self.x_test, self.x_other_features_test, self.y_test)
+            self._save_inputs(validate_path, self.x_validate, self.x_other_features_validate, self.y_validate)
+
         # return X_train, X_other_features_train, y_train, X_test, X_other_features_test, y_test, X_validate, X_other_features_validate, y_validate
 
     # functions for creating X and y from content
@@ -179,7 +186,7 @@ class Data:
         h5f.close()
         return shuffle_vector
 
-    def _x_letter_input(self, content, dictionary, max_word, vowels):
+    def _x_letter_input(self, content, dictionary, max_word, vowels, shuffle_vector_location):
         if self._additional_letter_attributes:
             if not self._bidirectional_basic_input:
                 x = np.zeros((len(content), max_word, len(dictionary) + 6), dtype=int)
@@ -196,9 +203,18 @@ class Data:
             else:
                 x = np.zeros((len(content), 2 * max_word, len(dictionary)), dtype=int)
 
-        i = 0
-        for el in content:
-            word = el[0]
+        if self._shuffle_all_inputs:
+            s = self._load_shuffle_vector(shuffle_vector_location, len(content))
+        else:
+            s = None
+
+        # i = 0
+        for i in range(len(content)):
+            if self._shuffle_all_inputs:
+                mod_i = s[i]
+            else:
+                mod_i = i
+            word = content[mod_i][0]
             if self._reverse_inputs:
                 word = word[::-1]
             j = 0
@@ -242,7 +258,7 @@ class Data:
                                 if self._bidirectional_basic_input:
                                     x[i][j2][len(dictionary) + 5] = 1
                 j += 1
-            i += 1
+            #i += 1
         return x
 
     def _x_syllable_input(self, content, dictionary, max_num_vowels, vowels):
@@ -266,11 +282,19 @@ class Data:
             i += 1
         return x
 
-    def _y_output(self, content, max_num_vowels, vowels, accentuated_vowels):
+    def _y_output(self, content, max_num_vowels, vowels, accentuated_vowels, shuffle_vector_location):
         y = np.zeros((len(content), max_num_vowels))
         i = 0
-
-        for el in content:
+        if self._shuffle_all_inputs:
+            s = self._load_shuffle_vector(shuffle_vector_location, len(content))
+        else:
+            s = None
+        for i in range(len(content)):
+            if self._shuffle_all_inputs:
+                mod_i = s[i]
+            else:
+                mod_i = i
+            el = content[mod_i]
             word = el[3]
             if self._reverse_inputs:
                 word = word[::-1]
@@ -292,27 +316,26 @@ class Data:
                 if self._is_vowel(word, j, vowels):
                     num_vowels += 1
                 j += 1
-            i += 1
         return y
 
     # Generate each y as an array of 11 numbers (with possible values between 0 and 1)
     def _generate_x_and_y(self, dictionary, max_word, max_num_vowels, content, vowels, accentuated_vowels, feature_dictionary,
                           shuffle_vector_location):
         if self._input_type == 'l':
-            x = self._x_letter_input(content, dictionary, max_word, vowels)
+            x = self._x_letter_input(content, dictionary, max_word, vowels, shuffle_vector_location)
         elif self._input_type == 's' or self._input_type == 'sl':
             x = self._x_syllable_input(content, dictionary, max_num_vowels, vowels)
         else:
             raise ValueError('No input_type provided. It could be \'l\', \'s\' or \'sl\'.')
-        y = self._y_output(content, max_num_vowels, vowels, accentuated_vowels)
+        y = self._y_output(content, max_num_vowels, vowels, accentuated_vowels, shuffle_vector_location)
 
         # print('CREATING OTHER FEATURES...')
-        x_other_features = self._create_x_features(content, feature_dictionary, vowels)
+        x_other_features = self._create_x_features(content, feature_dictionary, vowels, shuffle_vector_location)
         # print('OTHER FEATURES CREATED!')
 
         if self._shuffle_all_inputs:
             print('SHUFFELING INPUTS...')
-            x, x_other_features, y = self._shuffle_inputs(x, x_other_features, y, shuffle_vector_location)
+            #x, x_other_features, y = self._shuffle_inputs(x, x_other_features, y, shuffle_vector_location)
             print('INPUTS SHUFFELED!')
         return x, x_other_features, y
 
@@ -390,10 +413,19 @@ class Data:
                 split = min(split_options, key=lambda x: x[1])
                 return consonants[:split[0] + 1], consonants[split[0] + 1:]
 
-    def _create_x_features(self, content, feature_dictionary, vowels):
+    def _create_x_features(self, content, feature_dictionary, vowels, shuffle_vector_location):
         content = content
         x_other_features = []
-        for el in content:
+        if self._shuffle_all_inputs:
+            s = self._load_shuffle_vector(shuffle_vector_location, len(content))
+        else:
+            s = None
+        for index in range(len(content)):
+            if self._shuffle_all_inputs:
+                mod_i = s[index]
+            else:
+                mod_i = index
+            el = content[mod_i]
             x_el_other_features = []
             if self._convert_multext:
                 converted_el = ''.join(self._convert_to_multext_east_v4(list(el[2]), feature_dictionary))
@@ -587,9 +619,17 @@ class Data:
             else:
                 while loc < size:
                     if loc + batch_size >= size:
-                        yield ([orig_x[loc:size], orig_x_additional[loc:size]], orig_y[loc:size])
+                        if self._bidirectional_architectural_input:
+                            split_orig_x = np.hsplit(orig_x[loc:size], 2)
+                            yield ([split_orig_x[0], split_orig_x[1], orig_x_additional[loc:size]], orig_y[loc:size])
+                        else:
+                            yield ([orig_x[loc:size], orig_x_additional[loc:size]], orig_y[loc:size])
                     else:
-                        yield ([orig_x[loc:loc + batch_size], orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+                        if self._bidirectional_architectural_input:
+                            split_orig_x = np.hsplit(orig_x[loc:loc + batch_size], 2)
+                            yield ([split_orig_x[0], split_orig_x[1], orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+                        else:
+                            yield ([orig_x[loc:loc + batch_size], orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
                     loc += batch_size
 
     # generator for inputs for tracking of data fitting
