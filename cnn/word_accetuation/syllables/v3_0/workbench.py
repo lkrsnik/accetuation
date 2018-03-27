@@ -16,8 +16,8 @@ np.random.seed(7)
 
 # get_ipython().magic('run ../../../prepare_data.py')
 
-# import sys
-# # sys.path.insert(0, '../../../')
+import sys
+sys.path.insert(0, '../../../../')
 # sys.path.insert(0, '/home/luka/Developement/accetuation/')
 from prepare_data import *
 
@@ -31,10 +31,10 @@ from prepare_data import *
 # data = Data('l', save_generated_data=False, number_of_syllables=True)
 
 # syllabled letters
-data = Data('s', save_generated_data=False)
+data = Data('s', bidirectional_basic_input=True)
 data.generate_data('syllables_word_accetuation_bidirectional_train',
                    'syllables_word_accetuation_bidirectional_test',
-                   'syllables_word_accetuation_validate',
+                   'syllables_word_accetuation_bidirectional_validate',
                       inputs_location='../../../internal_representations/inputs/', content_location='../../../../data/')
 
 
