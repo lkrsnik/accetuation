@@ -261,25 +261,37 @@ class Data:
             #i += 1
         return x
 
-    def _x_syllable_input(self, content, dictionary, max_num_vowels, vowels):
-        x = np.zeros((len(content), max_num_vowels), dtype=int)
+    def _x_syllable_input(self, content, dictionary, max_num_vowels, vowels, shuffle_vector_location):
+        if not self._bidirectional_basic_input:
+            x = np.zeros((len(content), max_num_vowels), dtype=int)
+        else:
+            x = np.zeros((len(content), 2 * max_num_vowels), dtype=int)
 
-        i = 0
-        for el in content:
+        if self._shuffle_all_inputs:
+            s = self._load_shuffle_vector(shuffle_vector_location, len(content))
+        else:
+            s = None
+
+        for i in range(len(content)):
+            if self._shuffle_all_inputs:
+                mod_i = s[i]
+            else:
+                mod_i = i
             j = 0
-            syllables = self._create_syllables(el[0], vowels)
+            syllables = self._create_syllables(content[mod_i][0], vowels)
             if self._reverse_inputs:
                 syllables = syllables[::-1]
             for syllable in syllables:
                 if j >= max_num_vowels:
                     continue
                 if syllable in dictionary:
-                    index = dictionary.index(syllable)
+                    x[i][j] = dictionary.index(syllable)
+                    if self._bidirectional_basic_input:
+                        x[i][max_num_vowels + (len(syllables) - j - 1)] = dictionary.index(syllable)
                 else:
-                    index = 0
-                x[i][j] = index
+                    x[i][j] = 0
                 j += 1
-            i += 1
+            #i += 1
         return x
 
     def _y_output(self, content, max_num_vowels, vowels, accentuated_vowels, shuffle_vector_location):
@@ -324,7 +336,7 @@ class Data:
         if self._input_type == 'l':
             x = self._x_letter_input(content, dictionary, max_word, vowels, shuffle_vector_location)
         elif self._input_type == 's' or self._input_type == 'sl':
-            x = self._x_syllable_input(content, dictionary, max_num_vowels, vowels)
+            x = self._x_syllable_input(content, dictionary, max_num_vowels, vowels, shuffle_vector_location)
         else:
             raise ValueError('No input_type provided. It could be \'l\', \'s\' or \'sl\'.')
         y = self._y_output(content, max_num_vowels, vowels, accentuated_vowels, shuffle_vector_location)
