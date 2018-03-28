@@ -3,6 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_0/workbench.py" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_0/workbench.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllables/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/cnn.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_0/workbench.py" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_0/workbench.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prepare_data.py" afterPath="$PROJECT_DIR$/prepare_data.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -32,8 +36,8 @@
       <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="664" column="65" lean-forward="true" selection-start-line="664" selection-start-column="65" selection-end-line="664" selection-end-column="65" />
+            <state relative-caret-position="298">
+              <caret line="480" column="20" lean-forward="false" selection-start-line="480" selection-start-column="19" selection-end-line="480" selection-end-column="20" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
                 <element signature="e#6821#8109#0" expanded="false" />
@@ -41,7 +45,7 @@
                 <element signature="e#17366#17668#0" expanded="false" />
                 <element signature="e#18641#18987#0" expanded="false" />
                 <element signature="e#23403#24050#0" expanded="false" />
-                <element signature="e#35363#35504#0" expanded="false" />
+                <element signature="e#37139#37280#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -50,8 +54,8 @@
       <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_0/workbench.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="586">
-              <caret line="91" column="104" lean-forward="true" selection-start-line="91" selection-start-column="104" selection-end-line="91" selection-end-column="104" />
+            <state relative-caret-position="-350">
+              <caret line="33" column="17" lean-forward="false" selection-start-line="33" selection-start-column="17" selection-end-line="33" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -60,8 +64,28 @@
       <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_0/workbench.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="788">
-              <caret line="91" column="39" lean-forward="true" selection-start-line="91" selection-start-column="39" selection-end-line="91" selection-end-column="39" />
+            <state relative-caret-position="716">
+              <caret line="99" column="9" lean-forward="false" selection-start-line="99" selection-start-column="9" selection-end-line="99" selection-end-column="9" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_1/workbench.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="522">
+              <caret line="79" column="62" lean-forward="true" selection-start-line="79" selection-start-column="62" selection-end-line="79" selection-end-column="62" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_1/workbench.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="63" column="78" lean-forward="true" selection-start-line="58" selection-start-column="0" selection-end-line="63" selection-end-column="78" />
               <folding />
             </state>
           </provider>
@@ -102,8 +126,8 @@
       <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/workbench.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="572">
-              <caret line="86" column="132" lean-forward="false" selection-start-line="86" selection-start-column="108" selection-end-line="86" selection-end-column="132" />
+            <state relative-caret-position="188">
+              <caret line="30" column="64" lean-forward="false" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="64" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
               </folding>
@@ -112,10 +136,10 @@
         </entry>
       </file>
       <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_0/workbench.py">
+        <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllables/v2_4/workbench.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="35" column="0" lean-forward="false" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+            <state relative-caret-position="414">
+              <caret line="34" column="11" lean-forward="false" selection-start-line="34" selection-start-column="11" selection-end-line="34" selection-end-column="11" />
               <folding />
             </state>
           </provider>
@@ -200,17 +224,12 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_accent_classification</find>
-      <find>wrong</find>
-      <find>wrong_word</find>
-      <find>predict</find>
       <find>get_ensemble_type_predictions</find>
       <find>_convert_to_multext_east_v4</find>
       <find>_split_consonants</find>
       <find>UNRECOGNIZED</find>
       <find>word_glob_num</find>
       <find>convert_multext</find>
-      <find>_syllable_generator</find>
       <find>generator</find>
       <find>_x</find>
       <find>bidirectional_basic_input</find>
@@ -230,6 +249,11 @@
       <find>reverse_inputs</find>
       <find>index</find>
       <find>x_sy</find>
+      <find>_letter_generator</find>
+      <find>translator</find>
+      <find>_bidirectional_architectural_input</find>
+      <find>print</find>
+      <find>_syllable_generator</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -252,10 +276,11 @@
         <option value="$PROJECT_DIR$/workbench.xrsl" />
         <option value="$PROJECT_DIR$/sloleks_accentuation.py" />
         <option value="$PROJECT_DIR$/workbench.py" />
-        <option value="$PROJECT_DIR$/prepare_data.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_0/workbench.py" />
+        <option value="$PROJECT_DIR$/prepare_data.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_0/workbench.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_0/workbench.py" />
+        <option value="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_1/workbench.py" />
       </list>
     </option>
   </component>
@@ -368,14 +393,136 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="v2_4" />
+              <option name="myItemId" value="v3_1" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cnn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="word_accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="syllables" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="v3_0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cnn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="word_accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="syllabled_letters" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cnn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="word_accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="syllabled_letters" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="v3_0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cnn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="word_accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cnn_dictionary" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cnn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="word_accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cnn_dictionary" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="v5_1" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -669,31 +816,11 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="7" />
+      <option name="time" value="10" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/theano_tutorial/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1368">
-          <caret line="76" column="6" lean-forward="false" selection-start-line="76" selection-start-column="2" selection-end-line="76" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/theano_tutorial/logistic_regression.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="846">
-          <caret line="49" column="31" lean-forward="false" selection-start-line="49" selection-start-column="31" selection-end-line="49" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/theano_tutorial/tutorial_derivates.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -987,21 +1114,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/workbench.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="572">
-          <caret line="86" column="132" lean-forward="false" selection-start-line="86" selection-start-column="108" selection-end-line="86" selection-end-column="132" />
-          <folding>
-            <element signature="e#24#63#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_0/workbench.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="432">
           <caret line="35" column="0" lean-forward="false" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="188">
+          <caret line="30" column="64" lean-forward="false" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="64" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1015,24 +1142,40 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_0/workbench.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="91" column="104" lean-forward="true" selection-start-line="91" selection-start-column="104" selection-end-line="91" selection-end-column="104" />
+        <state relative-caret-position="-350">
+          <caret line="33" column="17" lean-forward="false" selection-start-line="33" selection-start-column="17" selection-end-line="33" selection-end-column="17" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_0/workbench.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="788">
-          <caret line="91" column="39" lean-forward="true" selection-start-line="91" selection-start-column="39" selection-end-line="91" selection-end-column="39" />
+        <state relative-caret-position="716">
+          <caret line="99" column="9" lean-forward="false" selection-start-line="99" selection-start-column="9" selection-end-line="99" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_1/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="63" column="78" lean-forward="true" selection-start-line="58" selection-start-column="0" selection-end-line="63" selection-end-column="78" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_1/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="522">
+          <caret line="79" column="62" lean-forward="true" selection-start-line="79" selection-start-column="62" selection-end-line="79" selection-end-column="62" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/prepare_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="664" column="65" lean-forward="true" selection-start-line="664" selection-start-column="65" selection-end-line="664" selection-end-column="65" />
+        <state relative-caret-position="298">
+          <caret line="480" column="20" lean-forward="false" selection-start-line="480" selection-start-column="19" selection-end-line="480" selection-end-column="20" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
             <element signature="e#6821#8109#0" expanded="false" />
@@ -1040,7 +1183,7 @@
             <element signature="e#17366#17668#0" expanded="false" />
             <element signature="e#18641#18987#0" expanded="false" />
             <element signature="e#23403#24050#0" expanded="false" />
-            <element signature="e#35363#35504#0" expanded="false" />
+            <element signature="e#37139#37280#0" expanded="false" />
           </folding>
         </state>
       </provider>
