@@ -669,7 +669,15 @@ class Data:
                         loc += 1
                     if len(input_x_stack) > batch_size:
                         gen_orig_x = translator[np.array(input_x_stack[:batch_size])]
-                        yield ([gen_orig_x, np.array(input_x_other_features_stack[:batch_size])], np.array(input_y_stack)[:batch_size])
+
+                        if self._bidirectional_architectural_input:
+                            split_orig_x = np.hsplit(gen_orig_x, 2)
+                            yield ([split_orig_x[0], split_orig_x[1], np.array(input_x_other_features_stack[:batch_size])],
+                                   np.array(input_y_stack)[:batch_size])
+                        else:
+                            yield ([gen_orig_x, np.array(input_x_other_features_stack[:batch_size])], np.array(input_y_stack)[:batch_size])
+
+                        # yield ([gen_orig_x, np.array(input_x_other_features_stack[:batch_size])], np.array(input_y_stack)[:batch_size])
                         input_x_stack = input_x_stack[batch_size:]
                         input_x_other_features_stack = input_x_other_features_stack[batch_size:]
                         input_y_stack = input_y_stack[batch_size:]
@@ -684,7 +692,15 @@ class Data:
                         if len(input_x_stack) == 0:
                             continue
                         gen_orig_x = translator[np.array(input_x_stack)]
-                        yield ([gen_orig_x, np.array(input_x_other_features_stack)], np.array(input_y_stack))
+
+                        if self._bidirectional_architectural_input:
+                            split_orig_x = np.hsplit(gen_orig_x, 2)
+                            yield ([split_orig_x[0], split_orig_x[1], np.array(input_x_other_features_stack)],
+                                   np.array(input_y_stack))
+                        else:
+                            yield ([gen_orig_x, np.array(input_x_other_features_stack)], np.array(input_y_stack))
+
+                        # yield ([gen_orig_x, np.array(input_x_other_features_stack)], np.array(input_y_stack))
                         input_x_stack = []
                         input_x_other_features_stack = []
                         input_y_stack = []
@@ -692,10 +708,24 @@ class Data:
                 while loc < size:
                     if loc + batch_size >= size:
                         gen_orig_x = translator[orig_x[loc:size]]
-                        yield ([gen_orig_x, orig_x_additional[loc:size]], orig_y[loc:size])
+
+                        if self._bidirectional_architectural_input:
+                            split_orig_x = np.hsplit(gen_orig_x, 2)
+                            yield ([split_orig_x[0], split_orig_x[1], orig_x_additional[loc:size]], orig_y[loc:size])
+                        else:
+                            yield ([gen_orig_x, orig_x_additional[loc:size]], orig_y[loc:size])
+
+                        #yield ([gen_orig_x, orig_x_additional[loc:size]], orig_y[loc:size])
                     else:
                         gen_orig_x = translator[orig_x[loc:loc + batch_size]]
-                        yield ([gen_orig_x, orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+
+                        if self._bidirectional_architectural_input:
+                            split_orig_x = np.hsplit(gen_orig_x, 2)
+                            yield ([split_orig_x[0], split_orig_x[1], orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+                        else:
+                            yield ([gen_orig_x, orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
+
+                        #yield ([gen_orig_x, orig_x_additional[loc:loc + batch_size]], orig_y[loc:loc + batch_size])
                     loc += batch_size
 
     def _get_max_syllable(self, syllable_dictionary):

@@ -31,7 +31,7 @@ from prepare_data import *
 # data = Data('l', save_generated_data=False, number_of_syllables=True)
 
 # syllabled letters
-data = Data('s', bidirectional_basic_input=True)
+data = Data('s', bidirectional_architectural_input=True, bidirectional_basic_input=True)
 data.generate_data('syllables_word_accetuation_bidirectional_train',
                    'syllables_word_accetuation_bidirectional_test',
                    'syllables_word_accetuation_bidirectional_validate',
@@ -53,7 +53,7 @@ num_fake_epoch = 20
 # conv_input_shape=(23, 36)
 
 # syllabled letters
-conv_input_shape=(20, 5168)
+conv_input_shape=(10, 5168)
 
 
 othr_input = (140, )
@@ -68,9 +68,15 @@ x_conv = Conv1D(200, (2), padding='same', activation='relu')(conv_input)
 x_conv = MaxPooling1D(pool_size=2)(x_conv)
 x_conv = Flatten()(x_conv)
 
+conv_input2 = Input(shape=conv_input_shape, name='conv_input2')
+x_conv2 = Conv1D(200, (2), padding='same', activation='relu')(conv_input2)
+x_conv2 = MaxPooling1D(pool_size=2)(x_conv2)
+x_conv2 = Flatten()(x_conv2)
+# x_conv = Dense(516, activation='relu', kernel_constraint=maxnorm(3))(x_conv)
+
 othr_input = Input(shape=othr_input, name='othr_input')
 
-x = concatenate([x_conv, othr_input])
+x = concatenate([x_conv, x_conv2, othr_input])
 # x = Dense(1024, input_dim=(516 + 256), activation='relu')(x)
 x = Dense(256, activation='relu')(x)
 x = Dropout(0.3)(x)
@@ -83,7 +89,7 @@ x = Dense(nn_output_dim, activation='sigmoid')(x)
 
 
 
-model = Model(inputs=[conv_input, othr_input], outputs=x)
+model = Model(inputs=[conv_input, conv_input2, othr_input], outputs=x)
 opt = optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy,])
 # model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])

@@ -31,7 +31,7 @@ from prepare_data import *
 # data = Data('l', save_generated_data=False, number_of_syllables=True)
 
 # syllabled letters
-data = Data('sl', save_generated_data=False)
+data = Data('sl', bidirectional_basic_input=True)
 data.generate_data('syllables_word_accetuation_bidirectional_train',
                    'syllables_word_accetuation_bidirectional_test',
                    'syllables_word_accetuation_bidirectional_validate',
@@ -43,7 +43,7 @@ nn_output_dim = 10
 nn_hdim = 516
 batch_size = 16
 # actual_epoch = 1
-actual_epoch = 40
+actual_epoch = 20
 # num_fake_epoch = 2
 num_fake_epoch = 20
 
@@ -97,7 +97,7 @@ history = model.fit_generator(data.generator('train', batch_size, content_locati
                               verbose=2
                               )
 
-name = '40_epoch'
+name = '20_epoch'
 model.save(name + '.h5')
 output = open(name + '_history.pkl', 'wb')
 pickle.dump(history.history, output)
