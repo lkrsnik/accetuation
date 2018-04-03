@@ -34,7 +34,10 @@ data.generate_data('../../internal_representations/inputs/letters_word_accentuat
 
 reshaped_train = np.reshape(data.x_train, (data.x_train.shape[0], 828))
 
-svm = LinearSVC(random_state=0)
+svm = LinearSVC(random_state=0, verbose=True)
 cls = BinaryRelevance(classifier=svm)
 
 cls.fit(reshaped_train, data.y_train)
+
+filename = 'finalized_model.sav'
+pickle.dump(cls, open(filename, 'wb'))
