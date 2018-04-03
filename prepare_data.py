@@ -51,7 +51,7 @@ class Data:
     def generate_data(self, train_inputs_name, test_inputs_name, validate_inputs_name, test_and_validation_size=0.1,
                       force_override=False, content_name='SlovarIJS_BESEDE_utf8.lex',
                       content_shuffle_vector='content_shuffle_vector', shuffle_vector='shuffle_vector',
-                      inputs_location='../../internal_representations/inputs/', content_location='../../../data/'):
+                      inputs_location='../../internal_representations/inputs/', content_location='../../../data/', test_set=False):
         content_path = '{}{}'.format(content_location, content_name)
         train_path = '{}{}.h5'.format(inputs_location, train_inputs_name)
         test_path = '{}{}.h5'.format(inputs_location, test_inputs_name)
@@ -69,6 +69,14 @@ class Data:
             # actual generation of inputs
             self._generate_inputs(content_path, content_shuffle_vector_path, shuffle_vector_path, test_and_validation_size, train_path, test_path,
                                   validate_path)
+        if test_set:
+            self.x_train = np.concatenate((self.x_train, self.x_test), axis=0)
+            self.x_other_features_train = np.concatenate((self.x_other_features_train, self.x_other_features_test), axis=0)
+            self.y_train = np.concatenate((self.y_train, self.y_test), axis=0)
+
+            self.x_test = self.x_validate
+            self.x_other_features_train = self.x_other_features_validate
+            self.y_train = self.y_validate
 
     def _generate_inputs(self, content_location, content_shuffle_vector_location, shuffle_vector_location, test_and_validation_size, train_path,
                          test_path, validate_path):

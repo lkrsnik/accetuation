@@ -35,7 +35,7 @@ data = Data('s', bidirectional_architectural_input=True, bidirectional_basic_inp
 data.generate_data('syllables_word_accetuation_bidirectional_train',
                    'syllables_word_accetuation_bidirectional_test',
                    'syllables_word_accetuation_bidirectional_validate',
-                      inputs_location='../../../internal_representations/inputs/', content_location='../../../../data/')
+                      inputs_location='../../../internal_representations/inputs/', content_location='../../../../data/', test_set=True)
 
 
 num_examples = len(data.x_train)  # training set size
@@ -103,7 +103,8 @@ history = model.fit_generator(data.generator('train', batch_size, content_locati
                               verbose=2
                               )
 
-name = '20_epoch'
+# name = '20_epoch'
+name = '20_test_epoch'
 model.save(name + '.h5')
 output = open(name + '_history.pkl', 'wb')
 pickle.dump(history.history, output)
