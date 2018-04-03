@@ -34,14 +34,17 @@ data.generate_data('../../internal_representations/inputs/letters_word_accentuat
 
 reshaped_train = np.reshape(data.x_train, (data.x_train.shape[0], 828))
 
-svm = LinearSVC(random_state=0, verbose=True, max_iter=10000)
-cls = BinaryRelevance(classifier=svm)
+for i in range(-5, 5):
+    c = math.pow(10, i)
 
-cls.fit(reshaped_train, data.y_train)
+    svm = LinearSVC(random_state=0, verbose=True, max_iter=10000, C=c)
+    cls = BinaryRelevance(classifier=svm)
 
-filename = 'finalized_model.sav'
-pickle.dump(cls, open(filename, 'wb'))
+    cls.fit(reshaped_train, data.y_train)
 
-reshaped_test = np.reshape(data.x_test, (data.x_test.shape[0], 828))
-result = loaded_model.score(reshaped_test, data.y_test)
-print(result)
+    filename = 'finalized_model_c_' + str(c) + '.sav'
+    pickle.dump(cls, open(filename, 'wb'))
+
+    reshaped_test = np.reshape(data.x_test, (data.x_test.shape[0], 828))
+    result = cls.score(reshaped_test, data.y_test)
+    print('c = ' + str(c) + ' || result = ' + str(result))
