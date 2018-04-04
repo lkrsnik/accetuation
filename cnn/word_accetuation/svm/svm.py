@@ -38,12 +38,12 @@ reshaped_test = np.reshape(data.x_test, (data.x_test.shape[0], 828))
 for i in range(-5, 5):
     c = math.pow(10, i)
 
-    svm = LinearSVC(random_state=0, verbose=True, max_iter=10000, C=c)
+    svm = LinearSVC(random_state=0, verbose=True, max_iter=10000, C=c, class_weight='balanced')
     cls = BinaryRelevance(classifier=svm)
 
     cls.fit(reshaped_train, data.y_train)
 
-    filename = 'finalized_model_c_' + str(c) + '.sav'
+    filename = 'finalized_model_c_balanced_' + str(c) + '.sav'
     pickle.dump(cls, open(filename, 'wb'))
 
     result = cls.score(reshaped_test, data.y_test)
