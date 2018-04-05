@@ -17,7 +17,7 @@ np.random.seed(7)
 # get_ipython().magic('run ../../../prepare_data.py')
 
 import sys
-sys.path.insert(0, '../../../../')
+# sys.path.insert(0, '../../../../')
 # sys.path.insert(0, '/home/luka/Developement/accetuation/')
 from prepare_data import *
 
@@ -31,7 +31,7 @@ data = Data('l', bidirectional_basic_input=True)
 data.generate_data('letters_word_accetuation_bidirectional_train',
                    'letters_word_accetuation_bidirectional_test',
                    'letters_word_accetuation_bidirectional_validate',
-                   inputs_location='../../../internal_representations/inputs/', content_location='../../../../data/', test_set=True)
+                   inputs_location='cnn/internal_representations/inputs/', content_location='data/', test_set=True)
 
 
 num_examples = len(data.x_train)  # training set size
@@ -76,10 +76,10 @@ model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accurac
 # model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
 
-history = model.fit_generator(data.generator('train', batch_size, content_location='../../../../data/'),
+history = model.fit_generator(data.generator('train', batch_size, content_location='data/'),
                               data.x_train.shape[0]/(batch_size * num_fake_epoch),
                               epochs=actual_epoch*num_fake_epoch,
-                              validation_data=data.generator('test', batch_size, content_location='../../../../data/'),
+                              validation_data=data.generator('test', batch_size, content_location='data/'),
                               validation_steps=data.x_test.shape[0]/(batch_size * num_fake_epoch),
                               verbose=2
                               )

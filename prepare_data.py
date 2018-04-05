@@ -75,8 +75,8 @@ class Data:
             self.y_train = np.concatenate((self.y_train, self.y_test), axis=0)
 
             self.x_test = self.x_validate
-            self.x_other_features_train = self.x_other_features_validate
-            self.y_train = self.y_validate
+            self.x_other_features_test = self.x_other_features_validate
+            self.y_test = self.y_validate
 
     def _generate_inputs(self, content_location, content_shuffle_vector_location, shuffle_vector_location, test_and_validation_size, train_path,
                          test_path, validate_path):
