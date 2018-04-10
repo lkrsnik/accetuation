@@ -63,11 +63,11 @@ else:
     svm = LinearSVC(random_state=0, verbose=True, max_iter=10000, C=c)
     cls = BinaryRelevance(classifier=svm)
 
-    cls.fit(reshaped_train, data.y_train)
+    cls.fit(concatenated_train, data.y_train)
 
     filename = 'complete_input.sav'
     pickle.dump(cls, open(filename, 'wb'))
 
-    result = cls.score(reshaped_test, data.y_test)
+    result = cls.score(concatenated_test, data.y_test)
     print('c = ' + str(c) + ' || result = \n' + str(result))
 
