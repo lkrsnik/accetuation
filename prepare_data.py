@@ -968,6 +968,8 @@ class Data:
                     decoded_x = self.decode_x(x[i], dictionary)
                 else:
                     decoded_x = self.decode_syllable_x(x[i], syllable_dictionary)
+                if self._bidirectional_basic_input:
+                    decoded_x = decoded_x[:int(len(decoded_x)/2)]
                 errors.append([i,
                                decoded_x,
                                self.decode_x_other_features(feature_dictionary, [x_other_features[i]]),
@@ -988,7 +990,10 @@ class Data:
         if not syllables:
             word_list = list(word)
         else:
-            word_list = list(word)[::-1]
+            if self._reverse_inputs:
+                word_list = list(word)[::-1]
+            else:
+                word_list = list(word)
         vowel_num = 0
         for i in range(len(word_list)):
             if self._is_vowel(word_list, i, vowels):
