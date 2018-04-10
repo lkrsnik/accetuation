@@ -46,11 +46,20 @@ else:
     svm = LinearSVC(random_state=0, verbose=True, max_iter=10000, C=c)
     cls = BinaryRelevance(classifier=svm)
 
+<<<<<<< HEAD
     cls.fit(x_train, y_train)
+=======
+    cls.fit(concatenated_train, data.y_train)
+>>>>>>> e6cb2d7338e88eff7c5b9f09d3a9816e24e28a51
 
     filename = 'model.sav'
     pickle.dump(cls, open(filename, 'wb'))
 
+<<<<<<< HEAD
     result = cls.score(x_test, y_test)
     print('c = ' + str(c) + ' || result = ' + str(result))
+=======
+    result = cls.score(concatenated_test, data.y_test)
+    print('c = ' + str(c) + ' || result = \n' + str(result))
+>>>>>>> e6cb2d7338e88eff7c5b9f09d3a9816e24e28a51
 

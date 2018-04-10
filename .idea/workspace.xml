@@ -2,14 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/svm/svm_prepare_data.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/ensemble_test_errors.pkl" afterPath="$PROJECT_DIR$/cnn/word_accetuation/ensemble_test_errors.pkl" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_0/20_test_epoch.h5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_0/20_test_epoch_history.pkl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_1/20_test_epoch.h5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_1/20_test_epoch_history.pkl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_0/20_test_epoch.h5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_0/20_test_epoch_history.pkl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_1/20_test_epoch.h5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_1/20_test_epoch_history.pkl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_0/20_test_epoch.h5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_0/20_test_epoch_history.pkl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_1/20_test_epoch.h5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_1/20_test_epoch_history.pkl" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/cnn/word_accetuation/svm/complete_input.sav" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/cnn.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/error_analysis.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/error_analysis.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/svm/svm.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/svm/svm.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_0/workbench.py" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_0/workbench.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_1/workbench.py" afterPath="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_1/workbench.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/svm/svm.py" afterPath="$PROJECT_DIR$/cnn/word_accetuation/svm/svm.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_0/workbench.py" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_0/workbench.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_1/workbench.py" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_1/workbench.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_0/workbench.py" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_0/workbench.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_1/workbench.py" afterPath="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_1/workbench.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/run_multiple_files.py" afterPath="$PROJECT_DIR$/run_multiple_files.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -70,7 +84,7 @@
             <state relative-caret-position="18">
               <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
               <folding>
-                <element signature="e#0#57#0" expanded="true" />
+                <marker date="1523345178128" expanded="true" signature="0:353" ph="import ..." />
               </folding>
             </state>
           </provider>
@@ -256,8 +270,8 @@
         <option value="$PROJECT_DIR$/run_multiple_files.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/TEST/workbench.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/svm/svm_prepare_data.py" />
-        <option value="$PROJECT_DIR$/cnn/word_accetuation/svm/svm.py" />
         <option value="$PROJECT_DIR$/prepare_data.py" />
+        <option value="$PROJECT_DIR$/cnn/word_accetuation/svm/svm.py" />
       </list>
     </option>
   </component>
@@ -373,6 +387,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="v3_0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cnn" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="word_accetuation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="svm" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -641,9 +677,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="24" width="1855" height="1056" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12227074" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18831877" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -890,7 +926,7 @@
         <state relative-caret-position="18">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding>
-            <element signature="e#0#57#0" expanded="true" />
+            <marker date="1523345178128" expanded="true" signature="0:353" ph="import ..." />
           </folding>
         </state>
       </provider>
