@@ -86,7 +86,7 @@ history = model.fit_generator(data.generator('train', batch_size, content_locati
                               )
 
 # name = '20_epoch'
-name = 'cnn/word_accetuation/cnn_dictionary/v5_2/20_test_epoch'
+name = 'cnn/word_accetuation/cnn_dictionary/v5_2/20_epoch'
 model.save(name + '.h5')
 output = open(name + '_history.pkl', 'wb')
 pickle.dump(history.history, output)
