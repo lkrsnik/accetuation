@@ -35,7 +35,7 @@ data = Data('sl', reverse_inputs=False)
 data.generate_data('syllables_word_accetuation_correct_input_order_train',
                    'syllables_word_accetuation_correct_input_order_test',
                    'syllables_word_accetuation_correct_input_order_validate',
-                      inputs_location='cnn/internal_representations/inputs/', content_location='data/', test_set=True)
+                      inputs_location='cnn/internal_representations/inputs/', content_location='data/')
 
 
 num_examples = len(data.x_train)  # training set size

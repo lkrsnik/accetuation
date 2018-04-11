@@ -31,7 +31,7 @@ data = Data('l', reverse_inputs=False)
 data.generate_data('letters_word_accetuation_correct_input_order_train',
                    'letters_word_accetuation_correct_input_order_test',
                    'letters_word_accetuation_correct_input_order_validate',
-                   inputs_location='cnn/internal_representations/inputs/', content_location='data/', test_set=True)
+                   inputs_location='cnn/internal_representations/inputs/', content_location='data/')
 
 
 num_examples = len(data.x_train)  # training set size
