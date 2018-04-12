@@ -51,7 +51,8 @@ class Data:
     def generate_data(self, train_inputs_name, test_inputs_name, validate_inputs_name, test_and_validation_size=0.1,
                       force_override=False, content_name='SlovarIJS_BESEDE_utf8.lex',
                       content_shuffle_vector='content_shuffle_vector', shuffle_vector='shuffle_vector',
-                      inputs_location='../../internal_representations/inputs/', content_location='../../../data/', test_set=False):
+                      inputs_location='../../internal_representations/inputs/', content_location='../../../data/',
+                      test_set=False, complete_set=False):
         content_path = '{}{}'.format(content_location, content_name)
         train_path = '{}{}.h5'.format(inputs_location, train_inputs_name)
         test_path = '{}{}.h5'.format(inputs_location, test_inputs_name)
@@ -73,6 +74,16 @@ class Data:
             self.x_train = np.concatenate((self.x_train, self.x_test), axis=0)
             self.x_other_features_train = np.concatenate((self.x_other_features_train, self.x_other_features_test), axis=0)
             self.y_train = np.concatenate((self.y_train, self.y_test), axis=0)
+
+            self.x_test = self.x_validate
+            self.x_other_features_test = self.x_other_features_validate
+            self.y_test = self.y_validate
+
+        if complete_set:
+            self.x_train = np.concatenate((self.x_train, self.x_test, self.x_validate), axis=0)
+            self.x_other_features_train = np.concatenate((self.x_other_features_train, self.x_other_features_test, self.x_other_features_validate),
+                                                         axis=0)
+            self.y_train = np.concatenate((self.y_train, self.y_test, self.y_validate), axis=0)
 
             self.x_test = self.x_validate
             self.x_other_features_test = self.x_other_features_validate
@@ -956,12 +967,19 @@ class Data:
             i += 1
         return res
 
-    def test_accuracy(self, predictions, x, x_other_features, y, dictionary, feature_dictionary, vowels, syllable_dictionary=None):
+    def test_accuracy(self, predictions, x, x_other_features, y, dictionary, feature_dictionary, vowels, syllable_dictionary=None,
+                      threshold=0.4999955):
         errors = []
         num_of_pred = len(predictions)
         num_of_correct_pred = 0
         for i in range(predictions.shape[0]):
-            if (np.around(predictions[i]) == y[i]).all():
+            correct_prediction = True
+            for j in range(len(y[i])):
+                if (predictions[i][j] < threshold and y[i][j] == 1.0) or (predictions[i][j] >= threshold and y[i][j] == 0.0):
+                    correct_prediction = False
+                    break
+            # if (np.around(predictions[i]) == y[i]).all():
+            if correct_prediction:
                 num_of_correct_pred += 1
             else:
                 if self._input_type == 'l':
