@@ -31,15 +31,15 @@ from prepare_data import *
 # data = Data('l', save_generated_data=False, number_of_syllables=True)
 
 # syllabled letters
-data = Data('s', accent_classification=True, reverse_inputs=False)
-data.generate_data('syllables_accent_classification_correct_input_order_train',
-                   'syllables_accent_classification_correct_input_order_test',
-                   'syllables_accent_classification_correct_input_order_validate',
+data = Data('s')
+data.generate_data('syllables_word_accetuation_train',
+                   'syllables_word_accetuation_test',
+                   'syllables_word_accetuation_validate',
                       inputs_location='cnn/internal_representations/inputs/', content_location='data/', complete_set=True)
 
 
 num_examples = len(data.x_train)  # training set size
-nn_output_dim = 13
+nn_output_dim = 10
 nn_hdim = 516
 batch_size = 16
 # actual_epoch = 1
@@ -56,7 +56,7 @@ num_fake_epoch = 20
 conv_input_shape=(10, 5168)
 
 
-othr_input = (150, )
+othr_input = (140, )
 
 conv_input = Input(shape=conv_input_shape, name='conv_input')
 # letters
@@ -98,7 +98,7 @@ history = model.fit_generator(data.generator('train', batch_size, content_locati
                               )
 
 # name = '20_epoch'
-name = 'cnn/accent_classification/syllables/v2_0/20_final_epoch'
+name = 'cnn/word_accetuation/syllables/v3_3/20_final_epoch'
 model.save(name + '.h5')
 output = open(name + '_history.pkl', 'wb')
 pickle.dump(history.history, output)

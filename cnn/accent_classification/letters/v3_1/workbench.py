@@ -16,8 +16,8 @@ np.random.seed(7)
 
 # get_ipython().magic('run ../../../prepare_data.py')
 
-import sys
-# sys.path.insert(0, '../../../../')
+# import sys
+# # sys.path.insert(0, '../../../')
 # sys.path.insert(0, '/home/luka/Developement/accetuation/')
 from prepare_data import *
 
@@ -31,11 +31,11 @@ from prepare_data import *
 # data = Data('l', save_generated_data=False, number_of_syllables=True)
 
 # syllabled letters
-data = Data('s', accent_classification=True, reverse_inputs=False)
-data.generate_data('syllables_accent_classification_correct_input_order_train',
-                   'syllables_accent_classification_correct_input_order_test',
-                   'syllables_accent_classification_correct_input_order_validate',
-                      inputs_location='cnn/internal_representations/inputs/', content_location='data/', complete_set=True)
+data = Data('l', accent_classification=True)
+data.generate_data('letters_accent_classification_train',
+                   'letters_accent_classification_test',
+                   'letters_accent_classification_validate',
+                   inputs_location='cnn/internal_representations/inputs/', content_location='data/', complete_set=True)
 
 
 num_examples = len(data.x_train)  # training set size
@@ -50,23 +50,18 @@ num_fake_epoch = 20
 
 
 # letters
-# conv_input_shape=(23, 36)
+conv_input_shape=(23, 36)
 
 # syllabled letters
-conv_input_shape=(10, 5168)
-
-
+# conv_input_shape=(10, 5168)
 othr_input = (150, )
 
 conv_input = Input(shape=conv_input_shape, name='conv_input')
-# letters
-# x_conv = Conv1D(115, (3), padding='same', activation='relu')(conv_input)
-# x_conv = Conv1D(46, (3), padding='same', activation='relu')(x_conv)
-
-# syllabled letters
-x_conv = Conv1D(200, (2), padding='same', activation='relu')(conv_input)
+x_conv = Conv1D(115, (3), padding='same', activation='relu')(conv_input)
+x_conv = Conv1D(46, (3), padding='same', activation='relu')(x_conv)
 x_conv = MaxPooling1D(pool_size=2)(x_conv)
 x_conv = Flatten()(x_conv)
+
 
 othr_input = Input(shape=othr_input, name='othr_input')
 
@@ -98,7 +93,7 @@ history = model.fit_generator(data.generator('train', batch_size, content_locati
                               )
 
 # name = '20_epoch'
-name = 'cnn/accent_classification/syllables/v2_0/20_final_epoch'
+name = 'cnn/accent_classification/letters/v3_1/20_final_epoch'
 model.save(name + '.h5')
 output = open(name + '_history.pkl', 'wb')
 pickle.dump(history.history, output)

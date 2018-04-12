@@ -31,10 +31,10 @@ from prepare_data import *
 # data = Data('l', save_generated_data=False, number_of_syllables=True)
 
 # syllabled letters
-data = Data('s', accent_classification=True, reverse_inputs=False)
-data.generate_data('syllables_accent_classification_correct_input_order_train',
-                   'syllables_accent_classification_correct_input_order_test',
-                   'syllables_accent_classification_correct_input_order_validate',
+data = Data('s', accent_classification=True)
+data.generate_data('syllables_accent_classification_train',
+                   'syllables_accent_classification_test',
+                   'syllables_accent_classification_validate',
                       inputs_location='cnn/internal_representations/inputs/', content_location='data/', complete_set=True)
 
 
@@ -98,7 +98,7 @@ history = model.fit_generator(data.generator('train', batch_size, content_locati
                               )
 
 # name = '20_epoch'
-name = 'cnn/accent_classification/syllables/v2_0/20_final_epoch'
+name = 'cnn/accent_classification/syllables/v2_1/20_final_epoch'
 model.save(name + '.h5')
 output = open(name + '_history.pkl', 'wb')
 pickle.dump(history.history, output)

@@ -35,7 +35,7 @@ data = Data('sl', accent_classification=True, reverse_inputs=False)
 data.generate_data('syllables_accent_classification_correct_input_order_train',
                    'syllables_accent_classification_correct_input_order_test',
                    'syllables_accent_classification_correct_input_order_validate',
-                      inputs_location='cnn/internal_representations/inputs/', content_location='data/', test_set=True)
+                      inputs_location='cnn/internal_representations/inputs/', content_location='data/', complete_set=True)
 
 
 num_examples = len(data.x_train)  # training set size
@@ -98,7 +98,7 @@ history = model.fit_generator(data.generator('train', batch_size, content_locati
                               )
 
 # name = '20_epoch'
-name = 'cnn/accent_classification/syllabled_letters/v2_0/20_test_epoch'
+name = 'cnn/accent_classification/syllabled_letters/v2_0/20_final_epoch'
 model.save(name + '.h5')
 output = open(name + '_history.pkl', 'wb')
 pickle.dump(history.history, output)
