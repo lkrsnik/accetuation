@@ -9,6 +9,8 @@ import keras.backend as K
 import os.path
 import codecs
 
+from copy import copy
+
 from keras import optimizers
 from keras.models import Model
 from keras.layers import Dense, Dropout, Input
@@ -968,16 +970,49 @@ class Data:
         return res
 
     def test_accuracy(self, predictions, x, x_other_features, y, dictionary, feature_dictionary, vowels, syllable_dictionary=None,
-                      threshold=0.4999955):
+                      threshold=0.4999955, patterns=None):
         errors = []
         num_of_pred = len(predictions)
         num_of_correct_pred = 0
+
+        # wrong_patterns = 0
+        # wrong_pattern_prediction = 0
         for i in range(predictions.shape[0]):
             correct_prediction = True
+
+            round_predictions = np.zeros(predictions[i].shape)
             for j in range(len(y[i])):
+                if predictions[i][j] < threshold:
+                    round_predictions[j] = 0.0
+                else:
+                    round_predictions[j] = 1.0
                 if (predictions[i][j] < threshold and y[i][j] == 1.0) or (predictions[i][j] >= threshold and y[i][j] == 0.0):
                     correct_prediction = False
-                    break
+
+            # in_pattern = False
+            # if patterns is not None:
+            #     test_predictions = copy(predictions[i])
+            #     l = self.get_word_length(x[i])
+            #     round_predictions = np.zeros(test_predictions.shape)
+            #     for j in range(len(y[i])):
+            #         if test_predictions[j] < threshold:
+            #             round_predictions[j] = 0.0
+            #         else:
+            #             round_predictions[j] = 1.0
+            #
+            #     in_pattern = False
+            #     for pattern in patterns[l]:
+            #         if (pattern == round_predictions).all():
+            #             in_pattern = True
+            #     if not in_pattern:
+            #         wrong_patterns += 1
+            #
+            # for j in range(len(y[i])):
+            #     if (predictions[i][j] < threshold and y[i][j] == 1.0) or (predictions[i][j] >= threshold and y[i][j] == 0.0):
+            #         correct_prediction = False
+            #
+            # if not in_pattern and not correct_prediction:
+            #     wrong_pattern_prediction += 1
             # if (np.around(predictions[i]) == y[i]).all():
             if correct_prediction:
                 num_of_correct_pred += 1
@@ -991,11 +1026,21 @@ class Data:
                 errors.append([i,
                                decoded_x,
                                self.decode_x_other_features(feature_dictionary, [x_other_features[i]]),
-                               self.assign_stress_locations(decoded_x, np.around(predictions[i]), vowels, syllables=self._input_type != 'l'),
+                               self.assign_stress_locations(decoded_x, round_predictions, vowels, syllables=self._input_type != 'l'),
                                self.assign_stress_locations(decoded_x, y[i], vowels, syllables=self._input_type != 'l')
                                ])
 
+        # print(wrong_patterns)
+        # print(wrong_pattern_prediction)
         return (num_of_correct_pred / float(num_of_pred)) * 100, errors
+
+    # def get_word_length(self, x_el):
+    #     i = 0
+    #     for el in x_el:
+    #         if el == 0:
+    #             return i
+    #         i += 1
+    #     return 10
 
     @staticmethod
     def decode_syllable_x(word_encoded, syllable_dictionary):
@@ -1214,8 +1259,37 @@ class Data:
     @staticmethod
     def load_location_models(letters_path, syllables_path, syllabled_letters_path):
         ############################ LOCATION ########################
-        letter_location_model = load_model(letters_path, custom_objects={'actual_accuracy': actual_accuracy})
+        nn_output_dim = 10
 
+        conv_input_shape = (23, 36)
+        othr_input = (140,)
+
+        conv_input = Input(shape=conv_input_shape, name='conv_input')
+        x_conv = Conv1D(115, (3), padding='same', activation='relu')(conv_input)
+        x_conv = Conv1D(46, (3), padding='same', activation='relu')(x_conv)
+        x_conv = MaxPooling1D(pool_size=2)(x_conv)
+        x_conv = Flatten()(x_conv)
+
+        othr_input = Input(shape=othr_input, name='othr_input')
+
+        x = concatenate([x_conv, othr_input])
+        # x = Dense(1024, input_dim=(516 + 256), activation='relu')(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(256, activation='relu')(x)
+        x = Dropout(0.3)(x)
+        x = Dense(nn_output_dim, activation='sigmoid')(x)
+
+        letter_location_model = Model(inputs=[conv_input, othr_input], outputs=x)
+        opt = optimizers.Adam(lr=1E-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        letter_location_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
+
+
+        letter_location_model.load_weights(letters_path)
+
+        ##############################################################
         # num_examples = len(data.x_train)  # training set size
         nn_output_dim = 10
 
@@ -1244,7 +1318,10 @@ class Data:
         syllable_location_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[actual_accuracy, ])
         syllable_location_model.load_weights(syllables_path)
 
+
+        #####################################################
         conv_input_shape = (10, 252)
+
         othr_input = (140,)
 
         conv_input = Input(shape=conv_input_shape, name='conv_input')
@@ -1354,6 +1431,7 @@ class Data:
 
     @staticmethod
     def get_ensemble_location_predictions(input_words, letter_location_model, syllable_location_model, syllabled_letters_location_model,
+                                          letter_location_co_model, syllable_location_co_model, syllabled_letters_location_co_model,
                                           dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary, syllable_dictionary):
         batch_size = 16
         # print(tagged_input_words[pos])
@@ -1379,11 +1457,59 @@ class Data:
         generator = data._syllable_generator(x, x_other_features, fake_y, batch_size, syllable_letters_translator, accented_vowels)
         syllabled_letters_location_predictions = syllabled_letters_location_model.predict_generator(generator, len(x) / (batch_size))
 
-        return np.mean(np.array([letter_location_predictions, syllable_location_predictions, syllabled_letters_location_predictions]), axis=0)
+        ############## CORRECT ORDER INPUT ##############
+        data = Data('l', shuffle_all_inputs=False, convert_multext=False, reverse_inputs=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(dictionary, max_word, max_num_vowels, input_words, vowels, accented_vowels,
+                                                             feature_dictionary, 'who cares')
+        generator = data._letter_generator(x, x_other_features, fake_y, batch_size, accented_vowels)
+        letter_location_co_predictions = letter_location_co_model.predict_generator(generator, len(x) / (batch_size))
+
+        letter_location_co_predictions = data.reverse_predictions(letter_location_co_predictions, input_words, vowels)
+
+        data = Data('s', shuffle_all_inputs=False, convert_multext=False, reverse_inputs=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(syllable_dictionary, max_word, max_num_vowels, input_words, vowels,
+                                                                 accented_vowels, feature_dictionary, 'who cares')
+        eye = np.eye(len(syllable_dictionary), dtype=int)
+        generator = data._syllable_generator(x, x_other_features, fake_y, batch_size, eye, accented_vowels)
+        syllable_location_co_predictions = syllable_location_co_model.predict_generator(generator, len(x) / (batch_size))
+
+        syllable_location_co_predictions = data.reverse_predictions(syllable_location_co_predictions, input_words, vowels)
+
+        data = Data('sl', shuffle_all_inputs=False, convert_multext=False, reverse_inputs=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(syllable_dictionary, max_word, max_num_vowels, input_words, vowels,
+                                                             accented_vowels, feature_dictionary, 'who cares')
+        max_syllable = data._get_max_syllable(syllable_dictionary)
+        syllable_letters_translator = data._create_syllable_letters_translator(max_syllable, syllable_dictionary, dictionary, vowels)
+        generator = data._syllable_generator(x, x_other_features, fake_y, batch_size, syllable_letters_translator, accented_vowels)
+        syllabled_letters_location_co_predictions = syllabled_letters_location_co_model.predict_generator(generator, len(x) / (batch_size))
+
+        syllabled_letters_location_co_predictions = data.reverse_predictions(syllabled_letters_location_co_predictions, input_words, vowels)
+
+        return np.mean(np.array([letter_location_predictions, syllable_location_predictions, syllabled_letters_location_predictions,
+                                 letter_location_co_predictions, syllable_location_co_predictions, syllabled_letters_location_co_predictions]), axis=0)
+
+    def count_syllables(self, word, vowels):
+        j = 0
+        num_vowels = 0
+        for j in range(len(word)):
+            if self._is_vowel(word, j, vowels):
+                num_vowels += 1
+        return num_vowels
+
+    def reverse_predictions(self, predictions, words, vowels):
+        new_predictions = np.zeros(predictions.shape, dtype='float32')
+        for i in range(len(predictions)):
+            word_len = self.count_syllables(words[i][0], vowels)
+
+            for k in range(word_len):
+                new_predictions[i][k] += predictions[i][word_len - 1 - k]
+
+        return new_predictions
 
     @staticmethod
     def get_ensemble_type_predictions(input_words, location_y, letter_type_model, syllable_type_model, syllabled_letter_type_model,
-                                          dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary, syllable_dictionary):
+                                      letter_type_co_model, syllable_type_co_model, syllabled_letter_type_co_model,
+                                      dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary, syllable_dictionary):
         batch_size = 16
         y_array = np.asarray(location_y)
         accentuation_length = (y_array > 0).sum()
@@ -1409,7 +1535,57 @@ class Data:
         generator = data._syllable_generator(x, x_other_features, location_y, batch_size, syllable_letters_translator, accented_vowels)
         syllabled_letter_type_predictions = syllabled_letter_type_model.predict_generator(generator, accentuation_length / batch_size)
 
-        return np.mean(np.array([letter_type_predictions, syllable_type_predictions, syllabled_letter_type_predictions]), axis=0)
+        ############## CORRECT ORDER INPUT ##############
+        location_y = data.reverse_predictions(location_y, input_words, vowels)
+
+        data = Data('l', shuffle_all_inputs=False, accent_classification=True, convert_multext=False, reverse_inputs=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(dictionary, max_word, max_num_vowels, input_words, vowels, accented_vowels,
+                                                             feature_dictionary, 'who cares')
+        generator = data._letter_generator(x, x_other_features, location_y, batch_size, accented_vowels)
+        letter_type_co_predictions = letter_type_co_model.predict_generator(generator, accentuation_length / (batch_size))
+
+        data.reorder_correct_direction_inputs(letter_type_co_predictions, location_y)
+
+        data = Data('s', shuffle_all_inputs=False, accent_classification=True, convert_multext=False, reverse_inputs=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(syllable_dictionary, max_word, max_num_vowels, input_words, vowels,
+                                                             accented_vowels, feature_dictionary, 'who cares')
+        eye = np.eye(len(syllable_dictionary), dtype=int)
+        generator = data._syllable_generator(x, x_other_features, location_y, batch_size, eye, accented_vowels)
+        syllable_type_co_predictions = syllable_type_co_model.predict_generator(generator, accentuation_length / (batch_size))
+
+        data.reorder_correct_direction_inputs(syllable_type_co_predictions, location_y)
+
+        data = Data('sl', shuffle_all_inputs=False, accent_classification=True, convert_multext=False, reverse_inputs=False)
+        x, x_other_features, fake_y = data._generate_x_and_y(syllable_dictionary, max_word, max_num_vowels, input_words, vowels,
+                                                             accented_vowels, feature_dictionary, 'who cares')
+        max_syllable = data._get_max_syllable(syllable_dictionary)
+        syllable_letters_translator = data._create_syllable_letters_translator(max_syllable, syllable_dictionary, dictionary, vowels)
+        generator = data._syllable_generator(x, x_other_features, location_y, batch_size, syllable_letters_translator, accented_vowels)
+        syllabled_letter_type_co_predictions = syllabled_letter_type_co_model.predict_generator(generator, accentuation_length / batch_size)
+
+        data.reorder_correct_direction_inputs(syllabled_letter_type_co_predictions, location_y)
+
+        return np.mean(np.array([letter_type_predictions, syllable_type_predictions, syllabled_letter_type_predictions,
+                                 letter_type_co_predictions, syllable_type_co_predictions, syllabled_letter_type_co_predictions]), axis=0)
+
+    def reorder_correct_direction_inputs(self, predictions, y):
+        pred_i = 0
+        for i in range(len(y)):
+            num_accented_syllables = 0
+            for el in y[i]:
+                if el > 0:
+                    num_accented_syllables += 1
+            if num_accented_syllables > 1:
+                min_i = pred_i
+                max_i = pred_i + num_accented_syllables - 1
+                while (max_i > min_i):
+                    min_pred = copy(predictions[min_i])
+                    max_pred = copy(predictions[max_i])
+                    predictions[min_i] = max_pred
+                    predictions[max_i] = min_pred
+                    min_i += 1
+                    max_i -= 1
+            pred_i += num_accented_syllables
 
     def assign_location_stress(self, word, locations, vowels):
             #     word = list(word)
@@ -1449,12 +1625,17 @@ class Data:
         return ''.join(word_list)
 
     def accentuate_word(self, input_words, letter_location_model, syllable_location_model, syllabled_letters_location_model,
+                        letter_location_co_model, syllable_location_co_model, syllabled_letters_location_co_model,
                         letter_type_model, syllable_type_model, syllabled_letter_type_model,
+                        letter_type_co_model, syllable_type_co_model, syllabled_letter_type_co_model,
                         dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary, syllable_dictionary):
         predictions = self.get_ensemble_location_predictions(input_words, letter_location_model, syllable_location_model,
                                                              syllabled_letters_location_model,
+                                                             letter_location_co_model, syllable_location_co_model,
+                                                             syllabled_letters_location_co_model,
                                                              dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary,
                                                              syllable_dictionary)
+        #print(predictions)
         if 'A' not in vowels:
             vowels.extend(['A', 'E', 'I', 'O', 'U'])
         location_accented_words = [self.assign_location_stress(input_words[i][0][::-1], self.decode_y(predictions[i]), vowels)[::-1] for i in
@@ -1463,6 +1644,7 @@ class Data:
         location_y = np.around(predictions)
         type_predictions = self.get_ensemble_type_predictions(input_words, location_y, letter_type_model, syllable_type_model,
                                                               syllabled_letter_type_model,
+                                                              letter_type_co_model, syllable_type_co_model, syllabled_letter_type_co_model,
                                                               dictionary, max_word, max_num_vowels, vowels, accented_vowels, feature_dictionary,
                                                               syllable_dictionary)
 
