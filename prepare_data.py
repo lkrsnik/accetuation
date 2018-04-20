@@ -580,20 +580,20 @@ class Data:
 
     # generator for inputs for tracking of data fitting
     def generator(self, data_type, batch_size, x=None, x_other_features_validate=None, y_validate=None, content_name='SlovarIJS_BESEDE_utf8.lex',
-                  content_location='../../../data/'):
+                  content_location='../../../data/', oversampling=np.ones(13)):
         content_path = '{}{}'.format(content_location, content_name)
         if data_type == 'train':
-            return self._generator_instance(self.x_train, self.x_other_features_train, self.y_train, batch_size, content_path)
+            return self._generator_instance(self.x_train, self.x_other_features_train, self.y_train, batch_size, content_path, oversampling)
         elif data_type == 'test':
-            return self._generator_instance(self.x_test, self.x_other_features_test, self.y_test, batch_size, content_path)
+            return self._generator_instance(self.x_test, self.x_other_features_test, self.y_test, batch_size, content_path, oversampling)
         elif data_type == 'validate':
-            return self._generator_instance(self.x_validate, self.x_other_features_validate, self.y_validate, batch_size, content_path)
+            return self._generator_instance(self.x_validate, self.x_other_features_validate, self.y_validate, batch_size, content_path, oversampling)
         else:
             return self._generator_instance(x, x_other_features_validate, y_validate, batch_size)
 
             # if self._input_type
 
-    def _generator_instance(self, orig_x, orig_x_additional, orig_y, batch_size, content_path):
+    def _generator_instance(self, orig_x, orig_x_additional, orig_y, batch_size, content_path, oversampling):
         if self._input_type == 'l':
             content = self._read_content(content_path)
             dictionary, max_word, max_num_vowels, vowels, accented_vowels = self._create_dict(content)
@@ -603,14 +603,14 @@ class Data:
             dictionary, max_word, max_num_vowels, vowels, accented_vowels = self._create_dict(content)
             syllable_dictionary = self._create_syllables_dictionary(content, vowels)
             eye = np.eye(len(syllable_dictionary), dtype=int)
-            return self._syllable_generator(orig_x, orig_x_additional, orig_y, batch_size, eye, accented_vowels)
+            return self._syllable_generator(orig_x, orig_x_additional, orig_y, batch_size, eye, accented_vowels, oversampling)
         elif self._input_type == 'sl':
             content = self._read_content(content_path)
             dictionary, max_word, max_num_vowels, vowels, accented_vowels = self._create_dict(content)
             syllable_dictionary = self._create_syllables_dictionary(content, vowels)
             max_syllable = self._get_max_syllable(syllable_dictionary)
             syllable_letters_translator = self._create_syllable_letters_translator(max_syllable, syllable_dictionary, dictionary, vowels)
-            return self._syllable_generator(orig_x, orig_x_additional, orig_y, batch_size, syllable_letters_translator, accented_vowels)
+            return self._syllable_generator(orig_x, orig_x_additional, orig_y, batch_size, syllable_letters_translator, accented_vowels, oversampling)
 
     # generator for inputs for tracking of data fitting
     def _letter_generator(self, orig_x, orig_x_additional, orig_y, batch_size, accented_vowels):
@@ -666,7 +666,7 @@ class Data:
                     loc += batch_size
 
     # generator for inputs for tracking of data fitting
-    def _syllable_generator(self, orig_x, orig_x_additional, orig_y, batch_size, translator, accented_vowels):
+    def _syllable_generator(self, orig_x, orig_x_additional, orig_y, batch_size, translator, accented_vowels, oversampling):
         size = orig_x.shape[0]
         while 1:
             loc = 0
@@ -683,9 +683,10 @@ class Data:
                             if accent > 0:
                                 new_orig_x_additional = orig_x_additional[loc]
                                 new_orig_x_additional = np.concatenate((new_orig_x_additional, eye_input_accent[accent_loc]))
-                                input_x_stack.append(orig_x[loc])
-                                input_x_other_features_stack.append(new_orig_x_additional)
-                                input_y_stack.append(eye[int(accent)])
+                                for i in range(oversampling[int(accent)]):
+                                    input_x_stack.append(orig_x[loc])
+                                    input_x_other_features_stack.append(new_orig_x_additional)
+                                    input_y_stack.append(eye[int(accent)])
                             accent_loc += 1
                         loc += 1
                     if len(input_x_stack) > batch_size:

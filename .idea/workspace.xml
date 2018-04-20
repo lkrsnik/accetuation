@@ -2,15 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8a8ba9af-e1a4-433a-9968-475192610776" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/sloleks_accentuation2.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/error_analysis_results/onedirectional_input/ensemble_errors.pkl" afterPath="$PROJECT_DIR$/cnn/word_accetuation/error_analysis_results/onedirectional_input/ensemble_errors.pkl" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/error_analysis_results/onedirectional_input/ensemble_predictions.pkl" afterPath="$PROJECT_DIR$/cnn/word_accetuation/error_analysis_results/onedirectional_input/ensemble_predictions.pkl" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/accent_classification/ensemble_errors.pkl" afterPath="$PROJECT_DIR$/cnn/accent_classification/ensemble_errors.pkl" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/accent_classification/ensemble_predictions.pkl" afterPath="$PROJECT_DIR$/cnn/accent_classification/ensemble_predictions.pkl" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/accent_classification/error_analysis_results/onedirectional_input/ensemble_errors.pkl" afterPath="$PROJECT_DIR$/cnn/accent_classification/error_analysis_results/onedirectional_input/ensemble_errors.pkl" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/accent_classification/bidirectional_error_analysis.ipynb" afterPath="$PROJECT_DIR$/cnn/accent_classification/bidirectional_error_analysis.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/bidirectional_error_analysis.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/bidirectional_error_analysis.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/pattern_repetition.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/pattern_repetition.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cnn/word_accetuation/error_analysis.ipynb" afterPath="$PROJECT_DIR$/cnn/word_accetuation/error_analysis.ipynb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prepare_data.py" afterPath="$PROJECT_DIR$/prepare_data.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sloleks_accetuation.ipynb" afterPath="$PROJECT_DIR$/sloleks_accetuation.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/run_multiple_files.py" afterPath="$PROJECT_DIR$/run_multiple_files.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sloleks_accetuation2.ipynb" afterPath="$PROJECT_DIR$/sloleks_accetuation2.ipynb" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -40,8 +41,8 @@
       <file leaf-file-name="prepare_data.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/prepare_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-221">
-              <caret line="1570" column="23" lean-forward="false" selection-start-line="1570" selection-start-column="23" selection-end-line="1570" selection-end-column="23" />
+            <state relative-caret-position="319">
+              <caret line="685" column="56" lean-forward="false" selection-start-line="685" selection-start-column="56" selection-end-line="685" selection-end-column="56" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
                 <element signature="e#7950#9238#0" expanded="false" />
@@ -58,7 +59,7 @@
       <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_2/workbench.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="358">
+            <state relative-caret-position="1332">
               <caret line="85" column="39" lean-forward="false" selection-start-line="85" selection-start-column="39" selection-end-line="85" selection-end-column="39" />
               <folding />
             </state>
@@ -68,8 +69,8 @@
       <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_2/workbench.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="426">
-              <caret line="87" column="84" lean-forward="true" selection-start-line="55" selection-start-column="0" selection-end-line="87" selection-end-column="84" />
+            <state relative-caret-position="1368">
+              <caret line="87" column="84" lean-forward="false" selection-start-line="55" selection-start-column="0" selection-end-line="87" selection-end-column="84" />
               <folding />
             </state>
           </provider>
@@ -118,7 +119,7 @@
       <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cnn/accent_classification/syllabled_letters/v2_1/workbench.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1602">
+            <state relative-caret-position="607">
               <caret line="100" column="56" lean-forward="false" selection-start-line="100" selection-start-column="56" selection-end-line="100" selection-end-column="56" />
               <folding />
             </state>
@@ -128,8 +129,18 @@
       <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cnn/accent_classification/syllables/v2_1/workbench.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1602">
-              <caret line="100" column="48" lean-forward="false" selection-start-line="100" selection-start-column="48" selection-end-line="100" selection-end-column="48" />
+            <state relative-caret-position="1440">
+              <caret line="91" column="90" lean-forward="false" selection-start-line="91" selection-start-column="90" selection-end-line="91" selection-end-column="90" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="workbench.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cnn/accent_classification/syllables/v2_2/workbench.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="401">
+              <caret line="104" column="26" lean-forward="true" selection-start-line="104" selection-start-column="26" selection-end-line="104" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -175,11 +186,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="run_multiple_files.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="run_multiple_files.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/run_multiple_files.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="26" lean-forward="false" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="26" />
+            <state relative-caret-position="216">
+              <caret line="12" column="47" lean-forward="false" selection-start-line="12" selection-start-column="47" selection-end-line="12" selection-end-column="47" />
               <folding />
             </state>
           </provider>
@@ -212,8 +223,8 @@
       <file leaf-file-name="sloleks_accentuation.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sloleks_accentuation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="16" column="28" lean-forward="true" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
+            <state relative-caret-position="2214">
+              <caret line="129" column="66" lean-forward="false" selection-start-line="129" selection-start-column="66" selection-end-line="129" selection-end-column="66" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
               </folding>
@@ -221,11 +232,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="sloleks_accentuation2.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="sloleks_accentuation2.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sloleks_accentuation2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="454">
-              <caret line="48" column="61" lean-forward="true" selection-start-line="48" selection-start-column="61" selection-end-line="48" selection-end-column="61" />
+            <state relative-caret-position="504">
+              <caret line="36" column="92" lean-forward="false" selection-start-line="36" selection-start-column="92" selection-end-line="36" selection-end-column="92" />
               <folding>
                 <element signature="e#24#63#0" expanded="true" />
               </folding>
@@ -276,28 +287,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>np.concatenate</find>
-      <find>prepare_data</find>
-      <find>assign_stress_locations</find>
-      <find>test_accuracy</find>
-      <find>test_acc</find>
-      <find>test_set</find>
-      <find>accent_classification</find>
-      <find>test_type</find>
-      <find>get_word_length</find>
-      <find>input_words</find>
-      <find>content</find>
-      <find>codecs</find>
-      <find>data</find>
-      <find>load_model</find>
-      <find>accentuate_word</find>
-      <find>get_word_le</find>
-      <find>load_location_models</find>
-      <find>get_ensemble_location_predictions</find>
-      <find>reverse_inputs</find>
-      <find>_x_letter_input</find>
-      <find>reverse</find>
-      <find>print(</find>
       <find>count_vowels</find>
       <find>count</find>
       <find>sylla</find>
@@ -306,6 +295,28 @@
       <find>get_ensemble_type_predictions</find>
       <find>rever</find>
       <find>accentuate_wo</find>
+      <find>content</find>
+      <find>transla</find>
+      <find>feature_dic</find>
+      <find>_create_slovene_feature_dictionary</find>
+      <find>feature_dictionary</find>
+      <find>morp</find>
+      <find>convert_multext</find>
+      <find>_convert_multext</find>
+      <find>_convert_to_multext_east_v4</find>
+      <find>decode_x</find>
+      <find>assign_word_accentuation_type</find>
+      <find>accented_vowels</find>
+      <find>test_</find>
+      <find>à</find>
+      <find>_get_accented_vowels</find>
+      <find>ô</find>
+      <find>ó</find>
+      <find>accent_class</find>
+      <find>i</find>
+      <find>for i</find>
+      <find>_syllable_generator</find>
+      <find>_generator_instance</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -345,13 +356,14 @@
         <option value="$PROJECT_DIR$/cnn/accent_classification/syllables/v2_0/workbench.py" />
         <option value="$PROJECT_DIR$/cnn/accent_classification/letters/v3_1/workbench.py" />
         <option value="$PROJECT_DIR$/cnn/accent_classification/syllabled_letters/v2_1/workbench.py" />
-        <option value="$PROJECT_DIR$/cnn/accent_classification/syllables/v2_1/workbench.py" />
-        <option value="$PROJECT_DIR$/run_multiple_files.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_3/workbench.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_3/workbench.py" />
         <option value="$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_3/workbench.py" />
-        <option value="$PROJECT_DIR$/prepare_data.py" />
         <option value="$PROJECT_DIR$/sloleks_accentuation2.py" />
+        <option value="$PROJECT_DIR$/prepare_data.py" />
+        <option value="$PROJECT_DIR$/cnn/accent_classification/syllables/v2_1/workbench.py" />
+        <option value="$PROJECT_DIR$/cnn/accent_classification/syllables/v2_2/workbench.py" />
+        <option value="$PROJECT_DIR$/run_multiple_files.py" />
       </list>
     </option>
   </component>
@@ -376,7 +388,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -391,7 +403,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -677,7 +689,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18831877" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32881" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -723,7 +735,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.py" />
     <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/character_based_ffnn_keras.ipynb" />
     <entry file="file://$PROJECT_DIR$/hyphenation">
       <provider selected="true" editor-type-id="text-editor">
@@ -830,14 +841,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tex_hyphenation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1206">
-          <caret line="67" column="105" lean-forward="false" selection-start-line="67" selection-start-column="105" selection-end-line="67" selection-end-column="105" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_1/workbench.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
@@ -849,26 +852,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1476">
           <caret line="93" column="84" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="93" selection-end-column="84" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/svm/svm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="684">
-          <caret line="45" column="48" lean-forward="false" selection-start-line="45" selection-start-column="36" selection-end-line="45" selection-end-column="48" />
-          <folding>
-            <element signature="e#24#63#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/svm/svm_prepare_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="23" column="33" lean-forward="false" selection-start-line="23" selection-start-column="33" selection-end-line="23" selection-end-column="33" />
-          <folding>
-            <element signature="e#24#63#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -890,16 +873,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/workbench.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="30" column="64" lean-forward="false" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="64" />
-          <folding>
-            <element signature="e#24#63#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -938,18 +911,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_2/workbench.py">
+    <entry file="file://$PROJECT_DIR$/prepare_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1602">
-          <caret line="100" column="47" lean-forward="false" selection-start-line="100" selection-start-column="47" selection-end-line="100" selection-end-column="53" />
+        <state relative-caret-position="319">
+          <caret line="685" column="56" lean-forward="false" selection-start-line="685" selection-start-column="56" selection-end-line="685" selection-end-column="56" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+            <element signature="e#7950#9238#0" expanded="false" />
+            <element signature="e#10894#11189#0" expanded="false" />
+            <element signature="e#11294#14633#0" expanded="false" />
+            <element signature="e#18495#18797#0" expanded="false" />
+            <element signature="e#19770#20116#0" expanded="false" />
+            <element signature="e#24532#25179#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_2/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1332">
+          <caret line="85" column="39" lean-forward="false" selection-start-line="85" selection-start-column="39" selection-end-line="85" selection-end-column="39" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cnn/accent_classification/letters/v3_0/workbench.py">
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_2/workbench.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1512">
-          <caret line="95" column="55" lean-forward="false" selection-start-line="95" selection-start-column="55" selection-end-line="95" selection-end-column="55" />
+        <state relative-caret-position="1368">
+          <caret line="87" column="84" lean-forward="false" selection-start-line="55" selection-start-column="0" selection-end-line="87" selection-end-column="84" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_2/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1602">
+          <caret line="100" column="47" lean-forward="false" selection-start-line="100" selection-start-column="47" selection-end-line="100" selection-end-column="53" />
           <folding />
         </state>
       </provider>
@@ -970,34 +967,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/accent_classification/letters/v3_1/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="45" column="17" lean-forward="false" selection-start-line="45" selection-start-column="17" selection-end-line="45" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_2/notes">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
           <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cnn/accent_classification/syllables/v2_1/workbench.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1602">
-          <caret line="100" column="48" lean-forward="false" selection-start-line="100" selection-start-column="48" selection-end-line="100" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cnn/accent_classification/syllabled_letters/v2_1/workbench.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1602">
-          <caret line="100" column="56" lean-forward="false" selection-start-line="100" selection-start-column="56" selection-end-line="100" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_3/workbench.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="36" column="47" lean-forward="false" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
           <folding />
         </state>
       </provider>
@@ -1010,6 +991,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_3/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="36" column="47" lean-forward="false" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllables/v3_3/workbench.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1368">
@@ -1018,58 +1007,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cnn/accent_classification/letters/v3_1/workbench.py">
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/svm/svm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="45" column="17" lean-forward="false" selection-start-line="45" selection-start-column="17" selection-end-line="45" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/cnn_dictionary/v5_2/workbench.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="85" column="39" lean-forward="false" selection-start-line="85" selection-start-column="39" selection-end-line="85" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/syllabled_letters/v3_2/workbench.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="426">
-          <caret line="87" column="84" lean-forward="true" selection-start-line="55" selection-start-column="0" selection-end-line="87" selection-end-column="84" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/run_multiple_files.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="26" lean-forward="false" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/prepare_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-221">
-          <caret line="1570" column="23" lean-forward="false" selection-start-line="1570" selection-start-column="23" selection-end-line="1570" selection-end-column="23" />
+        <state relative-caret-position="684">
+          <caret line="45" column="48" lean-forward="false" selection-start-line="45" selection-start-column="36" selection-end-line="45" selection-end-column="48" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
-            <element signature="e#7950#9238#0" expanded="false" />
-            <element signature="e#10894#11189#0" expanded="false" />
-            <element signature="e#11294#14633#0" expanded="false" />
-            <element signature="e#18495#18797#0" expanded="false" />
-            <element signature="e#19770#20116#0" expanded="false" />
-            <element signature="e#24532#25179#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/word_accetuation/svm/svm_prepare_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="23" column="33" lean-forward="false" selection-start-line="23" selection-start-column="33" selection-end-line="23" selection-end-column="33" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sloleks_accentuation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="16" column="28" lean-forward="true" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
+        <state relative-caret-position="2214">
+          <caret line="129" column="66" lean-forward="false" selection-start-line="129" selection-start-column="66" selection-end-line="129" selection-end-column="66" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
           </folding>
@@ -1078,11 +1039,69 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sloleks_accentuation2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="48" column="61" lean-forward="true" selection-start-line="48" selection-start-column="61" selection-end-line="48" selection-end-column="61" />
+        <state relative-caret-position="504">
+          <caret line="36" column="92" lean-forward="false" selection-start-line="36" selection-start-column="92" selection-end-line="36" selection-end-column="92" />
           <folding>
             <element signature="e#24#63#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tex_hyphenation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1206">
+          <caret line="67" column="105" lean-forward="false" selection-start-line="67" selection-start-column="105" selection-end-line="67" selection-end-column="105" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="30" column="64" lean-forward="false" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="64" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/accent_classification/letters/v3_0/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1512">
+          <caret line="95" column="55" lean-forward="false" selection-start-line="95" selection-start-column="55" selection-end-line="95" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/accent_classification/syllabled_letters/v2_1/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="607">
+          <caret line="100" column="56" lean-forward="false" selection-start-line="100" selection-start-column="56" selection-end-line="100" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/accent_classification/syllables/v2_1/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1440">
+          <caret line="91" column="90" lean-forward="false" selection-start-line="91" selection-start-column="90" selection-end-line="91" selection-end-column="90" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cnn/accent_classification/syllables/v2_2/workbench.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="401">
+          <caret line="104" column="26" lean-forward="true" selection-start-line="104" selection-start-column="26" selection-end-line="104" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run_multiple_files.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="47" lean-forward="false" selection-start-line="12" selection-start-column="47" selection-end-line="12" selection-end-column="47" />
+          <folding />
         </state>
       </provider>
     </entry>
