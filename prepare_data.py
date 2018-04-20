@@ -1500,7 +1500,8 @@ class Data:
         new_predictions = np.zeros(predictions.shape, dtype='float32')
         for i in range(len(predictions)):
             word_len = self.count_syllables(words[i][0], vowels)
-
+            if word_len > 10:
+                word_len = 10
             for k in range(word_len):
                 new_predictions[i][k] += predictions[i][word_len - 1 - k]
 

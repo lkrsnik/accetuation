@@ -47,7 +47,7 @@ print('Commencing accentuator!')
 rate = 100000
 start_timer = time.time()
 with open("data/new_sloleks/new_sloleks.tab", "a") as myfile:
-    for index in range(0, len(new_content), rate):
+    for index in range(300000, len(new_content), rate):
         if index+rate >= len(new_content):
             words = [[el[0], '', el[2], el[0]] for el in new_content][index:len(new_content)]
         else:
