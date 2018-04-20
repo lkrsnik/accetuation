@@ -97,3 +97,4 @@ new_sloleks.xml
 grid_results/
 .idea/
 cnn/word_accetuation/svm/data/
+data_merge.ipynb
