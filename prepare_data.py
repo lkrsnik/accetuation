@@ -683,7 +683,7 @@ class Data:
                             if accent > 0:
                                 new_orig_x_additional = orig_x_additional[loc]
                                 new_orig_x_additional = np.concatenate((new_orig_x_additional, eye_input_accent[accent_loc]))
-                                for i in range(oversampling[int(accent)]):
+                                for i in range(int(oversampling[int(accent)])):
                                     input_x_stack.append(orig_x[loc])
                                     input_x_other_features_stack.append(new_orig_x_additional)
                                     input_y_stack.append(eye[int(accent)])
