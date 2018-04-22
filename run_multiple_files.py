@@ -10,5 +10,5 @@
 #import cnn.accent_classification.syllables.v2_0.workbench
 #import cnn.accent_classification.syllabled_letters.v2_0.workbench
 #import cnn.accent_classification.letters.v3_2.workbench
-import cnn.accent_classification.syllables.v2_2.workbench
-import cnn.accent_classification.syllabled_letters.v2_2.workbench
+import cnn.accent_classification.syllables.v2_3.workbench
+import cnn.accent_classification.syllabled_letters.v2_3.workbench
