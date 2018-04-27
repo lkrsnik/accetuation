@@ -7,6 +7,7 @@ import h5py
 import math
 import keras.backend as K
 import os.path
+from os import remove
 import codecs
 
 from copy import copy
@@ -666,7 +667,7 @@ class Data:
                     loc += batch_size
 
     # generator for inputs for tracking of data fitting
-    def _syllable_generator(self, orig_x, orig_x_additional, orig_y, batch_size, translator, accented_vowels, oversampling):
+    def _syllable_generator(self, orig_x, orig_x_additional, orig_y, batch_size, translator, accented_vowels, oversampling=np.ones(13)):
         size = orig_x.shape[0]
         while 1:
             loc = 0
@@ -1655,6 +1656,95 @@ class Data:
 
         return location_accented_words, accented_words
 
+    def tag_words(self, reldi_location, original_location):
+        # generates text with every word in new line
+        with open(original_location) as f:
+            original_text = f.readlines()
+        original_text = ''.join(original_text)
+        # print(original_text)
+        text_with_whitespaces = original_text.replace(',', ' ,').replace('.', ' .').replace('\n', ' ').replace("\"", " \" ").replace(":",
+                                                                                                                                     " :").replace(
+            "ć", "č").replace('–', '-')
+        # print('-------------------------------------------------')
+        text_with_whitespaces = '\n'.join(text_with_whitespaces.split())
+        text_with_whitespaces += '\n\n'
+        # print(text_with_whitespaces)
+        with open('.words_with_whitespaces', "w") as text_file:
+            text_file.write(text_with_whitespaces)
+
+        # generates text with PoS tags
+        import subprocess
+
+        myinput = open('.words_with_whitespaces', 'r')
+        myoutput = open('.word_tags', 'w')
+        # print(myinput.readlines())
+        python3_command = reldi_location + "/tagger.py sl"  # launch your python2 script using bash
+
+        process = subprocess.run(python3_command.split(), stdin=myinput, stdout=myoutput)
+
+        # generates interesting words
+        pointless_words = ['.', ',', '\"', ':', '-']
+        with open('.word_tags', "r") as text_file:
+            tagged_input_words = []
+            for x in text_file.readlines()[:-1]:
+                splited_line = x[:-1].split('\t')
+                if splited_line[0] not in pointless_words and not any(char.isdigit() for char in splited_line[0]):
+                    tagged_input_words.append([splited_line[0].lower(), '', splited_line[1], splited_line[0].lower()])
+
+        remove(".words_with_whitespaces")
+        remove(".word_tags")
+        return tagged_input_words, original_text
+
+    def create_connected_text_locations(self, tagged_input_words, original_text, predictions, vowels):
+        if 'A' not in vowels:
+            vowels.extend(['A', 'E', 'I', 'O', 'U'])
+        accented_words = [self.assign_location_stress(tagged_input_words[i][0][::-1], self.decode_y(predictions[i]), vowels)[::-1] for i in
+                          range(len(tagged_input_words))]
+
+        # print(accented_words[:20])
+        # print(tagged_input_words[:20])
+
+        words_and_accetuation_loc = [[tagged_input_words[i][0], self.decode_y(predictions[i])] for i in range(len(tagged_input_words))]
+
+        original_text_list = list(original_text)
+        original_text_lowercase = original_text.lower()
+        end_pos = 0
+        for word in words_and_accetuation_loc:
+            posit = original_text_lowercase.find(word[0], end_pos)
+            if posit != -1:
+                start_pos = posit
+                end_pos = start_pos + len(word[0])
+
+            original_text_list[start_pos:end_pos] = list(
+                self.assign_location_stress(''.join(original_text_list[start_pos:end_pos][::-1]), word[1], vowels)[::-1])
+
+        return ''.join(original_text_list)
+
+    def create_connected_text_accented(self, tagged_input_words, original_text, type_predictions, location_y, vowels, accented_vowels):
+
+        input_words = [el[0] for el in tagged_input_words]
+        words = self.assign_stress_types(type_predictions, input_words, location_y, vowels, accented_vowels)
+
+        # print(original_text)
+
+        original_text_list = list(original_text)
+        original_text_lowercase = original_text.lower()
+        end_pos = 0
+        for i in range(len(words)):
+            posit = original_text_lowercase.find(input_words[i], end_pos)
+            if posit != -1:
+                start_pos = posit
+                end_pos = start_pos + len(words[i])
+
+                orig_word = original_text_list[start_pos:end_pos]
+                new_word = list(words[i])
+                for j in range(len(orig_word)):
+                    if orig_word[j].isupper():
+                        new_word[j] = new_word[j].upper()
+
+                original_text_list[start_pos:end_pos] = new_word
+
+        return ''.join(original_text_list)
 # def count_vowels(content, vowels):
 #     num_all_vowels = 0
 #     for el in content:
