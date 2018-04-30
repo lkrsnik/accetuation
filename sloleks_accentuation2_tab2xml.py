@@ -30,8 +30,8 @@ from prepare_data import *
 #
 # gen = xml_words_generator('data/Sloleks_v1.2_p2.xml')
 word_glob_num = 0
-word_limit = 1000
-iter_num = 1000
+word_limit = 50000
+iter_num = 50000
 word_index = 0
 
 # iter_index = 0
@@ -107,7 +107,15 @@ with open("data/new_sloleks/final_sloleks.xml", "ab") as myfile:
                                 break
                             word_index = (word_index + 1) % len(accentuated_content)
 
-                        if word_index == word_index_sp:
+                        error = word_index == word_index_sp
+                        if word_index == word_index_sp and word == accentuated_content[word_index][0] and msd == accentuated_content[word_index][2] \
+                            and lemma == accentuated_content[word_index][1]:
+                            accentuated_word_location = accentuated_content[word_index][4]
+                            accentuated_word = accentuated_content[word_index][5][:-1]
+                            error = False
+                            del(accentuated_content[word_index])
+
+                        if error:
                             print('ERROR IN ' + word + ' : ' + lemma + ' : ' + msd)
                             # print('ERROR IN ' + word + ' : ' + accentuated_content[word_index][0] + ' OR ' + msd + ' : '
                             #       + accentuated_content[word_index][2])
@@ -128,10 +136,9 @@ with open("data/new_sloleks/final_sloleks.xml", "ab") as myfile:
         # print(etree.tostring(element, encoding="UTF-8"))
         # myfile2.write(etree.tostring(element, encoding="UTF-8", pretty_print=True))
         if word_glob_num > word_limit:
-            print('Proccessed ' + str(word_glob_num) + ' words')
+            # print('Proccessed ' + str(word_glob_num) + ' words')
             end_timer = time.time()
-            print("Elapsed time: " + "{0:.2f}".format((end_timer - start_timer) / 60.0) + " minutes")
+            # print("Elapsed time: " + "{0:.2f}".format((end_timer - start_timer) / 60.0) + " minutes")
             word_limit += iter_num
-            break
         myfile.write(etree.tostring(element, encoding="UTF-8", pretty_print=True))
         element.clear()
