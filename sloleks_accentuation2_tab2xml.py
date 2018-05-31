@@ -134,7 +134,7 @@ with open("data/new_sloleks/final_sloleks.xml", "ab") as myfile:
 
                         new_element = etree.Element('feat')
                         new_element.attrib['att'] = 'SAMPA'
-                        new_element.attrib['val'] = result = convert_to_SAMPA(accentuated_word)
+                        new_element.attrib['val'] = convert_to_SAMPA(accentuated_word)
                         wf.append(new_element)
 
                         word_glob_num += 1

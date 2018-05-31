@@ -157,7 +157,7 @@ def convert_to_SAMPA(word):
     next_letter_i = 1
     if word[0] == '\"':
         letter_i = 1
-        if word[2] == ':':
+        if len(word) > 2 and word[2] == ':':
             if len(word) > 3:
                 next_letter_i = 3
             else:
@@ -167,7 +167,10 @@ def convert_to_SAMPA(word):
                 #    word[next_letter_i] = 'n\''
                 return ''.join(word)
         else:
-            next_letter_i = 2
+            if len(word) > 2:
+                next_letter_i = 2
+            else:
+                return ''.join(word)
     elif len(word) > 1 and word[1] == '\"':
         next_letter_i = 2
     # {('m', 'f'): 'F'}
