@@ -5,6 +5,7 @@
 from lxml import etree
 import time
 from prepare_data import *
+from text2SAMPA import *
 
 # def xml_words_generator(xml_path):
 #     for event, element in etree.iterparse(xml_path, tag="LexicalEntry", encoding="UTF-8"):
@@ -130,6 +131,12 @@ with open("data/new_sloleks/final_sloleks.xml", "ab") as myfile:
                         new_element.attrib['att'] = 'naglašena_beseda'
                         new_element.attrib['val'] = accentuated_word
                         wf.append(new_element)
+
+                        new_element = etree.Element('feat')
+                        new_element.attrib['att'] = 'SAMPA'
+                        new_element.attrib['val'] = result = convert_to_SAMPA(accentuated_word)
+                        wf.append(new_element)
+
                         word_glob_num += 1
                         # word_index += 1
 
